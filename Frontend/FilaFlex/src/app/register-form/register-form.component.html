@@ -1,0 +1,51 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <h1>Register</h1>
+
+  <div>
+    <label for="name">Full Name:</label>
+    <input type="text" id="name" formControlName="name" />
+    <span
+      *ngIf="
+        registerForm.get('name')?.invalid && registerForm.get('name')?.touched
+      "
+    >
+      Full name is required and must be at least 6 characters long.
+    </span>
+  </div>
+
+  <div>
+    <label for="email">Email:</label>
+    <input type="email" id="email" formControlName="email" />
+    <span
+      *ngIf="
+        registerForm.get('email')?.invalid && registerForm.get('email')?.touched
+      "
+    >
+      Type a valid email.
+    </span>
+  </div>
+
+  <div>
+    <label for="password">Password:</label>
+    <input type="password" id="password" formControlName="password" />
+    <span
+      *ngIf="
+        registerForm.get('password')?.invalid &&
+        registerForm.get('password')?.touched
+      "
+    >
+      Password must be at least 8 characters long.
+    </span>
+  </div>
+
+  <div>
+    <label for="role">User Role:</label>
+    <select id="role" formControlName="role">
+      <option value="" disabled selected>Select a role</option>
+      <option value="admin">Admin</option>
+      <option value="user">User</option>
+    </select>
+  </div>
+
+  <button type="submit" [disabled]="registerForm.invalid">Register</button>
+</form>
