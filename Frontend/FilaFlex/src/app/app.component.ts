@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RegisterFormComponent } from './register-form/register-form.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  standalone: true,
+  imports: [RegisterFormComponent],
+  template: ` <app-register-form></app-register-form> `,
 })
 export class AppComponent {
   title = 'FilaFlex';
