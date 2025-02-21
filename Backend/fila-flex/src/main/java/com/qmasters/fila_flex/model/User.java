@@ -25,8 +25,15 @@ public class User implements UserDetails {
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @GeneratedValue(generator = "user_id_sequence", strategy = GenerationType.SEQUENCE)
+
+    private String name;
     @Column(name = "id", updatable = false)
-    private long id;
+    private Long id;
+
+    public Long getId() {
+        return id;
+    }
+
     @NotNull(message = "Email é obrigatório")
     private String email;
 
@@ -38,16 +45,29 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String email, String password, UserRole role) {
+    public User(String email, String password, UserRole role,String name) {
         this.email = email;
         this.password = password;
         this.role = role;
+        this.name =name;
     }
 
-    public void setemail(String email) {
+    public String getName(){
+        return name;
+    }
+    public void setName(String name ){
+        this.name = name;
+
+    }
+    public void setEmail(String email) {
         this.email = email;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }
@@ -66,7 +86,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == role.ADMIN) {
+        if (this.role == UserRole.ADMIN) {
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), 
              new SimpleGrantedAuthority("ROLE_USER"));
         } else {
