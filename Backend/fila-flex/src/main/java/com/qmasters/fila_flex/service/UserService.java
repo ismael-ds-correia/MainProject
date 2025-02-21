@@ -17,9 +17,7 @@ public class UserService {
     //private PasswordEncoder passwordEncoder;
 
     public User saveUser(UserDTO userDto) {
-        User user = new User(userDto.getUsername()
-        , userDto.getPassword()
-        , User.Role.valueOf(userDto.getRole()));
+        User user = new User();
         //user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
         }
@@ -28,8 +26,8 @@ public class UserService {
         return userRepository.findAll();
         }
 
-        public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public void delete(User user) {
