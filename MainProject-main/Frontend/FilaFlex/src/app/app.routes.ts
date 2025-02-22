@@ -7,3 +7,5 @@ export const routes: Routes = [
     component: RegisterComponent,
   },
 ];
+
+export default routes;
