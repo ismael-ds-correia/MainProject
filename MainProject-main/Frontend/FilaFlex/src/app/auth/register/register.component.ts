@@ -3,25 +3,24 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
-  AbstractControl,
-  ValidationErrors,
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-register-form',
+  selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './register-form.component.html',
-  styleUrls: ['./register-form.component.css'],
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css'],
 })
-export class RegisterFormComponent {
-  registerForm: FormGroup;
+
+export class RegisterComponent {
+  register: FormGroup;
   errorMessage: string = '';
 
   constructor(private fb: FormBuilder) {
-    this.registerForm = this.fb.group({
+    this.register = this.fb.group({
       name: [
         '',
         [
@@ -36,8 +35,8 @@ export class RegisterFormComponent {
   }
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      console.log('Form submitted:', this.registerForm.value);
+    if (this.register.valid) {
+      console.log('Form submitted:', this.register.value);
     } else {
       this.errorMessage = 'Please fill in all required fields correctly!';
     }

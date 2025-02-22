@@ -1,4 +1,4 @@
-<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+<form [formGroup]="register" (ngSubmit)="onSubmit()" class="register">
   <h1>Registrar-se</h1>
 
   <div>
@@ -6,7 +6,7 @@
     <input type="text" id="name" formControlName="name" />
     <span
       *ngIf="
-        registerForm.get('name')?.invalid && registerForm.get('name')?.touched
+        register.get('name')?.invalid && register.get('name')?.touched
       "
     >
       O nome completo é obrigatório e deve ter no mínimo 6 caracteres.
@@ -18,7 +18,7 @@
     <input type="email" id="email" formControlName="email" />
     <span
       *ngIf="
-        registerForm.get('email')?.invalid && registerForm.get('email')?.touched
+        register.get('email')?.invalid && register.get('email')?.touched
       "
     >
       Digite um e-mail válido.
@@ -30,8 +30,8 @@
     <input type="password" id="password" formControlName="password" />
     <span
       *ngIf="
-        registerForm.get('password')?.invalid &&
-        registerForm.get('password')?.touched
+        register.get('password')?.invalid &&
+        register.get('password')?.touched
       "
     >
       A senha deve ter pelo menos 8 caracteres.
@@ -47,5 +47,5 @@
     </select>
   </div>
 
-  <button type="submit" [disabled]="registerForm.invalid">Registrar-se</button>
+  <button type="submit" [disabled]="register.invalid">Registrar-se</button>
 </form>

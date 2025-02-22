@@ -9,7 +9,7 @@ body {
 }
 
 /* Centraliza o formulário e define um tamanho máximo */
-.register-form {
+.register {
   font-family: 'Roboto', sans-serif;
   max-width: 400px;
   width: 100%;
@@ -22,32 +22,32 @@ body {
 }
 
 /* Centraliza o título do formulário */
-.register-form h1 {
+.register h1 {
   text-align: center;
   margin-bottom: 20px;
 }
 
 /* Adiciona espaçamento entre os campos do formulário */
-.register-form div {
+.register div {
   margin-bottom: 15px;
 }
 
 /* Define o estilo dos rótulos */
-.register-form label {
+.register label {
   display: block;
   margin-bottom: 5px;
 }
 
 /* Define o estilo dos campos de entrada e seleção */
-.register-form input,
-.register-form select {
+.register input,
+.register select {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
 }
 
 /* Define o estilo do botão de envio */
-.register-form button {
+.register button {
   width: 100%;
   padding: 10px;
   background-color: #007bff;
@@ -58,11 +58,11 @@ body {
 }
 
 /* Define o estilo do botão de envio quando desabilitado */
-.register-form button:disabled {
+.register button:disabled {
   background-color: #ccc;
 }
 
-.register-form span{
+.register span{
   color: red;
   font-size: 0.875em;
 }
