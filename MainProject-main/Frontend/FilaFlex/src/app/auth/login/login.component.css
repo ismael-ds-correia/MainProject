@@ -1,0 +1,88 @@
+/* Importa a fonte Roboto do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/* Centraliza o formulário e define um tamanho máximo */
+.login-container {
+  font-family: 'Roboto', sans-serif;
+  width: 400px; /* Define uma largura fixa para o contêiner */
+  height: 300px; /* Ajusta a altura do contêiner */
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+/* Centraliza o título do formulário */
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Adiciona espaçamento entre os campos do formulário */
+.login-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Define o estilo dos rótulos */
+.login-container label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Define o estilo dos campos de entrada */
+.login-container input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* Define o estilo do botão de envio */
+.login-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Define o estilo do botão de envio quando desabilitado */
+.login-container button:disabled {
+  background-color: #ccc;
+}
+
+/* Centraliza o link de registro */
+.login-container p {
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Define o fundo da página como azul */
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: blue;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Define o estilo das mensagens de erro */
+.error-message {
+  color: red;
+  font-size: 0.875em;
+}
