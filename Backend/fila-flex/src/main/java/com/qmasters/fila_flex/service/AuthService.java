@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.qmasters.fila_flex.dto.UserDTO;
 import com.qmasters.fila_flex.model.User;
@@ -21,6 +22,11 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private static final String REGISTER_URL = "http://localhost:8080/users/register";
+
     public User register(UserDTO userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new RuntimeException("Email já cadastrado!");
@@ -33,6 +39,10 @@ public class AuthService implements UserDetailsService {
         user.setRole(UserRole.valueOf(userDTO.getRole())); 
         
         return userRepository.save(user);
+    }
+
+    public User registerWithApi(UserDTO userDTO) {
+        return restTemplate.postForObject(REGISTER_URL, userDTO, User.class);
     }
 
     @Override
