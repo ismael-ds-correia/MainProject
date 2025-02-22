@@ -24,23 +24,19 @@ public class User implements UserDetails {
 
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
-    @GeneratedValue(generator = "user_id_sequence", strategy = GenerationType.SEQUENCE)
-
-    private String name;
+    @GeneratedValue(generator = "user_sequence", strategy = GenerationType.SEQUENCE)
     @Column(name = "id", updatable = false)
     private Long id;
-
-    public Long getId() {
-        return id;
-    }
 
     @NotNull(message = "Email é obrigatório")
     private String email;
 
     @NotNull(message = "Senha é obrigatória")
     private String password;
-
+    @NotNull(message = "Role é obrigatório")
     private UserRole role;
+    @NotNull(message = "Nome é obrigatório")
+    private String name;
 
     public User() {
     }
@@ -51,6 +47,13 @@ public class User implements UserDetails {
         this.role = role;
         this.name =name;
     }
+    public void setId(Long id){
+        this.id = id;
+    }
+    public Long getId() {
+        return id;
+    }
+    
 
     public String getName(){
         return name;
