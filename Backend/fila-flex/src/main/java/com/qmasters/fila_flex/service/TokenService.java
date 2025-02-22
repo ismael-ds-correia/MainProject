@@ -4,36 +4,66 @@ import java.util.Date;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.qmasters.fila_flex.model.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 @Service
 public class TokenService {
 
-    @Value("${jwt.secret}")
+    @Value("${api.security.token.secret}")
     private String secret;
 
-    @Value("${jwt.expiration}")
-    private long expiration;
+    private long expiration = (48 * 60 * 60 * 1000);//tempo de expiração de 48 horas
 
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(Keys.hmacShaKeyFor(secret.getBytes()),SignatureAlgorithm.HS512)
-                .compact();
+    public String generateToken(User user) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(this.secret);
+            String token = JWT.create()
+                .withIssuer("FilaFlex")
+                .withSubject(user.getUsername())
+                .withExpiresAt(this.getExpirationAt())
+                .sign(algorithm);
+            return token;
+        } catch (JWTCreationException e) {
+            throw new RuntimeException("Erro ao criar o token JWT em TokenService: " + e.getMessage());
+        }
     }
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+
+    public String validateToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(this.secret);
+            return JWT.require(algorithm)
+                    .withIssuer("FilaFlex")
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (JWTVerificationException e) {
+            return "Erro no validateToken, em TokenService";
+        }
     }
-     public String extractUsername(String token) {
+
+    private Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+        .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+        .build()
+        .parseClaimsJws(token)
+        .getBody();
+    }
+    
+    private Date getExpirationAt() {
+        return new Date(System.currentTimeMillis() + expiration);
+    }
+
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -46,15 +76,4 @@ public class TokenService {
         return claimsResolver.apply(claims);
     }
 
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
 }

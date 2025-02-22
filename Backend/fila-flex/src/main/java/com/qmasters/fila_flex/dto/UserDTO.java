@@ -4,7 +4,7 @@ public class UserDTO {
 
     private String email;
     private String password;
-    private String role;
+    private UserRole role;
     private String name;
    
     
@@ -14,7 +14,7 @@ public class UserDTO {
     public UserDTO(String email, String password, UserRole role, String name) {
         this.email = email;
         this.password = password;
-        this.role = role.name();
+        this.role = role;
         this.name=name;
 
     }
@@ -44,11 +44,11 @@ public class UserDTO {
         this.password = password;
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(UserRole role) {
         this.role = role;
     }
     
