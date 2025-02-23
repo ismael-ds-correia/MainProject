@@ -27,10 +27,8 @@ public class User implements UserDetails {
     @GeneratedValue(generator = "user_sequence", strategy = GenerationType.SEQUENCE)
     @Column(name = "id", updatable = false)
     private Long id;
-
     @NotNull(message = "Email é obrigatório")
     private String email;
-
     @NotNull(message = "Senha é obrigatória")
     private String password;
     @NotNull(message = "Role é obrigatório")
@@ -41,27 +39,30 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String email, String password, UserRole role,String name) {
+    public User(String email, String password, UserRole role, String name) {
         this.email = email;
         this.password = password;
         this.role = role;
         this.name =name;
     }
+
     public void setId(Long id){
         this.id = id;
     }
+
     public Long getId() {
         return id;
     }
     
-
     public String getName(){
         return name;
     }
+
     public void setName(String name ){
         this.name = name;
 
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -99,10 +100,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+        return email;
     }
-
-
 
 }
