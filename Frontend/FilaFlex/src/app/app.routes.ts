@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
-import { RegisterFormComponent } from './register-form/register-form.component';
+import { RegisterComponent } from './auth/register/register.component';
+import { LoginComponent } from './auth/login/login.component';
 
-export const routes: Routes = [
-  {
-    path: 'form',
-    component: RegisterFormComponent,
-  },
+const routes: Routes = [
+  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' }, // Redireciona para a página de login por padrão.
 ];
+
+export default routes;
