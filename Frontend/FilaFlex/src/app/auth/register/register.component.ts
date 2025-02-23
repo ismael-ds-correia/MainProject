@@ -85,7 +85,7 @@ export class RegisterComponent implements OnInit {
       const newUser = { id: 0, name, email, password, role };
 
       this.authService.register(newUser)
-        .then(() => this.router.navigate(['/register']))
+        .then(() => this.router.navigate(['/login']))
         .catch(err => alert('Erro ao registrar usuário: ' + err));
     }
   }

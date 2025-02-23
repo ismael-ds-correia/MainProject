@@ -10,7 +10,7 @@ export class AuthService {
 
   async login(email: string, password: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.apiUrl}/register`, {
+      const response = await fetch(`${this.apiUrl}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
