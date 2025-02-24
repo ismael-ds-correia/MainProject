@@ -37,11 +37,14 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorize -> authorize
-            .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-            .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
-            //.requestMatcher("/fila/**").hasRole("USER")
-            //qualquer outra saida API deve ser adicionada aqui
-            .anyRequest().authenticated())
+        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
+        .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+        //.requestMatcher("/fila/**").hasRole("USER")
+        //qualquer outra saida API deve ser adicionada aqui
+
+        .anyRequest().authenticated())
+
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
     }

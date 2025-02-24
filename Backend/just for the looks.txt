@@ -1,0 +1,1 @@
+txt adicionado para corrigir a forma como o github mostra a pasta "backend" no repositorio. Impratico, mas funcional.
