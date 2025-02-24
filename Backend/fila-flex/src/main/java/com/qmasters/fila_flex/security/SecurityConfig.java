@@ -28,6 +28,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
+        .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
         //.requestMatcher("/fila/**").hasRole("USER")
         //qualquer outra saida API deve ser adicionada aqui
 

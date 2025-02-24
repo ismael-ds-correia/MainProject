@@ -11,43 +11,36 @@ import com.qmasters.fila_flex.dto.UserDTO;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.repository.UserRepository;
 
+import jakarta.transaction.TransactionScoped;
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
     
     @Autowired
     private UserRepository userRepository;
-    
-    //talvez seja redundante, tambem existe a mesma função em AuthService
-    public User saveUser(UserDTO userDTO) {
-        UserDetails existingUser = userRepository.findByEmail(userDTO.getEmail());
-        if (existingUser != null) {
-            throw new IllegalArgumentException("Email já está em uso");
-        }
-
-        String encriptedPassword = new BCryptPasswordEncoder().encode(userDTO.getPassword());
-        //userDTO.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
-
-        User user = new User(userDTO.getEmail(), encriptedPassword, userDTO.getRole(), userDTO.getName());
-        return userRepository.save(user);
-    }
 
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
+    public User findById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
     public UserDetails findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    @Transactional
+    public void deleteUsuario(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+        } else {
+            throw new IllegalArgumentException("Usuário não encontrado, remoção não foi realizada");
+        }
     }
 
-    public void delete(User user) {
-        userRepository.delete(user);
-    }
-
-    public User update(User user) {
+    public User update(User user) {//não testado
         return userRepository.save(user);
     }
 
