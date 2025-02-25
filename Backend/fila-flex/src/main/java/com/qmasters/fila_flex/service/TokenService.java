@@ -36,6 +36,7 @@ public class TokenService {
             String token = JWT.create()
                 .withIssuer("FilaFlex")
                 .withSubject(user.getUsername())
+                .withClaim("role", user.getRole().name()) // Inclui a função do usuário no token
                 .withExpiresAt(this.getExpirationAt())
                 .sign(algorithm);
             return token;
