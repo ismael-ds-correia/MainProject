@@ -4,14 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.qmasters.fila_flex.dto.UserDTO;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.repository.UserRepository;
 
-import jakarta.transaction.TransactionScoped;
 import jakarta.transaction.Transactional;
 
 @Service

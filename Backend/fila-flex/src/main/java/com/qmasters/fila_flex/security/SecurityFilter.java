@@ -34,13 +34,17 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = recoverToken(request);
 
         if (token != null) {
+            if (tokenService.isTokenRevoked(token)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Token inválido");
+                return;
+            }
             var login = this.tokenService.validateToken(token);
             UserDetails userDetails = userRepository.findByEmail(login);
 
             var auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
         
-
         }
 
         filterChain.doFilter(request, response);
