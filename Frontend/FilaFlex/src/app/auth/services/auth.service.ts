@@ -36,6 +36,7 @@ export class AuthService {
 
   async register(newUser: User): Promise<User | null> {
     try {
+      newUser.role = newUser.role.toUpperCase();
       const response = await fetch(`${this.apiUrl}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
