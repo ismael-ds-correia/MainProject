@@ -1,93 +1,82 @@
 package com.qmasters.fila_flex.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class AppointmentTypeDTO {
-    private Long id;
-    private String nome;
-    private String descricao;
-    private String categoria;
-    private BigDecimal preco;
-    private Integer tempoExecucao;
-    private LocalDate dataEntrega;
-    private String documentacaoNecessaria;
+    private String name;
+    private String description;
+    private String category;
+    private double price;
+    private Integer runtime;
+    private LocalDate estimatedTime;
+    private String requiredDocumentation;
 
     public AppointmentTypeDTO() {}
 
-    public AppointmentTypeDTO(Long id, String nome, String descricao, String categoria, BigDecimal preco,
-                              Integer tempoExecucao, LocalDate dataEntrega, String documentacaoNecessaria) {
-        this.id = id;
-        this.nome = nome;
-        this.descricao = descricao;
-        this.categoria = categoria;
-        this.preco = preco;
-        this.tempoExecucao = tempoExecucao;
-        this.dataEntrega = dataEntrega;
-        this.documentacaoNecessaria = documentacaoNecessaria;
+    public AppointmentTypeDTO(String name, String description, String category, double price,
+                              Integer runtime, LocalDate estimatedTime, String requiredDocumentation) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.price = price;
+        this.runtime = runtime;
+        this.estimatedTime = estimatedTime;
+        this.requiredDocumentation = requiredDocumentation;
     }
 
-    public Long getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getNome() {
-        return nome;
+    public String getDescription() {
+        return description;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getCategory() {
+        return category;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getCategoria() {
-        return categoria;
+    public double getPrice() {
+        return price;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
-    public BigDecimal getPreco() {
-        return preco;
+    public Integer getRuntime() {
+        return runtime;
     }
 
-    public void setPreco(BigDecimal preco) {
-        this.preco = preco;
+    public void setRuntime(Integer runtime) {
+        this.runtime = runtime;
     }
 
-    public Integer getTempoExecucao() {
-        return tempoExecucao;
+    public LocalDate getEstimatedTime() {
+        return estimatedTime;
     }
 
-    public void setTempoExecucao(Integer tempoExecucao) {
-        this.tempoExecucao = tempoExecucao;
+    public void setEstimatedTime(LocalDate estimatedTime) {
+        this.estimatedTime = estimatedTime;
     }
 
-    public LocalDate getDataEntrega() {
-        return dataEntrega;
+    public String getRequiredDocumentation() {
+        return requiredDocumentation;
     }
 
-    public void setDataEntrega(LocalDate dataEntrega) {
-        this.dataEntrega = dataEntrega;
-    }
-
-    public String getDocumentacaoNecessaria() {
-        return documentacaoNecessaria;
-    }
-
-    public void setDocumentacaoNecessaria(String documentacaoNecessaria) {
-        this.documentacaoNecessaria = documentacaoNecessaria;
+    public void setRequiredDocumentation(String requiredDocumentation) {
+        this.requiredDocumentation = requiredDocumentation;
     }
 }
