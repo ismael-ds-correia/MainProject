@@ -69,7 +69,7 @@ public class AppointmentTypeDTO {
         return estimatedTime;
     }
 
-    public void setEstimatedTime(LocalDate estimatedTime) {
+    public void setEstimatedTime(LocalDate estimatedTime) { // Corrigido aqui
         this.estimatedTime = estimatedTime;
     }
 

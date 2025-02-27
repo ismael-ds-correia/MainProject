@@ -3,6 +3,7 @@ package com.qmasters.fila_flex.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.dto.AppointmentTypeDTO;
@@ -11,27 +12,24 @@ import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 
 @Service
 public class AppointmentTypeService {
+    @Autowired
+    private AppointmentTypeRepository repository;
 
-    private final AppointmentTypeRepository repository;
+    public AppointmentTypeDTO toCreate(AppointmentTypeDTO dto) {
+        AppointmentType appointmentType = new AppointmentType(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getCategory(),
+                dto.getPrice(),
+                dto.getRuntime(),
+                dto.getEstimatedTime(),
+                dto.getRequiredDocumentation()
+         );
 
-    public AppointmentTypeService(AppointmentTypeRepository repository) {
-        this.repository = repository;
+        appointmentType = repository.save(appointmentType);
+
+        return toDTO(appointmentType);
     }
-
-public AppointmentTypeDTO toCreate(AppointmentTypeDTO dto) {
-    AppointmentType appointmentType = new AppointmentType(
-            dto.getName(),
-            dto.getDescription(),
-            dto.getCategory(),
-            dto.getPrice(),
-            dto.getRuntime(),
-            dto.getEstimatedTime(),
-            dto.getRequiredDocumentation()
-    );
-
-    appointmentType = repository.save(appointmentType);
-    return toDTO(appointmentType);
-}
 
     public List<AppointmentTypeDTO> listAll() {
         return repository.findAll().stream()

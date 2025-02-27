@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.qmasters.fila_flex.dto.AppointmentTypeDTO;
 import com.qmasters.fila_flex.service.AppointmentTypeService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/appointment-types")
 public class AppointmentTypeController {
@@ -24,13 +26,13 @@ public class AppointmentTypeController {
         this.service = service;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
-    public AppointmentTypeDTO toCreate(@RequestBody AppointmentTypeDTO dto) {
+    //@PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/create")
+    public AppointmentTypeDTO toCreate(@Valid @RequestBody AppointmentTypeDTO dto) {
         return service.toCreate(dto);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<AppointmentTypeDTO> listAll() {
         return service.listAll();
     }
