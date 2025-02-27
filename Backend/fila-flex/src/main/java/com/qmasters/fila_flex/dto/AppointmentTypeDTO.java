@@ -1,20 +1,21 @@
 package com.qmasters.fila_flex.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class AppointmentTypeDTO {
     private String name;
     private String description;
-    private String category;
+    private List<String> category;
     private double price;
     private Integer runtime;
     private LocalDate estimatedTime;
-    private String requiredDocumentation;
+    private List<String> requiredDocumentation;
 
     public AppointmentTypeDTO() {}
 
-    public AppointmentTypeDTO(String name, String description, String category, double price,
-                              Integer runtime, LocalDate estimatedTime, String requiredDocumentation) {
+    public AppointmentTypeDTO(String name, String description, List<String> category, double price,
+                              Integer runtime, LocalDate estimatedTime, List<String> requiredDocumentation) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -40,11 +41,11 @@ public class AppointmentTypeDTO {
         this.description = description;
     }
 
-    public String getCategory() {
+    public List<String> getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(List<String> category) {
         this.category = category;
     }
 
@@ -72,11 +73,11 @@ public class AppointmentTypeDTO {
         this.estimatedTime = estimatedTime;
     }
 
-    public String getRequiredDocumentation() {
+    public List<String> getRequiredDocumentation() {
         return requiredDocumentation;
     }
 
-    public void setRequiredDocumentation(String requiredDocumentation) {
+    public void setRequiredDocumentation(List<String> requiredDocumentation) {
         this.requiredDocumentation = requiredDocumentation;
     }
 }

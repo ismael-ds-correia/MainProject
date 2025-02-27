@@ -26,17 +26,17 @@ public class AppointmentTypeController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public AppointmentTypeDTO criar(@RequestBody AppointmentTypeDTO dto) {
+    public AppointmentTypeDTO toCreate(@RequestBody AppointmentTypeDTO dto) {
         return service.toCreate(dto);
     }
 
     @GetMapping
-    public List<AppointmentTypeDTO> listarTodos() {
+    public List<AppointmentTypeDTO> listAll() {
         return service.listAll();
     }
 
     @GetMapping("/{id}")
-    public AppointmentTypeDTO buscarPorId(@PathVariable Long id) {
+    public AppointmentTypeDTO findById(@PathVariable Long id) {
         return service.findById(id);
     }
 
