@@ -33,10 +33,10 @@ public class AppointmentType {
     private double price;
 
     @Column(nullable = false)
-    private Integer runtime; // Em minutos
+    private Integer estimatedTime; // Em minutos
 
     @Column(nullable = false)
-    private LocalDate estimatedTime;
+    private LocalDate appointmentDate;
 
     @ElementCollection                          //Atributo Multivalorado.
     private List<String> requiredDocumentation;
@@ -44,13 +44,13 @@ public class AppointmentType {
     public AppointmentType() {}
 
     public AppointmentType(String name, String description, List<String> category, double price,
-                           Integer runtime, LocalDate estimatedTime, List<String> requiredDocumentation) {
+                           Integer estimatedTime, LocalDate appointmentDate, List<String> requiredDocumentation) {
         this.name = name;
         this.description = description;
         this.category = category;
         this.price = price;
-        this.runtime = runtime;
         this.estimatedTime = estimatedTime;
+        this.appointmentDate = appointmentDate;
         this.requiredDocumentation = requiredDocumentation;
     }
 
@@ -94,20 +94,20 @@ public class AppointmentType {
         this.price = price;
     }
 
-    public Integer getRuntime() {
-        return runtime;
-    }
-
-    public void setRuntime(Integer runtime) {
-        this.runtime = runtime;
-    }
-
-    public LocalDate getEstimatedTime() {
+    public Integer getEstimatedTime() {
         return estimatedTime;
     }
 
-    public void setEstimatedTime(LocalDate estimatedTime) {
+    public void setEstimatedTime(Integer estimatedTime) {
         this.estimatedTime = estimatedTime;
+    }
+
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDate appointmentDate) {
+        this.appointmentDate = appointmentDate;
     }
 
     public List<String> getRequiredDocumentation() {

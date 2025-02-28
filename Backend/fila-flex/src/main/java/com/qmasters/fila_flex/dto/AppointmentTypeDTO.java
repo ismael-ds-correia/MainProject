@@ -8,20 +8,20 @@ public class AppointmentTypeDTO {
     private String description;
     private List<String> category;
     private double price;
-    private Integer runtime;
-    private LocalDate estimatedTime;
+    private Integer estimatedTime;
+    private LocalDate appointmentDate;
     private List<String> requiredDocumentation;
 
     public AppointmentTypeDTO() {}
 
     public AppointmentTypeDTO(String name, String description, List<String> category, double price,
-                              Integer runtime, LocalDate estimatedTime, List<String> requiredDocumentation) {
+                              Integer estimatedTime, LocalDate appointmentDate, List<String> requiredDocumentation) {
         this.name = name;
         this.description = description;
         this.category = category;
         this.price = price;
-        this.runtime = runtime;
         this.estimatedTime = estimatedTime;
+        this.appointmentDate = appointmentDate;
         this.requiredDocumentation = requiredDocumentation;
     }
 
@@ -57,20 +57,20 @@ public class AppointmentTypeDTO {
         this.price = price;
     }
 
-    public Integer getRuntime() {
-        return runtime;
-    }
-
-    public void setRuntime(Integer runtime) {
-        this.runtime = runtime;
-    }
-
-    public LocalDate getEstimatedTime() {
+    public Integer getEstimatedTime() {
         return estimatedTime;
     }
 
-    public void setEstimatedTime(LocalDate estimatedTime) { // Corrigido aqui
+    public void setEstimatedTime(Integer estimatedTime) {
         this.estimatedTime = estimatedTime;
+    }
+
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDate appointmentDate) { // Corrigido aqui
+        this.appointmentDate = appointmentDate;
     }
 
     public List<String> getRequiredDocumentation() {
