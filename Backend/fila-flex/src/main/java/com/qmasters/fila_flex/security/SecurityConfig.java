@@ -45,6 +45,12 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/categories/**").permitAll()
         .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.GET, "/adress/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/adress/**").permitAll()
+        .requestMatchers(HttpMethod.DELETE, "/adress/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/appointment/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/appointment/**").permitAll()
+        .requestMatchers(HttpMethod.DELETE, "/appointment/**").permitAll()
         //.requestMatcher("/fila/**").hasRole("USER")
         //qualquer outra saida API deve ser adicionada aqui
 

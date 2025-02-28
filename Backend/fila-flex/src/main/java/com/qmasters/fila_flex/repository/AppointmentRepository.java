@@ -1,11 +1,11 @@
 package com.qmasters.fila_flex.repository;
 
-
-import com.qmasters.fila_flex.model.AppointmentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.qmasters.fila_flex.model.Appointment;
+
 @Repository
-public interface AppointmentTypeRepository extends JpaRepository<AppointmentType, Long> {
+public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
     
 }

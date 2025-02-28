@@ -21,8 +21,8 @@ public class AppointmentTypeService {
                 dto.getDescription(),
                 dto.getCategory(),
                 dto.getPrice(),
-                dto.getRuntime(),
                 dto.getEstimatedTime(),
+                dto.getAppointmentDate(),
                 dto.getRequiredDocumentation()
          );
 
@@ -52,8 +52,8 @@ public class AppointmentTypeService {
                 appointmentType.getDescription(),
                 appointmentType.getCategory(),
                 appointmentType.getPrice(),
-                appointmentType.getRuntime(),
                 appointmentType.getEstimatedTime(),
+                appointmentType.getAppointmentDate(),
                 appointmentType.getRequiredDocumentation()
         );
     }
