@@ -29,7 +29,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUsuario(Long id) {
+    public void deleteUser(Long id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         } else {
@@ -37,7 +37,7 @@ public class UserService {
         }
     }
 
-    public User update(User user) {//não testado
+    public User update(User user) {
         return userRepository.save(user);
     }
 

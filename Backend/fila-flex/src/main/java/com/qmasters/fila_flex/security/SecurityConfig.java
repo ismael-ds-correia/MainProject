@@ -1,5 +1,7 @@
 package com.qmasters.fila_flex.security;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -29,7 +30,7 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedOrigins(List.of("http://localhost:4200")); // Altere conforme necessário
-            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));  
             config.setAllowCredentials(true);
             config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
             return config;
@@ -39,6 +40,10 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/appointment-types/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/appointment-types/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/categories/**").permitAll()
         .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
         //.requestMatcher("/fila/**").hasRole("USER")
         //qualquer outra saida API deve ser adicionada aqui

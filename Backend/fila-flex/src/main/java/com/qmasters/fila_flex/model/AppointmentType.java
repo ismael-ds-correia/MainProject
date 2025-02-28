@@ -1,9 +1,16 @@
 package com.qmasters.fila_flex.model;
 
 
-import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "appointment_types")
@@ -14,38 +21,37 @@ public class AppointmentType {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String nome;
+    private String name;
+
+    @Column(nullable = false, length=1000)      //Armazena até 1000 caracteres.
+    private String description;
+
+    @ElementCollection                          //Atributo Multivalorado, visto que pode está em mais de uma categoria.
+    private List<String> category;
 
     @Column(nullable = false)
-    private String descricao;
+    private double price;
 
     @Column(nullable = false)
-    private String categoria;
+    private Integer runtime; // Em minutos
 
     @Column(nullable = false)
-    private BigDecimal preco;
+    private LocalDate estimatedTime;
 
-    @Column(nullable = false)
-    private Integer tempoExecucao; // Em minutos
-
-    @Column(nullable = false)
-    private LocalDate dataEntrega;
-
-    @Lob
-    private String documentacaoNecessaria;
+    @ElementCollection                          //Atributo Multivalorado.
+    private List<String> requiredDocumentation;
 
     public AppointmentType() {}
 
-    public AppointmentType(Long id, String nome, String descricao, String categoria, BigDecimal preco,
-                           Integer tempoExecucao, LocalDate dataEntrega, String documentacaoNecessaria) {
-        this.id = id;
-        this.nome = nome;
-        this.descricao = descricao;
-        this.categoria = categoria;
-        this.preco = preco;
-        this.tempoExecucao = tempoExecucao;
-        this.dataEntrega = dataEntrega;
-        this.documentacaoNecessaria = documentacaoNecessaria;
+    public AppointmentType(String name, String description, List<String> category, double price,
+                           Integer runtime, LocalDate estimatedTime, List<String> requiredDocumentation) {
+        this.name = name;
+        this.description = description;
+        this.category = category;
+        this.price = price;
+        this.runtime = runtime;
+        this.estimatedTime = estimatedTime;
+        this.requiredDocumentation = requiredDocumentation;
     }
 
     public Long getId() {
@@ -56,60 +62,60 @@ public class AppointmentType {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getCategoria() {
-        return categoria;
+    public List<String> getCategory() {
+        return category;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setCategory(List<String> category) {
+        this.category = category;
     }
 
-    public BigDecimal getPreco() {
-        return preco;
+    public double getPrice() {
+        return price;
     }
 
-    public void setPreco(BigDecimal preco) {
-        this.preco = preco;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
-    public Integer getTempoExecucao() {
-        return tempoExecucao;
+    public Integer getRuntime() {
+        return runtime;
     }
 
-    public void setTempoExecucao(Integer tempoExecucao) {
-        this.tempoExecucao = tempoExecucao;
+    public void setRuntime(Integer runtime) {
+        this.runtime = runtime;
     }
 
-    public LocalDate getDataEntrega() {
-        return dataEntrega;
+    public LocalDate getEstimatedTime() {
+        return estimatedTime;
     }
 
-    public void setDataEntrega(LocalDate dataEntrega) {
-        this.dataEntrega = dataEntrega;
+    public void setEstimatedTime(LocalDate estimatedTime) {
+        this.estimatedTime = estimatedTime;
     }
 
-    public String getDocumentacaoNecessaria() {
-        return documentacaoNecessaria;
+    public List<String> getRequiredDocumentation() {
+        return requiredDocumentation;
     }
 
-    public void setDocumentacaoNecessaria(String documentacaoNecessaria) {
-        this.documentacaoNecessaria = documentacaoNecessaria;
+    public void setRequiredDocumentation(List<String> requiredDocumentation) {
+        this.requiredDocumentation = requiredDocumentation;
     }
 }
 

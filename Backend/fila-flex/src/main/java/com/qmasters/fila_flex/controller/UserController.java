@@ -37,7 +37,7 @@ public class UserController {
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         try {
-            userService.deleteUsuario(id);
+            userService.deleteUser(id);
             return ResponseEntity.status(HttpStatus.OK).body("Usuário removido com sucesso");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
