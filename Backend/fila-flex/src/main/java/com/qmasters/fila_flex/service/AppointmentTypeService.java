@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.dto.AppointmentTypeDTO;
+import com.qmasters.fila_flex.dto.CategoryDTO;
 import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 
@@ -14,6 +15,8 @@ import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 public class AppointmentTypeService {
     @Autowired
     private AppointmentTypeRepository repository;
+    @Autowired
+    private CategoryService categoryService;     //Importante para salvar categorias no banco de dados.
 
     public AppointmentTypeDTO toCreate(AppointmentTypeDTO dto) {
         AppointmentType appointmentType = new AppointmentType(
@@ -28,6 +31,12 @@ public class AppointmentTypeService {
 
         appointmentType = repository.save(appointmentType);
 
+        //Salva as categorias no banco de dados, se necessário.
+        for (String categoryName : dto.getCategory()) {
+            CategoryDTO categoryDTO = new CategoryDTO(categoryName);
+            categoryService.saveCategory(categoryDTO);
+        }
+
         return toDTO(appointmentType);
     }
 
@@ -41,6 +50,13 @@ public class AppointmentTypeService {
         return repository.findById(id)
                 .map(this::toDTO)
                 .orElseThrow(() -> new RuntimeException("Tipo de agendamento não encontrado."));
+    }
+
+    //Método para buscar AppointmentTypes filtrados por categoria.
+    public List<AppointmentTypeDTO> findByCategory(String category) {
+        return repository.findByCategory(category).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     public void delete(Long id) {

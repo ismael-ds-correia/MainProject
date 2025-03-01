@@ -21,7 +21,7 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false)
     @JoinColumn(name = "appointment_type_id", nullable = false)
     private AppointmentType appointmentType;
 
