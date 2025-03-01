@@ -13,6 +13,7 @@ public class AppointmentDTO {
     private LocalDateTime scheduledTime;
     private LocalDateTime createdDateTime;
     private Adress adress;
+    
     private String userEmail; //transient
     private String userId; //transient
 

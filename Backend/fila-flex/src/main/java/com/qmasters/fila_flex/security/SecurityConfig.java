@@ -40,14 +40,19 @@ public class SecurityConfig {
         .authorizeHttpRequests(authorize -> authorize
         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
         .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
+        .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+
         .requestMatchers(HttpMethod.GET, "/appointment-types/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/appointment-types/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/appointment-types/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/appointment-types/**").hasRole("ADMIN")
+
         .requestMatchers(HttpMethod.GET, "/category/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/category/**").permitAll()
-        .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+
         .requestMatchers(HttpMethod.GET, "/adress/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/adress/**").permitAll()
         .requestMatchers(HttpMethod.DELETE, "/adress/**").permitAll()
+
         .requestMatchers(HttpMethod.GET, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.DELETE, "/appointment/**").permitAll()
