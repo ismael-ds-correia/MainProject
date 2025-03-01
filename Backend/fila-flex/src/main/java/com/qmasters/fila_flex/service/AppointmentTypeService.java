@@ -59,6 +59,13 @@ public class AppointmentTypeService {
                 .collect(Collectors.toList());
     }
 
+    //Método para buscar AppointmentTypes por intervalo de preços.
+    public List<AppointmentTypeDTO> findByPriceBetween(double minPrice, double maxPrice) {
+        return repository.findByPriceBetween(minPrice, maxPrice).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public void delete(Long id) {
         repository.deleteById(id);
     }
