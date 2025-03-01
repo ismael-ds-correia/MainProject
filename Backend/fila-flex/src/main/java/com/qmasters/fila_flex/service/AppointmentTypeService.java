@@ -26,7 +26,8 @@ public class AppointmentTypeService {
                 dto.getPrice(),
                 dto.getEstimatedTime(),
                 dto.getAppointmentDate(),
-                dto.getRequiredDocumentation()
+                dto.getRequiredDocumentation(),
+                dto.getAdress()
          );
 
         appointmentType = repository.save(appointmentType);
@@ -77,7 +78,8 @@ public class AppointmentTypeService {
                 appointmentType.getPrice(),
                 appointmentType.getEstimatedTime(),
                 appointmentType.getAppointmentDate(),
-                appointmentType.getRequiredDocumentation()
+                appointmentType.getRequiredDocumentation(),
+                appointmentType.getAdress()
         );
     }
 }

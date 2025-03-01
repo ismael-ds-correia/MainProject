@@ -4,12 +4,15 @@ package com.qmasters.fila_flex.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -41,10 +44,22 @@ public class AppointmentType {
     @ElementCollection                          //Atributo Multivalorado.
     private List<String> requiredDocumentation;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "adress_id")   
+    private Adress adress;
+
+    public Adress getAdress() {
+        return adress;
+    }
+
+    public void setAdress(Adress adress) {
+        this.adress = adress;
+    }
+
     public AppointmentType() {}
 
     public AppointmentType(String name, String description, List<String> category, double price,
-                           Integer estimatedTime, LocalDate appointmentDate, List<String> requiredDocumentation) {
+                           Integer estimatedTime, LocalDate appointmentDate, List<String> requiredDocumentation, Adress adress) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -52,6 +67,7 @@ public class AppointmentType {
         this.estimatedTime = estimatedTime;
         this.appointmentDate = appointmentDate;
         this.requiredDocumentation = requiredDocumentation;
+        this.adress = adress;
     }
 
     public Long getId() {
