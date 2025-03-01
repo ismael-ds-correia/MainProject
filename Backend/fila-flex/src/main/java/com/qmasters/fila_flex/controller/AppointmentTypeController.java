@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qmasters.fila_flex.dto.AppointmentTypeDTO;
@@ -35,6 +36,12 @@ public class AppointmentTypeController {
     @GetMapping("/all")
     public List<AppointmentTypeDTO> listAll() {
         return service.listAll();
+    }
+
+    //Endpoint para buscar AppointmentType por categoria.
+    @GetMapping("/category")
+    public List<AppointmentTypeDTO> findByCategory(@RequestParam String category) {
+        return service.findByCategory(category);
     }
 
     @GetMapping("/{id}")
