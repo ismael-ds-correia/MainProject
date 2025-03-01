@@ -13,6 +13,9 @@ public class AppointmentDTO {
     private LocalDateTime scheduledTime;
     private LocalDateTime createdDateTime;
     private Adress adress;
+    
+    private String userEmail; //transient
+    private String userId; //transient
 
     public AppointmentDTO() {
     }
@@ -24,6 +27,27 @@ public class AppointmentDTO {
         this.scheduledTime = scheduledTime;
         this.createdDateTime = createdDateTime;
         this.adress = adress;
+
+        this.userEmail = user.getEmail(); //transient
+        this.userId = user.getId().toString(); //transient
+    }
+
+    //getter e setters transients
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     //getters e setters

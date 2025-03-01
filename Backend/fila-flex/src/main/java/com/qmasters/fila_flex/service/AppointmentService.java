@@ -19,7 +19,12 @@ public class AppointmentService {
 
     @Transactional
     public Appointment saveAppointment(AppointmentDTO appointmentDTO) {
-        Appointment appointment = new Appointment(appointmentDTO.getAppointmentType(), appointmentDTO.getUser(), appointmentDTO.getScheduledDateTime(), appointmentDTO.getScheduledTime(), appointmentDTO.getCreatedDateTime(), appointmentDTO.getAdress());
+        Appointment appointment = new Appointment(appointmentDTO.getAppointmentType()
+        , appointmentDTO.getUser()
+        , appointmentDTO.getScheduledDateTime()
+        , appointmentDTO.getScheduledTime()
+        , appointmentDTO.getAdress());
+        
         return appointmentRepository.save(appointment);
     }
 
