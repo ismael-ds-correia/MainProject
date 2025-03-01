@@ -44,6 +44,19 @@ public class AppointmentTypeController {
         return service.findByCategory(category);
     }
 
+    //Endpoint para buscar AppointmentTypes por intervalo de preços.
+    @GetMapping("/price-range")
+    public List<AppointmentTypeDTO> findByPriceBetween(
+            @RequestParam double minPrice,
+            @RequestParam double maxPrice) {
+
+        if (minPrice > maxPrice) {
+            throw new IllegalArgumentException("minPrice deve ser menor ou igual a maxPrice.");
+        }
+        
+        return service.findByPriceBetween(minPrice, maxPrice);
+    }
+
     @GetMapping("/{id}")
     public AppointmentTypeDTO findById(@PathVariable Long id) {
         return service.findById(id);

@@ -3,6 +3,8 @@ package com.qmasters.fila_flex.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.qmasters.fila_flex.model.Adress;
+
 public class AppointmentTypeDTO {
     private String name;
     private String description;
@@ -11,11 +13,20 @@ public class AppointmentTypeDTO {
     private Integer estimatedTime;
     private LocalDate appointmentDate;
     private List<String> requiredDocumentation;
+    private Adress adress;
+
+    public Adress getAdress() {
+        return adress;
+    }
+
+    public void setAdress(Adress adress) {
+        this.adress = adress;
+    }
 
     public AppointmentTypeDTO() {}
 
     public AppointmentTypeDTO(String name, String description, List<String> category, double price,
-                              Integer estimatedTime, LocalDate appointmentDate, List<String> requiredDocumentation) {
+                              Integer estimatedTime, LocalDate appointmentDate, List<String> requiredDocumentation, Adress adress) {
         this.name = name;
         this.description = description;
         this.category = category;
@@ -23,6 +34,7 @@ public class AppointmentTypeDTO {
         this.estimatedTime = estimatedTime;
         this.appointmentDate = appointmentDate;
         this.requiredDocumentation = requiredDocumentation;
+        this.adress = adress;
     }
 
     public String getName() {

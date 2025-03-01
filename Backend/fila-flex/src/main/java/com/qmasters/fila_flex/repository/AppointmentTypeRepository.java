@@ -14,4 +14,8 @@ import com.qmasters.fila_flex.model.AppointmentType;
 public interface AppointmentTypeRepository extends JpaRepository<AppointmentType, Long> {
     //Busca AppointmentTypes que contenham a categoria especificada.
     @Query("SELECT a FROM AppointmentType a WHERE :category MEMBER OF a.category")List<AppointmentType> findByCategory(@Param("category") String category);
+
+    //Busca AppointmentTypes que tenham o preço entre os valores especificados.
+    @Query("SELECT a FROM AppointmentType a WHERE a.price BETWEEN :minPrice AND :maxPrice")
+    List<AppointmentType> findByPriceBetween(@Param("minPrice") Double minPrice, @Param("maxPrice") Double maxPrice);
 }

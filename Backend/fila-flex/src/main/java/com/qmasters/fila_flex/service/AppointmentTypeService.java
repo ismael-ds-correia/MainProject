@@ -26,7 +26,8 @@ public class AppointmentTypeService {
                 dto.getPrice(),
                 dto.getEstimatedTime(),
                 dto.getAppointmentDate(),
-                dto.getRequiredDocumentation()
+                dto.getRequiredDocumentation(),
+                dto.getAdress()
          );
 
         appointmentType = repository.save(appointmentType);
@@ -59,6 +60,13 @@ public class AppointmentTypeService {
                 .collect(Collectors.toList());
     }
 
+    //Método para buscar AppointmentTypes por intervalo de preços.
+    public List<AppointmentTypeDTO> findByPriceBetween(double minPrice, double maxPrice) {
+        return repository.findByPriceBetween(minPrice, maxPrice).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
     public void delete(Long id) {
         repository.deleteById(id);
     }
@@ -70,7 +78,8 @@ public class AppointmentTypeService {
                 appointmentType.getPrice(),
                 appointmentType.getEstimatedTime(),
                 appointmentType.getAppointmentDate(),
-                appointmentType.getRequiredDocumentation()
+                appointmentType.getRequiredDocumentation(),
+                appointmentType.getAdress()
         );
     }
 }
