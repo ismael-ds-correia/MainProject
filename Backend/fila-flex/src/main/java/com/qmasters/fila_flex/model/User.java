@@ -7,13 +7,16 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.qmasters.fila_flex.util.UserRole;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -36,6 +39,12 @@ public class User implements UserDetails {
     @NotNull(message = "Nome é obrigatório")
     private String name;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference //usado para evitar loop infinito na saida do Insomnia
+    private List<Appointment> appointments;//talvez tirar o orphan removal caso queira manter os dados após remover User
+
+    //construtores
+
     public User() {
     }
 
@@ -45,6 +54,8 @@ public class User implements UserDetails {
         this.role = role;
         this.name =name;
     }
+
+    //getters e setters
 
     public void setId(Long id){
         this.id = id;
@@ -101,6 +112,14 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
 }

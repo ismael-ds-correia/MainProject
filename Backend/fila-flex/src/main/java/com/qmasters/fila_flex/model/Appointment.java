@@ -2,6 +2,8 @@ package com.qmasters.fila_flex.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "appointments")
@@ -27,6 +30,7 @@ public class Appointment {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference //usado para evitar loop infinito na saida do Insomnia
     private User user;
     
     //mudei para "scheduled" para não ter muita repetição de "appointment"
@@ -42,26 +46,44 @@ public class Appointment {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true) //talvez adicionar um mappedBy
     private Adress adress; //endereço do local que ocorrerá o agendamento
 
+    //variaveis Transients
+
+    @Transient
+    private String userEmail;
+
+    @Transient
+    private String userId;
+
     /*
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AppointmentStatus status; //pensando se precisa mesmo estar aqui
+    private AppointmentStatus status; //talvez seja util adicionar algo do tip
     */
 
     public Appointment() {
     
     }
 
-    public Appointment(AppointmentType appointmentType, User user, LocalDateTime scheduledDateTime, LocalDateTime scheduledTime, LocalDateTime createdDateTime, Adress adress) {
+    public Appointment(AppointmentType appointmentType, User user, LocalDateTime scheduledDateTime, LocalDateTime scheduledTime, Adress adress) {
         this.appointmentType = appointmentType;
         this.user = user;
         this.scheduledDateTime = scheduledDateTime;
         this.scheduledTime = scheduledTime;
-        this.createdDateTime = createdDateTime;
+        this.createdDateTime = LocalDateTime.now();//registra a hora atual
         this.adress = adress;
     }
 
-    // Getters and Setters
+    // Getters e Setters Transients
+
+    public String getUserEmail() {
+        return user.getEmail();
+    }
+
+    public String getUserId() {
+        return user.getId().toString();
+    }
+
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -117,6 +139,4 @@ public class Appointment {
     public void setAdress(Adress adress) {
         this.adress = adress;
     }
-
-
 }
