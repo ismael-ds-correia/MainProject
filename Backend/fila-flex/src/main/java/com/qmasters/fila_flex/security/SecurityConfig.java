@@ -35,6 +35,7 @@ public class SecurityConfig {
             config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
             return config;
         }))
+        //qualquer saida API deve ser adicionada aqui
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(authorize -> authorize
@@ -56,8 +57,6 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.GET, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.DELETE, "/appointment/**").permitAll()
-        //.requestMatcher("/fila/**").hasRole("USER")
-        //qualquer outra saida API deve ser adicionada aqui
 
         .anyRequest().authenticated())
 

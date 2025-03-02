@@ -1,6 +1,10 @@
 package com.qmasters.fila_flex.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,9 +13,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qmasters.fila_flex.dto.AppointmentDTO;
+import com.qmasters.fila_flex.dto.SimpleAppointmentDTO;
 import com.qmasters.fila_flex.service.AppointmentService;
 
 @RestController
@@ -43,6 +49,19 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Agendamento não encontrado");
         }
         return ResponseEntity.ok(appointment);
+    }
+
+    //Endpoint para buscar Appointment por intervalo de datas.
+    @GetMapping("/between")
+    public ResponseEntity<List<SimpleAppointmentDTO>> getAppointmentBetwenDate(
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Data de início deve ser anterior a data final");
+        }
+
+        return ResponseEntity.ok(appointmentService.findByScheduledDateTime(startDate, endDate));
     }
 
     @DeleteMapping("/{id}")

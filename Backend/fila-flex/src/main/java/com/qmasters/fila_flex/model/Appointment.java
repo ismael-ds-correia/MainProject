@@ -1,10 +1,10 @@
 package com.qmasters.fila_flex.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -24,33 +23,41 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "appointment_type_id", nullable = false)
+    @JsonIgnore //usado para evitar loop infinito na saida do Insomnia
     private AppointmentType appointmentType;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference //usado para evitar loop infinito na saida do Insomnia
+    @JsonIgnore
     private User user;
     
-    //mudei para "scheduled" para não ter muita repetição de "appointment"
-    @Column(nullable = false)
+    @Column(nullable = false) //mudei para "scheduled" para não ter muita repetição de "appointment"
     private LocalDateTime scheduledDateTime; //dia que ocorrerá o agendamento
-
-    @Column(nullable = false)
-    private LocalDateTime scheduledTime; //hora em que ocorrerá o agendamento
 
     @Column(nullable = false)
     private LocalDateTime createdDateTime; //util para determinar que não é mais possivel cancelar/reagendar o agendamento
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true) //talvez adicionar um mappedBy
-    private Adress adress; //endereço do local que ocorrerá o agendamento
+    //=================================variaveis Transients======================================
 
-    //variaveis Transients
+    @Transient
+    private String appointmentTypeName;
+    @Transient
+    private String appointmentTypeDescription;
+    @Transient
+    private List<String> appointmentTypeCategory;
+    @Transient
+    private String appointmentTypePrice;
+    @Transient
+    private String appointmentTypeEstimatedTime;
+    @Transient
+    private List<String> appointmentTypeRequiredDocumentation;
+    @Transient
+    private Adress appointmentTypeAdress;
 
     @Transient
     private String userEmail;
-
     @Transient
     private String userId;
 
@@ -64,16 +71,42 @@ public class Appointment {
     
     }
 
-    public Appointment(AppointmentType appointmentType, User user, LocalDateTime scheduledDateTime, LocalDateTime scheduledTime, Adress adress) {
+    public Appointment(AppointmentType appointmentType, User user, LocalDateTime scheduledDateTime) {
         this.appointmentType = appointmentType;
         this.user = user;
         this.scheduledDateTime = scheduledDateTime;
-        this.scheduledTime = scheduledTime;
         this.createdDateTime = LocalDateTime.now();//registra a hora atual
-        this.adress = adress;
     }
 
-    // Getters e Setters Transients
+    //================================Getters e Setters Transients================================
+
+    public String getAppointmentTypeName() {
+        return appointmentType.getName();
+    }
+
+    public String getAppointmentTypeDescription() {
+        return appointmentType.getDescription();
+    }
+
+    public List<String>getAppointmentTypeCategory() {
+        return appointmentType.getCategory();
+    }
+
+    public String getAppointmentTypePrice() {
+        return String.valueOf(appointmentType.getPrice());
+    }
+
+    public String getAppointmentTypeEstimatedTime() {
+        return String.valueOf(appointmentType.getEstimatedTime());
+    }
+
+    public List<String> getAppointmentTypeRequiredDocumentation() {
+        return appointmentType.getRequiredDocumentation();
+    }
+
+    public Adress getAppointmentTypeAdress() {
+        return appointmentType.getAdress();
+    }
 
     public String getUserEmail() {
         return user.getEmail();
@@ -83,7 +116,7 @@ public class Appointment {
         return user.getId().toString();
     }
 
-    // Getters e Setters
+    //==================================Getters e Setters===================================
     public Long getId() {
         return id;
     }
@@ -116,27 +149,11 @@ public class Appointment {
         this.scheduledDateTime = scheduledDateTime;
     }
 
-    public LocalDateTime getScheduledTime() {
-        return scheduledTime;
-    }
-
-    public void setScheduledTime(LocalDateTime scheduledTime) {
-        this.scheduledTime = scheduledTime;
-    }
-
     public LocalDateTime getCreatedDateTime() {
         return createdDateTime;
     }
 
     public void setCreatedDateTime(LocalDateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    public Adress getAdress() {
-        return adress;
-    }
-
-    public void setAdress(Adress adress) {
-        this.adress = adress;
     }
 }

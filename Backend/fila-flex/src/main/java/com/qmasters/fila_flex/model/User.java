@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.qmasters.fila_flex.util.UserRole;
 
 import jakarta.persistence.CascadeType;
@@ -23,6 +22,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users")
+//@JsonIgnoreProperties({"appointments"})
 public class User implements UserDetails {
 
     @Id
@@ -40,7 +40,6 @@ public class User implements UserDetails {
     private String name;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference //usado para evitar loop infinito na saida do Insomnia
     private List<Appointment> appointments;//talvez tirar o orphan removal caso queira manter os dados após remover User
 
     //construtores
