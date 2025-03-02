@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-queue-management',
+  selector: 'app-service-management',
   template: `
     <div class="p-6">
       <div class="flex justify-between items-center mb-4">
@@ -9,54 +10,60 @@ import { Component, OnInit } from '@angular/core';
         <button (click)="handleAddQueue()" class="btn btn-primary">Adicionar Fila</button>
       </div>
       
-      <table class="table-auto w-full border-collapse border border-gray-300">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="border p-2">ID</th>
-            <th class="border p-2">Nome</th>
-            <th class="border p-2">Tipo de Atendimento</th>
-            <th class="border p-2">Prioridade</th>
-            <th class="border p-2">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let queue of queues" class="border">
-            <td class="border p-2">{{ queue.id }}</td>
-            <td class="border p-2">{{ queue.name }}</td>
-            <td class="border p-2">{{ queue.type }}</td>
-            <td class="border p-2">{{ queue.priority }}</td>
-            <td class="border p-2 flex gap-2">
-              <button (click)="handleEditQueue(queue.id)" class="btn btn-outline">Editar</button>
-              <button (click)="handleDeleteQueue(queue.id)" class="btn btn-danger">Excluir</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <app-queue-table [queues]="queues" (editQueue)="handleEditQueue($event)" (deleteQueue)="handleDeleteQueue($event)"></app-queue-table>
     </div>
   `,
-    styleUrl: './service-management.component.css'
+  styles: [
+    `
+      .btn {
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background-color: #007bff;
+        color: white;
+      }
+    `
+  ]
 })
-export class QueueManagementComponent implements OnInit {
-  queues = [
-    //Exemplo de dados - Substituir por dados reais futuramente.
-    { id: 1, name: 'Fila de Emergência', type: 'Hospitalar', priority: 'Alta' },
-    { id: 2, name: 'Fila de Atendimento Bancário', type: 'Financeiro', priority: 'Média' },
-    { id: 3, name: 'Fila de Suporte Técnico', type: 'Tecnologia', priority: 'Baixa' }
-  ];
+export class ServiceManagementComponent implements OnInit {
+  queues: any[] = [];
+  private apiUrl = 'http://localhost:3000/queues'; // URL da API para testes no Insomnia
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.loadQueues();
+  }
+
+  loadQueues(): void {
+    this.http.get<any[]>(this.apiUrl).subscribe(
+      (data) => this.queues = data,
+      (error) => console.error('Erro ao carregar filas:', error)
+    );
+  }
 
   handleAddQueue(): void {
-    console.log('Adicionar nova fila');
+    const newQueue = { name: 'Nova Fila', type: 'Outro', priority: 'Média' };
+    this.http.post<any>(this.apiUrl, newQueue).subscribe(
+      (data) => this.queues = [...this.queues, data],
+      (error) => console.error('Erro ao adicionar fila:', error)
+    );
   }
 
   handleEditQueue(id: number): void {
-    console.log('Editar fila:', id);
+    const updatedQueue = { name: 'Fila Atualizada', type: 'Outro', priority: 'Alta' };
+    this.http.put<any>(`${this.apiUrl}/${id}`, updatedQueue).subscribe(
+      () => this.loadQueues(),
+      (error) => console.error('Erro ao editar fila:', error)
+    );
   }
 
   handleDeleteQueue(id: number): void {
-    console.log('Excluir fila:', id);
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe(
+      () => this.queues = this.queues.filter(queue => queue.id !== id),
+      (error) => console.error('Erro ao excluir fila:', error)
+    );
   }
 }

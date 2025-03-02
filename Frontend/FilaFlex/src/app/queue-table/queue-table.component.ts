@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-queue-table',
@@ -27,10 +28,25 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       </tbody>
     </table>
   `,
-  styleUrl: './queue-table.component.css'
+  styles: './queue-table.component.css'
 })
-export class QueueTableComponent {
+export class QueueTableComponent implements OnInit {
   @Input() queues: any[] = [];
   @Output() editQueue = new EventEmitter<number>();
   @Output() deleteQueue = new EventEmitter<number>();
+
+  private apiUrl = 'http://localhost:3000/queues'; // URL da API para testes no Insomnia
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadQueues();
+  }
+
+  loadQueues(): void {
+    this.http.get<any[]>(this.apiUrl).subscribe(
+      (data) => this.queues = data,
+      (error) => console.error('Erro ao carregar filas:', error)
+    );
+  }
 }
