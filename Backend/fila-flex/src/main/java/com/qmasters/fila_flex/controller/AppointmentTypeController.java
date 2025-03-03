@@ -26,7 +26,6 @@ public class AppointmentTypeController {
         this.service = service;
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
     public AppointmentTypeDTO toCreate(@Valid @RequestBody AppointmentTypeDTO dto) {
         return service.toCreate(dto);
@@ -61,7 +60,6 @@ public class AppointmentTypeController {
         return service.findById(id);
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
