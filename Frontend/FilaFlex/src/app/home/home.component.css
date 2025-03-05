@@ -1,0 +1,74 @@
+.home-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #1976d2; /* Fundo azul */
+    min-height: 100vh;
+    color: white;
+    border-radius: 8px;
+  }
+  
+  .logout-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .appointment-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: flex-start;
+  }
+  
+  .appointment-card {
+    flex: 0 0 calc(33.333% - 20px);
+    min-width: 280px;
+    border: 1px solid #ccc;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .appointment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .appointment-card h2 {
+    margin-top: 0;
+    color: #333;
+  }
+  
+  .description {
+    color: #666;
+    margin-bottom: 15px;
+  }
+  
+  .price {
+    font-weight: bold;
+    color: #2196F3;
+  }
+  
+  .time {
+    color: #4CAF50;
+  }
+  
+  /* Responsividade para telas menores */
+  @media (max-width: 768px) {
+    .appointment-card {
+      flex: 0 0 calc(50% - 20px);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .appointment-card {
+      flex: 0 0 100%;
+    }
+  }
