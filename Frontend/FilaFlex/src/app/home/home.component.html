@@ -1,0 +1,14 @@
+<div class="home-container">
+    <h1>Bem-vindo à página inicial</h1>
+    <button (click)="logout()" class="logout-button">Logout</button>
+    
+    <div class="appointment-grid">
+      <div *ngFor="let appointmentType of appointmentTypes" class="appointment-card">
+        <h2>{{ appointmentType.name }}</h2>
+        <p class="description">{{ appointmentType.description | slice:0:50 }}...</p>
+        <p class="price">Preço: {{ appointmentType.price | currency:'BRL' }}</p>
+        <p class="time">Tempo estimado: {{ appointmentType.estimatedTime }} minutos</p>
+      </div>
+    </div>
+  </div>
+  
