@@ -2,7 +2,6 @@ package com.qmasters.fila_flex.model;
 
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -31,7 +30,7 @@ public class AppointmentType {
     private String description;
 
     @ElementCollection                          //Atributo Multivalorado, visto que pode está em mais de uma categoria.
-    private List<String> category = new ArrayList<>();
+    private List<String> category;;
 
     @Column(nullable = false)
     private double price;
@@ -43,7 +42,7 @@ public class AppointmentType {
     private LocalDate appointmentDate;
 
     @ElementCollection                          //Atributo Multivalorado.
-    private List<String> requiredDocumentation = new ArrayList<>();
+    private List<String> requiredDocumentation;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "adress_id")   
