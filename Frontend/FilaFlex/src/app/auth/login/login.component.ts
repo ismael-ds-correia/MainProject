@@ -9,31 +9,7 @@ import { Router, RouterModule } from '@angular/router';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  template: `
-  <section>
-    <div class="login-container">
-      <h2>Login</h2>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login">
-        <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" formControlName="email" placeholder="Digite seu email" />
-          <span *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
-            Digite um e-mail válido.
-          </span>
-        </div>
-        <div>
-          <label for="password">Senha:</label>
-          <input type="password" id="password" formControlName="password" placeholder="Digite sua senha" required />
-          <span *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
-            A senha é obrigatória.
-          </span>
-        </div>
-        <button type="submit" [disabled]="loginForm.invalid">Login</button>
-      </form>
-      <p>Ainda não possui conta? <a [routerLink]="['/register']">Registre-se</a></p>
-    </div>
-  </section>
-  `,
+  templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
