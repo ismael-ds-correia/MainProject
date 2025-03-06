@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentType, AppointmentTypeService } from '../services/appointment-type.service';
+import { catchError, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-service-management',
@@ -48,15 +49,15 @@ export class ServiceManagementComponent implements OnInit {
   }
   
   loadAppointmentTypes(): void {
-    this.appointmentTypeService.getAppointmentTypes().subscribe(
-      data => {
+    this.appointmentTypeService.getAppointmentTypes().subscribe({
+      next: (data) => {
         this.appointmentTypes = data;
         console.log('Appointment types carregados:', data);
       },
-      error => {
+      error: (error) => {
         console.error('Erro ao carregar os tipos de serviço:', error);
       }
-    );
+    });
   }
   
   toggleForm(): void {
@@ -70,14 +71,14 @@ export class ServiceManagementComponent implements OnInit {
     if (this.appointmentTypeForm.invalid) {
       return;
     }
-
+  
     const formData = this.prepareFormData();
     console.log('Dados preparados para envio:', formData);
-
+  
     if (this.isEditing && this.currentAppointmentType) {
       // Atualizar serviço existente
-      this.appointmentTypeService.updateAppointmentType(formData).subscribe(
-        updated => {
+      this.appointmentTypeService.updateAppointmentType(formData).subscribe({
+        next: (updated) => {
           console.log('Serviço atualizado com sucesso:', updated);
           const index = this.appointmentTypes.findIndex(a => a.name === this.currentAppointmentType?.name);
           if (index !== -1) {
@@ -85,22 +86,22 @@ export class ServiceManagementComponent implements OnInit {
           }
           this.resetForm();
         },
-        error => {
+        error: (error) => {
           console.error('Erro ao atualizar o serviço:', error);
         }
-      );
+      });
     } else {
       // Adicionar novo serviço
-      this.appointmentTypeService.createAppointmentType(formData).subscribe(
-        created => {
+      this.appointmentTypeService.createAppointmentType(formData).subscribe({
+        next: (created) => {
           console.log('Serviço criado com sucesso:', created);
           this.appointmentTypes.push(created);
           this.resetForm();
         },
-        error => {
+        error: (error) => {
           console.error('Erro ao criar o serviço:', error);
         }
-      );
+      });
     }
   }
 
@@ -155,19 +156,23 @@ export class ServiceManagementComponent implements OnInit {
     });
   }
 
+
   deleteAppointmentType(appointmentType: AppointmentType): void {
-    if (confirm(`Tem certeza que deseja excluir o serviço "${appointmentType.name}"?`)) {
-      // Agora passa o appointmentType completo, não apenas o ID
-      this.appointmentTypeService.deleteAppointmentType(appointmentType).subscribe(
-        () => {
+    if (!appointmentType.name) {
+      console.error('Não é possível excluir: nome não encontrado');
+      return;
+    }
+    
+    this.appointmentTypeService.deleteAppointmentTypeByName(appointmentType.name)
+      .subscribe({
+        next: () => {
           console.log('Serviço excluído com sucesso');
           this.appointmentTypes = this.appointmentTypes.filter(a => a.name !== appointmentType.name);
         },
-        error => {
+        error: (error) => {
           console.error('Erro ao excluir o serviço:', error);
         }
-      );
-    }
+      });
   }
 
   cancelForm(): void {
