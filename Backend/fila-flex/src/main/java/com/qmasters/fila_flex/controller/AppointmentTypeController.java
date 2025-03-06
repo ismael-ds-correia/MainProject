@@ -55,6 +55,11 @@ public class AppointmentTypeController {
         return service.findByPriceBetween(minPrice, maxPrice);
     }
 
+    @DeleteMapping("/delete/{name}")
+    public void deleteByName(@PathVariable String name) {
+        service.deleteByName(name);
+    }    
+
     @GetMapping("/{id}")
     public AppointmentTypeDTO findById(@PathVariable Long id) {
         return service.findById(id);

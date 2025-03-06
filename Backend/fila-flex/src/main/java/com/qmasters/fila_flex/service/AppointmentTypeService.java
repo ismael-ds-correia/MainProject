@@ -71,6 +71,16 @@ public class AppointmentTypeService {
         repository.deleteById(id);
     }
 
+    //Método para deletar AppointmentType por nome.
+    public void deleteByName(String name) {
+        // Encontra o AppointmentType pelo nome
+        AppointmentType appointmentType = repository.findByName(name)
+            .orElseThrow(() -> new RuntimeException("Tipo de agendamento não encontrado com o nome: " + name));
+        
+        // Deleta o AppointmentType
+        repository.delete(appointmentType);
+    }
+
     private AppointmentTypeDTO toDTO(AppointmentType appointmentType) {
         return new AppointmentTypeDTO(appointmentType.getName(),
                 appointmentType.getDescription(),
