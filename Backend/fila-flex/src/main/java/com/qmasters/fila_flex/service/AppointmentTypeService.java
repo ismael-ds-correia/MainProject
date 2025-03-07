@@ -18,7 +18,7 @@ public class AppointmentTypeService {
     @Autowired
     private CategoryService categoryService;     //Importante para salvar categorias no banco de dados.
 
-    public AppointmentTypeDTO toCreate(AppointmentTypeDTO dto) {
+    public AppointmentTypeDTO saveAppointmentType(AppointmentTypeDTO dto) {
         AppointmentType appointmentType = new AppointmentType(
                 dto.getName(),
                 dto.getDescription(),
@@ -67,7 +67,7 @@ public class AppointmentTypeService {
                 .collect(Collectors.toList());
     }
 
-    public void delete(Long id) {
+    public void deleteAppointmentType(Long id) {
         repository.deleteById(id);
     }
 

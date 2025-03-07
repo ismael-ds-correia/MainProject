@@ -1,5 +1,6 @@
 package com.qmasters.fila_flex.dto;
 import com.qmasters.fila_flex.util.UserRole;
+
 public class UserDTO {
 
     private String email;

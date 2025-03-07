@@ -22,7 +22,6 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users")
-//@JsonIgnoreProperties({"appointments"})
 public class User implements UserDetails {
 
     @Id

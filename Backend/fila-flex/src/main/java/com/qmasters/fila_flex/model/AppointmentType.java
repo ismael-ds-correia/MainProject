@@ -8,10 +8,12 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
@@ -44,9 +46,12 @@ public class AppointmentType {
     @ElementCollection                          //Atributo Multivalorado.
     private List<String> requiredDocumentation;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "adress_id")   
     private Adress adress;
+
+    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) //talvez remover orphanRemoval para n„o apagar os appointments
+    private List<Appointment> appointments;
 
     //Construtores
 
@@ -136,6 +141,14 @@ public class AppointmentType {
     
     public void setAdress(Adress adress) {
         this.adress = adress;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
     public String getAdressAsString() {// Retorna o endere√ßo como uma String

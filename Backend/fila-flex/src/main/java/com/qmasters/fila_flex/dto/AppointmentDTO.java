@@ -12,6 +12,9 @@ public class AppointmentDTO {
     private LocalDateTime scheduledDateTime;
     private LocalDateTime createdDateTime;
     
+    private String userId; //transient
+    private String userEmail; //transient
+    
     private String appointmentTypeName; //transient
     private String appointmentTypeDescription; //transient
     private List<String> appointmentTypeCategory; //transient
@@ -20,8 +23,6 @@ public class AppointmentDTO {
     private List<String> appointmentTypeRequiredDocumentation; //transient
     private String appointmentTypeAdress; //transient
 
-    private String userEmail; //transient
-    private String userId; //transient
 
     //================================Construtores===================================
 
@@ -34,6 +35,9 @@ public class AppointmentDTO {
         this.scheduledDateTime = scheduledDateTime;
         this.createdDateTime = createdDateTime;
 
+        this.userId = user.getId().toString(); //transient
+        this.userEmail = user.getEmail(); //transient
+
         this.appointmentTypeName = appointmentType.getName(); //transient
         this.appointmentTypeDescription = appointmentType.getDescription(); //transient
         this.appointmentTypeCategory = appointmentType.getCategory(); //transient
@@ -42,12 +46,11 @@ public class AppointmentDTO {
         this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation(); //transient
         this.appointmentTypeAdress = appointmentType.getAdressAsString(); //transient
         
-        this.userEmail = user.getEmail(); //transient
-        this.userId = user.getId().toString(); //transient
     }
 
     //=================================Getter e Setters transients========================================
-    
+    //aparentemente, os getters e setters transients do DTO não são necessarios, pois mesmo apagando eles
+    //a saida no Insomnia fica correta, mas melhor manter eles aqui por precaução.
     public String getAppointmentTypeName() {
         return appointmentTypeName;
     }

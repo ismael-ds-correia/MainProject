@@ -55,6 +55,7 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.DELETE, "/adress/**").permitAll()
 
         .requestMatchers(HttpMethod.GET, "/appointment/**").permitAll()
+        .requestMatchers(HttpMethod.PUT, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.DELETE, "/appointment/**").permitAll()
 
