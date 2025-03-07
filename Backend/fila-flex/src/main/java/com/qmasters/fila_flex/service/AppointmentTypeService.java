@@ -50,7 +50,7 @@ public class AppointmentTypeService {
     public AppointmentTypeDTO findById(Long id) {
         return repository.findById(id)
                 .map(this::toDTO)
-                .orElseThrow(() -> new RuntimeException("Tipo de agendamento não encontrado."));
+                .orElseThrow(() -> new RuntimeException("AppointmentType não encontrado."));
     }
 
     //Método para buscar AppointmentTypes filtrados por categoria.
