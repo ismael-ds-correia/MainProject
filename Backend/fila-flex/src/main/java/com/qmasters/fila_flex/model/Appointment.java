@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "appointments")
@@ -34,38 +33,17 @@ public class Appointment {
     private User user;
     
     @Column(nullable = false) //mudei para "scheduled" para não ter muita repetição de "appointment"
-    private LocalDateTime scheduledDateTime; //dia que ocorrerá o agendamento
+    private LocalDateTime scheduledDateTime; //dia que ocorrera o agendamento
 
-    @Column(nullable = false)
-    private LocalDateTime createdDateTime; //util para determinar que não é mais possivel cancelar/reagendar o agendamento
+    private LocalDateTime createdDateTime; //talvez seja util no futuro
 
     //=================================variaveis Transients======================================
+    //as variaveis transients não são obrigatorias nesta classe, mas baseado na ordem que elas estão
+    //listadas aqui, elas serão exibidas desta mesma ordem no Insomnia
 
-    @Transient
-    private String appointmentTypeName;
-    @Transient
-    private String appointmentTypeDescription;
-    @Transient
-    private List<String> appointmentTypeCategory;
-    @Transient
-    private String appointmentTypePrice;
-    @Transient
-    private String appointmentTypeEstimatedTime;
-    @Transient
-    private List<String> appointmentTypeRequiredDocumentation;
-    @Transient
-    private Adress appointmentTypeAdress;
 
-    @Transient
-    private String userEmail;
-    @Transient
-    private String userId;
 
-    /*
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private AppointmentStatus status; //talvez seja util adicionar algo do tip
-    */
+    //=================================Construtores======================================
 
     public Appointment() {
     
@@ -79,6 +57,8 @@ public class Appointment {
     }
 
     //================================Getters e Setters Transients================================
+    //se remover estes getters, as variaveis transients não serão exibidas no Insomnia
+    //por mais que nem estejam sendo chamados no DTO ou em outro lugar
 
     public String getAppointmentTypeName() {
         return appointmentType.getName();

@@ -37,6 +37,7 @@ public class AppointmentService {
         return appointmentRepository.findById(id);
     }
 
+    //função para buscar Appointment por intervalo de datas.
     public List<SimpleAppointmentDTO> findByScheduledDateTime(LocalDateTime startDate, LocalDateTime endDate) {
         return appointmentRepository.findByScheduledDateTime(startDate, endDate).stream()
             .map(this::toSimpleDTO)
@@ -51,10 +52,30 @@ public class AppointmentService {
             appointment.getScheduledDateTime()
         );
     }
-
-    //função de busca por filtro de usuário
-    //public List<Appointment> findAppointmentByUserId(Long user)
     
+    @Transactional
+    public Appointment updateAppointment(Long id, AppointmentDTO appointmentDto) {//não passei o AppointmentDTO como parametro, pois só preciso da data e hora
+        Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
+
+        if (optionalAppointment.isPresent()) {
+            Appointment appointment = optionalAppointment.get();
+            LocalDateTime now = LocalDateTime.now();
+
+            if (appointment.getScheduledDateTime().isAfter(now.plusHours(12))) {//se o agendamento vai ocorrer em mais de 12 horas permite reagendar
+                LocalDateTime createdDateTime = appointment.getCreatedDateTime();//mantem a data de criação original
+                
+                appointment.setScheduledDateTime(appointmentDto.getScheduledDateTime());
+                appointment.setCreatedDateTime(createdDateTime);
+                return appointmentRepository.save(appointment);
+
+            } else {
+                throw new IllegalArgumentException("Só é possivel reagendar uma consulta com pelomenos 12 horas de antecedencia.");
+            }
+        } else {
+            throw new IllegalArgumentException("Agendamento não encontrado.");
+        }
+    }
+
     @Transactional
     public void deleteAppointment(Long id) {
         if (appointmentRepository.existsById(id)) {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -58,10 +59,20 @@ public class AppointmentController {
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         
         if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("Data de início deve ser anterior a data final");
+            throw new IllegalArgumentException("Data de inicio deve ser anterior a data final");
         }
 
         return ResponseEntity.ok(appointmentService.findByScheduledDateTime(startDate, endDate));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO appointmentDTO) {
+        try {
+            var appointment = appointmentService.updateAppointment(id, appointmentDTO);
+            return ResponseEntity.ok(appointment);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
