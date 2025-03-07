@@ -9,59 +9,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, CurrencyPipe, SlicePipe, FormsModule],
-  template: `
-    <div class="home-container">
-      <h1>Bem-vindo à página inicial</h1>
-      <button (click)="logout()" class="logout-button">Logout</button>
-      
-      <!-- Botão para abrir o modal de seleção de categorias -->
-      <button (click)="openCategoryModal()" class="search-button">Buscar por Categorias</button>
-
-      <!-- Modal de seleção de categorias -->
-      <div *ngIf="showCategoryModal" class="modal">
-        <div class="modal-content">
-          <span class="close" (click)="closeCategoryModal()">&times;</span>
-          <h2 style="color: black;">Selecione Categorias</h2>
-          
-          <!-- Mensagem quando não há categorias -->
-          <p *ngIf="allCategories.length === 0" style="color: black;">Carregando categorias...</p>
-          
-          <!-- Lista de categorias -->
-          <div *ngFor="let category of allCategories" class="category-item">
-            <label style="display: flex; align-items: center; color: black;">
-              <input 
-                type="checkbox" 
-                [value]="category" 
-                (change)="onCategoryChange($event)"
-                style="margin-right: 8px;"
-              >
-              <span style="color: black; font-weight: normal;">{{ category }}</span>
-            </label>
-          </div>
-          
-          <!-- Debug info -->
-          <p *ngIf="allCategories.length > 0" style="color: gray; font-size: 12px;">
-            {{ allCategories.length }} categorias disponíveis
-          </p>
-          
-          <button 
-            (click)="searchByCategories()" 
-            class="search-button"
-            style="margin-top: 15px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
-            Buscar
-          </button>
-        </div>
-      </div>
-
-      <div class="appointment-grid">
-        <div *ngFor="let appointmentType of filteredAppointmentTypes" class="appointment-card">
-          <h2>{{ appointmentType.name }}</h2>
-          <p class="description">{{ appointmentType.description | slice:0:50 }}...</p>
-          <p class="price">Preço: {{ appointmentType.price | currency:'BRL' }}</p>
-          <p class="time">Tempo estimado: {{ appointmentType.estimatedTime }} minutos</p>
-        </div>
-      </div>
-  `,
+  templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
@@ -71,6 +19,11 @@ export class HomeComponent implements OnInit {
   showCategoryModal: boolean = false;
   allCategories: string[] = [];
   selectedCategories: string[] = [];
+  
+  // Propriedades para busca por preço
+  minPrice: number = 0;
+  maxPrice: number = 1000;
+  showPriceModal: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -132,6 +85,37 @@ export class HomeComponent implements OnInit {
     
     console.log('Appointments filtrados:', this.filteredAppointmentTypes);
     this.closeCategoryModal();
+  }
+  
+  // Métodos para busca por intervalo de preço
+  openPriceModal(): void {
+    this.showPriceModal = true;
+    console.log('Modal de preço aberto');
+  }
+
+  closePriceModal(): void {
+    this.showPriceModal = false;
+  }
+
+  searchByPriceRange(): void {
+    // Validar valores
+    if (this.minPrice < 0) this.minPrice = 0;
+    if (this.maxPrice < this.minPrice) this.maxPrice = this.minPrice;
+    
+    // Chamar o serviço
+    this.appointmentTypeService.findByPriceRange(this.minPrice, this.maxPrice)
+      .subscribe({
+        next: (results) => {
+          this.filteredAppointmentTypes = results;
+          console.log(`Encontrados ${results.length} serviços no intervalo de preço R$${this.minPrice} a R$${this.maxPrice}`);
+          this.closePriceModal();
+        },
+        error: (error) => {
+          console.error('Erro ao buscar por intervalo de preço:', error);
+          // Em caso de erro, mantém a lista atual
+          this.closePriceModal();
+        }
+      });
   }
 
   search(): void{

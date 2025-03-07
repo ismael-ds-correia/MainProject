@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 
 export interface AppointmentType {
@@ -151,6 +151,20 @@ export class AppointmentTypeService {
         return categories.map(category => category.name);
       }),
       tap(names => console.log('Nomes das categorias extraídos:', names)),
+      catchError(this.handleError)
+    );
+  }
+
+  // Método para buscar appointment types por intervalo de preço
+  findByPriceRange(minPrice: number, maxPrice: number): Observable<AppointmentType[]> {
+    // Cria os parâmetros da query
+    const params = new HttpParams()
+      .set('minPrice', minPrice.toString())
+      .set('maxPrice', maxPrice.toString());
+    
+    // Faz a chamada à API com os parâmetros
+    return this.http.get<AppointmentType[]>(`${this.apiUrl}/price-range`, { params }).pipe(
+      tap(response => console.log(`Encontrados ${response.length} serviços no intervalo de preço R$${minPrice} a R$${maxPrice}`)),
       catchError(this.handleError)
     );
   }
