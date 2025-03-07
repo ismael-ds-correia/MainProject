@@ -52,10 +52,10 @@ export class ServiceManagementComponent implements OnInit {
     this.appointmentTypeService.getAppointmentTypes().subscribe({
       next: (data) => {
         this.appointmentTypes = data;
-        console.log('Appointment types carregados:', data);
+        console.log('AppointmentTypes carregados:', data);
       },
       error: (error) => {
-        console.error('Erro ao carregar os tipos de serviço:', error);
+        console.error('Erro ao carregar os AppointmentTypes:', error);
       }
     });
   }

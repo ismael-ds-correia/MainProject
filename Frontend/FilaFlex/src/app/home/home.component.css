@@ -1,74 +1,374 @@
+/* Estilo do container principal */
 .home-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: #1976d2; /* Fundo azul */
-    min-height: 100vh;
-    color: white;
-    border-radius: 8px;
-  }
-  
-  .logout-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 20px;
-  }
-  
-  .appointment-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: flex-start;
-  }
-  
+  position: relative;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #1976d2; /* Fundo azul */
+  min-height: 100vh;
+  color: white;
+  border-radius: 8px;
+}
+
+/* Ajuste para o título também ter espaço adequado */
+.home-container h1 {
+  margin-right: 100px; /* Evita sobreposição com o botão de logout */
+  margin-bottom: 25px; /* Espaço entre o título e os botões de filtro */
+}
+
+.logout-button:hover {
+  background-color: #d32f2f; /* Vermelho mais escuro no hover */
+}
+
+/* Estilo base para botões de pesquisa e categorias */
+.search-button {
+  background-color: #4CAF50; /* Verde para contrastar com o fundo azul */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0px;
+  font-size: 14px;
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Adiciona sombra para destacar */
+}
+
+.search-button:hover {
+  background-color: #45a049; /* Verde mais escuro no hover */
+}
+
+/* Botão de logout */
+.logout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.logout-button:hover {
+  background-color: #d32f2f; /* Vermelho mais escuro no hover */
+}
+
+/* Ajusta o espaçamento entre os botões de busca e os cards */
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px; /* Aumenta o espaço entre os botões e os cards */
+}
+
+/* Grid de cards de agendamento */
+.appointment-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+  margin-top: 10px; /* Adiciona espaço extra acima dos cards */
+}
+
+.appointment-card {
+  flex: 0 0 calc(33.333% - 20px);
+  min-width: 280px;
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.appointment-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-card h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.description {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.price {
+  font-weight: bold;
+  color: #2196F3;
+}
+
+.time {
+  color: #4CAF50;
+}
+
+/* Estilo do modal */
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+
+.modal-instruction {
+  color: #555;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.price-range-container {
+  margin: 25px 0;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.modal-content {
+  background-color: white;
+  margin: 10% auto;
+  padding: 25px;
+  border: none;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  animation: modalFadeIn 0.3s;
+}
+
+.close {
+  color: #777;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.category-item {
+  margin: 12px 0;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s;
+}
+
+.category-item:hover {
+  background-color: #f9f9f9;
+}
+
+.category-item label {
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: black;
+}
+
+/* Estilo específico para o botão dentro do modal */
+.modal-content .search-button {
+  background-color: #1976d2; /* Este é o botão DENTRO do modal, azul */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: 14px;
+  width: auto;
+  display: inline-block;
+  min-width: 0;
+  text-align: center;
+  box-shadow: none;
+  font-weight: normal;
+  transition: none;
+}
+
+.modal-content .search-button:hover {
+  background-color: #1565c0;
+  box-shadow: none;
+}
+
+.modal-content .search-button:active {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estilos para o modal de preços */
+.price-modal h2 {
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+
+/* CORREÇÃO: Melhorado o espaçamento dos inputs de preço */
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Aumentado de 10px para 20px para evitar sobreposição */
+  margin-bottom: 20px;
+}
+
+/* CORREÇÃO: Ajustado o separador "até" para não sobrepor os inputs */
+.price-range-separator {
+  color: #555;
+  font-weight: bold;
+  margin: 0;
+  flex: 0 0 auto; /* Impede que o separador se expanda */
+  width: 30px; /* Largura fixa */
+  text-align: center;
+}
+
+.input-group {
+  flex: 1;
+  min-width: 0; /* Permite que os inputs se comprimam conforme necessário */
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #444;
+  font-weight: 500;
+}
+
+.price-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.price-input:focus {
+  border-color: #1976d2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.price-range-preview {
+  margin-top: 20px;
+  padding: 10px 0;
+}
+
+.price-range-bar {
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  position: relative;
+  margin: 0 10px 10px 10px;
+}
+
+.price-range-fill {
+  height: 100%;
+  background-color: #1976d2;
+  border-radius: 4px;
+}
+
+.price-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
+}
+
+.validation-message {
+  display: flex;
+  align-items: center;
+  color: #d32f2f;
+  background-color: rgba(211, 47, 47, 0.08);
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.error-icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.invalid-range .price-range-fill {
+  background-color: #d32f2f;
+}
+
+/* CORREÇÃO: Ajustado o footer do modal para que os botões tenham o mesmo tamanho e alinhamento */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; /* Garante alinhamento vertical */
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+/* CORREÇÃO: Botões do footer com mesma dimensão e alinhamento corrigido */
+.modal-footer .cancel-button,
+.modal-footer .apply-button,
+.modal-footer .search-button {
+  width: 130px; /* Largura fixa igual para ambos os botões */
+  height: 40px; /* Altura fixa para garantir mesma dimensão */
+  padding: 0; /* Remove padding para evitar problemas de dimensão */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  display: flex; /* Usa flexbox para centralizar o conteúdo */
+  align-items: center; /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.modal-footer .cancel-button {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.modal-footer .apply-button,
+.modal-footer .search-button {
+  background-color: #1976d2;
+  color: white;
+  font-weight: 500;
+}
+
+.modal-footer .apply-button:disabled,
+.modal-footer .search-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.close:hover,
+.close:focus {
+  color: #1976d2;
+  text-decoration: none;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
   .appointment-card {
-    flex: 0 0 calc(33.333% - 20px);
-    min-width: 280px;
-    border: 1px solid #ccc;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    transition: transform 0.2s, box-shadow 0.2s;
+    flex: 0 0 calc(50% - 20px);
   }
-  
-  .appointment-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 480px) {
+  .appointment-card {
+    flex: 0 0 100%;
   }
-  
-  .appointment-card h2 {
-    margin-top: 0;
-    color: #333;
-  }
-  
-  .description {
-    color: #666;
-    margin-bottom: 15px;
-  }
-  
-  .price {
-    font-weight: bold;
-    color: #2196F3;
-  }
-  
-  .time {
-    color: #4CAF50;
-  }
-  
-  /* Responsividade para telas menores */
-  @media (max-width: 768px) {
-    .appointment-card {
-      flex: 0 0 calc(50% - 20px);
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .appointment-card {
-      flex: 0 0 100%;
-    }
-  }
+}
