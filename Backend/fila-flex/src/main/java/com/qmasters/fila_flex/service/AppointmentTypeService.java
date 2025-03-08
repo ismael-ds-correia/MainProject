@@ -81,6 +81,12 @@ public class AppointmentTypeService {
         repository.delete(appointmentType);
     }
 
+    public AppointmentTypeDTO findByName(String name) {
+        AppointmentType appointmentType = repository.findByName(name)
+            .orElseThrow(() -> new IllegalArgumentException("AppointmentType com nome " + name + " não encontrado"));
+        return toDTO(appointmentType);
+    }
+
     private AppointmentTypeDTO toDTO(AppointmentType appointmentType) {
         return new AppointmentTypeDTO(appointmentType.getName(),
                 appointmentType.getDescription(),

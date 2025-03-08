@@ -1,0 +1,71 @@
+<div class="details-container">
+    <!-- Exibir mensagem de carregamento -->
+    <div *ngIf="loading" class="loading-message">
+      <p>Carregando detalhes do serviço...</p>
+    </div>
+    
+    <!-- Exibir mensagem de erro se houver -->
+    <div *ngIf="error && !loading" class="error-message">
+      <p>{{ error }}</p>
+      <button (click)="goBack()" class="back-button">Voltar</button>
+    </div>
+    
+    <!-- Exibir detalhes do AppointmentType quando carregados -->
+    <div *ngIf="appointmentType && !loading" class="service-details">
+      <button (click)="goBack()" class="back-button">← Voltar</button>
+      
+      <h1>{{ appointmentType.name }}</h1>
+      
+      <div class="details-section">
+        <h2>Descrição</h2>
+        <p>{{ appointmentType.description }}</p>
+      </div>
+      
+      <div class="details-grid">
+        <div class="details-card">
+          <h2>Informações Gerais</h2>
+          <p><strong>Preço:</strong> {{ appointmentType.price | currency:'BRL' }}</p>
+          <p><strong>Tempo estimado:</strong> {{ appointmentType.estimatedTime }} minutos</p>
+          <p><strong>Data:</strong> {{ appointmentType.appointmentDate | date:'dd/MM/yyyy' }}</p>
+        </div>
+        
+        <div class="details-card">
+          <h2>Categorias</h2>
+          <div class="categories" *ngIf="appointmentType.category && appointmentType.category.length > 0">
+            <span *ngFor="let category of appointmentType.category" class="category-tag">
+              {{ category }}
+            </span>
+          </div>
+          <p *ngIf="!appointmentType.category || appointmentType.category.length === 0">
+            Nenhuma categoria definida
+          </p>
+        </div>
+        
+        <div class="details-card">
+          <h2>Documentação Necessária</h2>
+          <ul *ngIf="appointmentType.requiredDocumentation && appointmentType.requiredDocumentation.length > 0">
+            <li *ngFor="let doc of appointmentType.requiredDocumentation">{{ doc }}</li>
+          </ul>
+          <p *ngIf="!appointmentType.requiredDocumentation || appointmentType.requiredDocumentation.length === 0">
+            Nenhuma documentação necessária.
+          </p>
+        </div>
+        
+        <div class="details-card">
+          <h2>Endereço</h2>
+          <div *ngIf="appointmentType.adress">
+            <p>{{ appointmentType.adress.street }}, {{ appointmentType.adress.number }}</p>
+            <p>{{ appointmentType.adress.city }} - {{ appointmentType.adress.state }}</p>
+            <p>{{ appointmentType.adress.country }}</p>
+          </div>
+          <div *ngIf="!appointmentType.adress">
+            <p>Endereço não disponível</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="schedule-button">Agendar Serviço</button>
+      </div>
+    </div>
+  </div>

@@ -7,6 +7,7 @@ import { UnauthorizedComponent } from './unauthorized/unauthorized.component';
 import { ServiceManagementComponent } from './service-management/service-management.component';
 import { authGuard } from './auth/guards/auth.guard';
 import { loginGuard } from './auth/guards/login.guard';
+import { AppointmentTypeDetailsComponent } from './appointment-type-details/appointment-type-details.component';
 
 const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [loginGuard] },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [authGuard] },
   { path: 'admin', component: AdminComponent, canActivate: [authGuard], data: { role: 'ADMIN' } },
   { path: 'service-management', component: ServiceManagementComponent, canActivate: [authGuard] },
+  { path: 'appointment-details/:name', component: AppointmentTypeDetailsComponent, canActivate: [authGuard] },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router, RouterModule } from '@angular/router';
+import { User } from '../user';
 
 @Component({
   selector: 'app-register',
@@ -27,7 +28,15 @@ export class RegisterComponent {
   onSubmit() {
     if (this.register.valid) {
       const { name, email, password, role } = this.register.value;
-      this.authService.register(name, email, password, role)
+
+      const newUser: User = {
+        name,
+        email,
+        password,
+        role
+      };
+
+      this.authService.register(newUser)
         .then(success => {
           if (success) {
             this.router.navigate(['/login']);

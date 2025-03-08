@@ -11,7 +11,7 @@ export interface AppointmentType {
   estimatedTime: number;
   appointmentDate: string;
   requiredDocumentation: string[];
-  address: {
+  adress: {
     number: string;
     street: string;
     city: string;
@@ -36,9 +36,21 @@ export class AppointmentTypeService {
   }
 
   getAppointmentTypeByName(name: string): Observable<AppointmentType> {
-    return this.http.get<AppointmentType>(`${this.apiUrl}/${name}`).pipe(
-      catchError(this.handleError)
-    );
+    console.log(`Buscando serviço com nome: ${name}`);
+    console.log(`URL completa: ${this.apiUrl}/name/${name}`);
+    
+    const headers = { 
+      'Authorization': `Bearer ${localStorage.getItem('token')}` 
+    };
+    
+    return this.http.get<AppointmentType>(`${this.apiUrl}/name/${name}`, { headers })
+      .pipe(
+        tap(data => console.log('Dados recebidos:', data)),
+        catchError(error => {
+          console.error('Erro na requisição:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   createAppointmentType(appointmentType: AppointmentType): Observable<AppointmentType> {
@@ -82,13 +94,13 @@ export class AppointmentTypeService {
     
 
     let adress = null;
-    if (appointmentType.address) {
+    if (appointmentType.adress) {
       adress = {
-        number: appointmentType.address.number || '',
-        street: appointmentType.address.street || '',
-        city: appointmentType.address.city || '',
-        state: appointmentType.address.state || '',
-        country: appointmentType.address.country || ''
+        number: appointmentType.adress.number || '',
+        street: appointmentType.adress.street || '',
+        city: appointmentType.adress.city || '',
+        state: appointmentType.adress.state || '',
+        country: appointmentType.adress.country || ''
       };
     }
     
@@ -155,14 +167,12 @@ export class AppointmentTypeService {
     );
   }
 
-  // Método para buscar appointment types por intervalo de preço
+  //Método para buscar appointment types por intervalo de preço
   findByPriceRange(minPrice: number, maxPrice: number): Observable<AppointmentType[]> {
-    // Cria os parâmetros da query
     const params = new HttpParams()
       .set('minPrice', minPrice.toString())
       .set('maxPrice', maxPrice.toString());
-    
-    // Faz a chamada à API com os parâmetros
+
     return this.http.get<AppointmentType[]>(`${this.apiUrl}/price-range`, { params }).pipe(
       tap(response => console.log(`Encontrados ${response.length} serviços no intervalo de preço R$${minPrice} a R$${maxPrice}`)),
       catchError(this.handleError)
