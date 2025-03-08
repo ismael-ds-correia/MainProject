@@ -38,7 +38,7 @@ public class AppointmentController {
         try {
             var appointment = appointmentService.saveAppointment(appointmentDTO);
             return ResponseEntity.ok(appointment);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

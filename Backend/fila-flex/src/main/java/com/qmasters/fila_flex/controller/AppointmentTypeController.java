@@ -25,8 +25,8 @@ public class AppointmentTypeController {
     private AppointmentTypeService appointmentTypeService;
     
     @GetMapping("/all")
-    public List<AppointmentTypeDTO> listAll() {
-        return appointmentTypeService.listAll();
+    public ResponseEntity<?> listAll() {        
+        return ResponseEntity.ok(appointmentTypeService.listAll());
     }
 
     @PostMapping("/create")
