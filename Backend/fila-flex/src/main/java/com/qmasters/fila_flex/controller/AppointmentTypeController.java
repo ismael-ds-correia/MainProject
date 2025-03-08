@@ -78,4 +78,13 @@ public class AppointmentTypeController {
         }
     }
     
+    @GetMapping("/name/{name}")
+    public ResponseEntity<AppointmentTypeDTO> findByName(@PathVariable String name) {
+        try {
+            AppointmentTypeDTO appointmentType = appointmentTypeService.findByName(name);
+            return ResponseEntity.ok(appointmentType);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
 }

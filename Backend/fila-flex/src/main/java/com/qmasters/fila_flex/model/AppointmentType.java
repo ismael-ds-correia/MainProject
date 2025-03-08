@@ -2,6 +2,7 @@ package com.qmasters.fila_flex.model;
 
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -50,8 +51,18 @@ public class AppointmentType {
     @JoinColumn(name = "adress_id")   
     private Adress adress;
 
-    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER) //talvez remover orphanRemoval para não apagar os appointments
+    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = false, fetch = FetchType.EAGER) //talvez remover orphanRemoval para nï¿½o apagar os appointments
     private List<Appointment> appointments;
+
+    public void addAppointment(Appointment appointment) {
+        appointments.add(appointment);
+        appointment.setAppointmentType(this);
+    }
+    
+    public void removeAppointment(Appointment appointment) {
+        appointments.remove(appointment);
+        appointment.setAppointmentType(null);
+    }
 
     //Construtores
 
@@ -67,6 +78,7 @@ public class AppointmentType {
         this.appointmentDate = appointmentDate;
         this.requiredDocumentation = requiredDocumentation;
         this.adress = adress;
+        this.appointments = new ArrayList<>();
     }
     
     //Getters e Setters

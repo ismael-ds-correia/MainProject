@@ -97,7 +97,9 @@
     </div>
 
     <div class="appointment-grid">
-      <div *ngFor="let appointmentType of filteredAppointmentTypes" class="appointment-card">
+      <div *ngFor="let appointmentType of filteredAppointmentTypes" 
+           class="appointment-card" 
+           (click)="viewDetails(appointmentType.name)">
         <h2>{{ appointmentType.name }}</h2>
         <p class="description">{{ appointmentType.description | slice:0:50 }}...</p>
         <p class="price">Preço: {{ appointmentType.price | currency:'BRL' }}</p>

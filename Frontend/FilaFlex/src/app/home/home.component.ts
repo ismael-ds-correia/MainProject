@@ -128,6 +128,10 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  viewDetails(name: string): void {
+    this.router.navigate(['/appointment-details', name]);
+  }
+  
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

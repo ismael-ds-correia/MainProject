@@ -125,7 +125,7 @@ export class ServiceManagementComponent implements OnInit {
       estimatedTime: formValue.estimatedTime,
       appointmentDate: formValue.appointmentDate || '',
       requiredDocumentation: requiredDocumentation,
-      address: {
+      adress: {
         number: formValue.address?.number || '',
         street: formValue.address?.street || '',
         city: formValue.address?.city || '',
@@ -152,7 +152,7 @@ export class ServiceManagementComponent implements OnInit {
       estimatedTime: appointmentType.estimatedTime,
       appointmentDate: appointmentType.appointmentDate,
       requiredDocumentation: docsStr,
-      address: appointmentType.address || {}
+      address: appointmentType.adress || {}
     });
   }
 
