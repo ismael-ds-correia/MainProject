@@ -64,6 +64,10 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.POST, "/appointment/**").hasRole("USER")
         .requestMatchers(HttpMethod.DELETE, "/appointment/**").hasRole("ADMIN")
 
+        .requestMatchers(HttpMethod.GET, "/schedule/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/schedule/**").hasRole("ADMIN")
+        .requestMatchers(HttpMethod.DELETE, "/schedule/**").hasRole("ADMIN")
+
         .anyRequest().authenticated())
 
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
