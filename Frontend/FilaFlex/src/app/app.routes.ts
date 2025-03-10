@@ -9,6 +9,7 @@ import { authGuard } from './auth/guards/auth.guard';
 import { loginGuard } from './auth/guards/login.guard';
 import { AppointmentTypeDetailsComponent } from './appointment-type-details/appointment-type-details.component';
 import { AppointmentSchedulingComponent } from './appointment-scheduling/appointment-scheduling.component';
+import { AppointmentManagementComponent } from './appointment-management/appointment-management.component';
 
 const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [loginGuard] },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'appointment-details/:name', component: AppointmentTypeDetailsComponent, canActivate: [authGuard] },
   { path: 'unauthorized', component: UnauthorizedComponent },
   { path: 'appointment-scheduling', component: AppointmentSchedulingComponent },
+  { path: 'appointment-management', component: AppointmentManagementComponent, canActivate: [authGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 ];
 

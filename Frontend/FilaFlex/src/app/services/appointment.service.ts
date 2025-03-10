@@ -4,12 +4,9 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export interface AppointmentSchedule {
-  appointmentType: {
-    id: number;
-  };
-  user: {
-    id: number;
-  };
+  id?: number; // Adicionamos o ID para permitir edição
+  appointmentType: { id: number };
+  user: { id: number };
   scheduledDateTime: string;
 }
 
@@ -21,20 +18,45 @@ export class AppointmentService {
 
   constructor(private http: HttpClient) { }
 
+  /** Agendar novo compromisso */
   scheduleAppointment(appointment: AppointmentSchedule): Observable<any> {
-    const headers = new HttpHeaders({
+    const headers = this.getHeaders();
+    return this.http.post(`${this.apiUrl}/create`, appointment, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Buscar todos os agendamentos */
+  getAppointments(): Observable<AppointmentSchedule[]> {
+    const headers = this.getHeaders();
+    return this.http.get<AppointmentSchedule[]>(`${this.apiUrl}/all`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Atualizar um agendamento */
+  updateAppointment(id: number, updatedData: Partial<AppointmentSchedule>): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put(`${this.apiUrl}/update/${id}`, updatedData, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Remover um agendamento */
+  deleteAppointment(id: number): Observable<void> {
+    const headers = this.getHeaders();
+    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
+  /** Gerar headers com token */
+  private getHeaders(): HttpHeaders {
+    return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
-
-    return this.http.post(`${this.apiUrl}/create`, appointment, { headers })
-      .pipe(
-        catchError(this.handleError)
-      );
   }
 
+  /** Tratamento de erro */
   private handleError(error: HttpErrorResponse): Observable<never> {
-    console.error('Erro no agendamento:', error);
+    console.error('Erro ao processar requisição:', error);
     return throwError(() => error);
   }
 }
