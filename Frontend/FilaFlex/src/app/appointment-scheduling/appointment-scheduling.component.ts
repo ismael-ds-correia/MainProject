@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentService, AppointmentSchedule } from '../services/appointment.service';
 import { AuthService } from '../auth/services/auth.service';
+import { Location } from '@angular/common';  // Importado aqui
 
 @Component({
   selector: 'app-appointment-scheduling',
@@ -25,7 +26,8 @@ export class AppointmentSchedulingComponent implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
     private appointmentService: AppointmentService,
-    private authService: AuthService
+    private authService: AuthService,
+    private location: Location  // Adicionado aqui
   ) {
     this.appointmentForm = this.formBuilder.group({
       date: ['', Validators.required],
@@ -115,6 +117,6 @@ export class AppointmentSchedulingComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/appointment-type-details', { name: this.route.snapshot.paramMap.get('name') }]);
+    this.location.back();  // Implementado aqui
   }
 }
