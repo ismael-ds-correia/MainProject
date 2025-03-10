@@ -56,16 +56,17 @@ export class AuthService {
   hasRole(requiredRole: string): boolean {
     const token = this.getToken();
     if (!token) {
-      return false;
+        return false;
     }
     try {
-      const decodedToken: any = jwtDecode(token);
-      return decodedToken.role === requiredRole;
+        const decodedToken: any = jwtDecode(token);
+        return decodedToken.role?.toLowerCase() === requiredRole.toLowerCase();
     } catch (error) {
-      console.error('Token error:', error);
-      return false;
+        console.error('Token error:', error);
+        return false;
     }
   }
+
 
   getToken(): string | null {
     return localStorage.getItem('token');
@@ -102,6 +103,29 @@ export class AuthService {
     } catch (error) {
       console.error('Erro ao decodificar token:', error);
       return null;
+    }
+  }
+
+  getCurrentUser(): { id: string; email: string; role: string } | null {
+    const token = this.getToken();
+
+    if (!token) {
+        console.error('Nenhum token encontrado.');
+        return null;
+    }
+
+    try {
+        const decodedToken: any = jwtDecode(token);
+        console.log('Token decodificado:', decodedToken);
+
+        return {
+            id: decodedToken.id || decodedToken.userId || decodedToken.sub || '', // Retorna string vazia se não encontrar um ID válido
+            email: decodedToken.email || 'desconhecido',
+            role: decodedToken.role || 'USER' // Default para 'USER' caso não tenha um role definido
+        };
+    } catch (error) {
+        console.error('Erro ao decodificar token:', error);
+        return null;
     }
   }
 }
