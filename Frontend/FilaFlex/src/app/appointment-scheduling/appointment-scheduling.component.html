@@ -1,0 +1,52 @@
+<div class="scheduling-container">
+    <button (click)="goBack()" class="back-button">← Voltar</button>
+    
+    <h1>Agendar Serviço</h1>
+    
+    <div *ngIf="loading" class="loading-message">
+      <p>Processando agendamento...</p>
+    </div>
+    
+    <div *ngIf="error && !loading" class="error-message">
+      <p>{{ error }}</p>
+    </div>
+    
+    <div *ngIf="success && !loading" class="success-message">
+      <p>Agendamento realizado com sucesso!</p>
+      <button (click)="goBack()" class="back-button">Voltar para detalhes</button>
+    </div>
+    
+    <form *ngIf="!loading && !success" [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="scheduling-form">
+      <div class="form-group">
+        <label for="date">Data:</label>
+        <input 
+          type="date" 
+          id="date" 
+          formControlName="date"
+          [min]="minDate"
+          required>
+        <div *ngIf="appointmentForm.get('date')?.invalid && appointmentForm.get('date')?.touched" class="error-message">
+          Data é obrigatória
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="time">Horário:</label>
+        <input 
+          type="time" 
+          id="time" 
+          formControlName="time"
+          required>
+        <div *ngIf="appointmentForm.get('time')?.invalid && appointmentForm.get('time')?.touched" class="error-message">
+          Horário é obrigatório
+        </div>
+      </div>
+      
+      <button 
+        type="submit" 
+        [disabled]="appointmentForm.invalid" 
+        class="schedule-submit-button">
+        Confirmar Agendamento
+      </button>
+    </form>
+  </div>

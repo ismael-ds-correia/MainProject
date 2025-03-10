@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qmasters.fila_flex.dto.AppointmentTypeDTO;
+import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.service.AppointmentTypeService;
 
 @RestController
@@ -64,7 +65,7 @@ public class AppointmentTypeController {
     }    
 
     @GetMapping("/{id}")
-    public AppointmentTypeDTO findById(@PathVariable Long id) {
+    public AppointmentType findById(@PathVariable Long id) {
         return appointmentTypeService.findById(id);
     }
 
@@ -79,9 +80,9 @@ public class AppointmentTypeController {
     }
     
     @GetMapping("/name/{name}")
-    public ResponseEntity<AppointmentTypeDTO> findByName(@PathVariable String name) {
+    public ResponseEntity<AppointmentType> findByName(@PathVariable String name) {
         try {
-            AppointmentTypeDTO appointmentType = appointmentTypeService.findByName(name);
+            AppointmentType appointmentType = appointmentTypeService.findByName(name);
             return ResponseEntity.ok(appointmentType);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

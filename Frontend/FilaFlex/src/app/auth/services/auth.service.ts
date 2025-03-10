@@ -70,4 +70,38 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
+
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) {
+      console.error('Token não encontrado');
+      return null;
+    }
+    
+    try {
+      const decodedToken: any = jwtDecode(token);
+      console.log('Token decodificado:', decodedToken);
+      
+      // Verificar múltiplas possíveis propriedades que podem conter o ID do usuário
+      const possibleIdFields = ['id', 'userId', 'user_id', 'sub', 'jti'];
+      
+      for (const field of possibleIdFields) {
+        if (decodedToken[field]) {
+          console.log(`ID do usuário encontrado no campo "${field}": ${decodedToken[field]}`);
+          return String(decodedToken[field]);
+        }
+      }
+      
+      // Se chegou aqui, não encontrou o ID em nenhum campo comum
+      console.error('Não foi possível encontrar o ID do usuário no token JWT. Campos disponíveis:', Object.keys(decodedToken));
+      
+      // Fallback temporário: retornar um ID fixo para testes
+      // REMOVA ISSO EM PRODUÇÃO!
+      console.warn('Usando ID de usuário fixo (1) para testes. REMOVA EM PRODUÇÃO!');
+      return '1';
+    } catch (error) {
+      console.error('Erro ao decodificar token:', error);
+      return null;
+    }
+  }
 }
