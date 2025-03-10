@@ -57,4 +57,28 @@ export class AppointmentTypeDetailsComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/home']);
   }
+  
+  scheduleAppointment(): void {
+    if (!this.appointmentType) {
+      console.error('appointmentType é nulo');
+      return;
+    }
+    
+    const appointmentTypeId = this.appointmentTypeService.getAppointmentTypeId(this.appointmentType);
+    
+    if (appointmentTypeId) {
+      console.log('Navegando para agendamento com ID:', appointmentTypeId);
+      this.router.navigate(['/appointment-scheduling'], {
+        queryParams: {
+          id: appointmentTypeId,
+          name: this.appointmentType.name
+        }
+      });
+    } else {
+      console.error('ID inválido, usando apenas o nome');
+      this.router.navigate(['/appointment-scheduling'], {
+        queryParams: { name: this.appointmentType.name }
+      });
+    }
+  }
 }

@@ -45,7 +45,10 @@ export class AppointmentTypeService {
     
     return this.http.get<AppointmentType>(`${this.apiUrl}/name/${name}`, { headers })
       .pipe(
-        tap(data => console.log('Dados recebidos:', data)),
+        tap(data => {
+          console.log('Dados recebidos:', data);
+          console.log('ID recebido:', data.id ? `${data.id} (${typeof data.id})` : 'ID não encontrado');
+        }),
         catchError(error => {
           console.error('Erro na requisição:', error);
           return throwError(() => error);
@@ -66,6 +69,28 @@ export class AppointmentTypeService {
       tap(response => console.log('Resposta da criação:', response)),
       catchError(this.handleError)
     );
+  }
+
+  getAppointmentTypeId(appointmentType: AppointmentType | null): number | null {
+    if (!appointmentType) {
+      console.error('AppointmentType é nulo');
+      return null;
+    }
+    
+    if (appointmentType.id === undefined || appointmentType.id === null) {
+      console.error('ID não encontrado no appointmentType:', appointmentType);
+      return null;
+    }
+    
+    // Garantir que o ID é um número
+    const id = Number(appointmentType.id);
+    if (isNaN(id)) {
+      console.error('ID não é um número válido:', appointmentType.id);
+      return null;
+    }
+    
+    console.log('ID válido encontrado:', id);
+    return id;
   }
 
   updateAppointmentType(appointmentType: AppointmentType): Observable<AppointmentType> {
@@ -152,7 +177,7 @@ export class AppointmentTypeService {
     };
 
     return this.http.delete<void>(`${this.apiUrl}/delete/${name}`, {headers}).pipe(
-      catchError(this.handleError)
+      tap(data => console.log('Dados recebidos:', data))
     );
   }
   

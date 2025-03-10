@@ -37,6 +37,7 @@ public class TokenService {
                 .withIssuer("FilaFlex")
                 .withSubject(user.getUsername())
                 .withClaim("role", user.getRole().name()) // Inclui a função do usuário no token
+                .withClaim("id", user.getId())
                 .withExpiresAt(this.getExpirationAt())
                 .sign(algorithm);
             return token;
