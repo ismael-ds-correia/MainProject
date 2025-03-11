@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.dto.AppointmentDTO;
@@ -13,12 +15,18 @@ import com.qmasters.fila_flex.dto.SimpleAppointmentDTO;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 
 @Service
 public class AppointmentService {
     @Autowired
     private AppointmentRepository appointmentRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
     public Appointment saveAppointment(AppointmentDTO appointmentDTO) {
@@ -97,7 +105,49 @@ public class AppointmentService {
     @Transactional
     public void deleteAppointment(Long id) {
         if (appointmentRepository.existsById(id)) {
-            appointmentRepository.deleteById(id);
+            try {
+                System.out.println("Iniciando exclusão do agendamento ID: " + id);
+                
+                //Usar uma consulta JPQL direta para forçar a exclusão
+                int deletedCount = entityManager.createQuery(
+                    "DELETE FROM Appointment a WHERE a.id = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+                
+                System.out.println("Registros excluídos: " + deletedCount);
+                
+                //Força a sincronização com o banco de dados
+                entityManager.flush();
+                
+                //Limpa o cache do JPA para garantir estado consistente
+                entityManager.clear();
+                
+                //Verifica se a exclusão foi bem-sucedida
+                boolean stillExists = appointmentRepository.existsById(id);
+                if (stillExists) {
+                    System.err.println("AVISO: Agendamento continua existindo após tentativa de exclusão");
+                    throw new RuntimeException("Falha ao remover agendamento: ainda existe após exclusão");
+                }
+                
+                System.out.println("Agendamento ID: " + id + " removido com sucesso");
+            } catch (DataIntegrityViolationException e) {
+                System.err.println("Erro de integridade de dados ao excluir agendamento: " + e.getMessage());
+                throw new RuntimeException("Não foi possível excluir o agendamento devido a restrições de integridade. " +
+                    "Verifique se há registros relacionados.", e);
+            } catch (OptimisticLockingFailureException e) {
+                System.err.println("Erro de concorrência ao excluir agendamento: " + e.getMessage());
+                throw new RuntimeException("Erro de concorrência ao excluir o agendamento", e);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Argumento inválido: " + e.getMessage());
+                throw e;
+            } catch (PersistenceException e) {
+                System.err.println("Erro de persistência ao excluir agendamento: " + e.getMessage());
+                throw new RuntimeException("Erro ao persistir a exclusão do agendamento. " + 
+                    "Verifique a conexão com o banco de dados.", e);
+            } catch (RuntimeException e) {
+                System.err.println("Erro ao excluir agendamento: " + e.getMessage());
+                throw e;
+            }
         } else {
             throw new IllegalArgumentException("Agendamento não encontrado, remoção não foi realizada");
         }

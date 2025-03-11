@@ -17,6 +17,56 @@
     <p *ngIf="!isAdmin()">Você está visualizando apenas seus agendamentos.</p>
   </div>
 
+  <!-- Filtros de busca -->
+  <div class="search-filters">
+    <div class="date-filters">
+      <h3>Filtrar por data</h3>
+      <div class="date-inputs">
+        <div class="form-group">
+          <label for="startDate">Data inicial:</label>
+          <input 
+            type="date" 
+            id="startDate" 
+            name="startDate"
+          />
+        </div>
+        <div class="form-group">
+          <label for="endDate">Data final:</label>
+          <input 
+            type="date" 
+            id="endDate" 
+            name="endDate"
+          />
+        </div>
+      </div>
+    </div>
+    
+    <!-- Filtro de usuário (visível apenas para admin) -->
+    <div class="user-filter" *ngIf="isAdmin()">
+      <h3>Filtrar por usuário</h3>
+      <div class="form-group">
+        <label for="userSearch">Selecione um usuário:</label>
+        <select 
+          id="userSearch" 
+          name="userSearch" 
+          class="user-dropdown"
+        >
+          <option value="">-- Selecione um usuário --</option>
+          <option *ngFor="let user of users()" [value]="user.id">
+            {{ user.email || user.name || user.username || 'Usuário #' + user.id }}
+          </option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Botões de ação para os filtros -->
+    <div class="filter-actions">
+      <button class="search-button" (click)="filterByDate()">Buscar por Data</button>
+      <button class="search-button-user" *ngIf="isAdmin()" (click)="filterByUser()">Buscar por Usuário</button>
+      <button class="clear-button" (click)="clearFilters()">Limpar filtros</button>
+    </div>
+  </div>
+
   <div *ngIf="loading()" class="loading-message">
     <p>Carregando agendamentos...</p>
   </div>
@@ -33,7 +83,6 @@
           <th>Data</th>
           <th>Hora</th>
           <th>Serviço</th>
-          <!-- Nova coluna para endereço -->
           <th>Endereço</th>
           <th>Ações</th>
         </tr>
@@ -44,7 +93,6 @@
           <td>{{ appointment.displayDate }}</td>
           <td>{{ appointment.displayTime }}</td>
           <td>{{ appointment.displayServiceName }}</td>
-          <!-- Nova célula para endereço -->
           <td>{{ appointment.displayAddress }}</td>
           <td class="action-buttons">
             <button class="edit-button" (click)="editAppointment(appointment)">Editar</button>
@@ -72,7 +120,7 @@
         <input type="text" [value]="selectedAppointment().displayServiceName" disabled />
       </div>
       
-      <!-- Novo campo para endereço no modal -->
+      <!-- Campo para endereço no modal -->
       <div class="form-group">
         <label>Endereço:</label>
         <input type="text" [value]="selectedAppointment().displayAddress" disabled />
@@ -89,6 +137,23 @@
       <div class="modal-actions">
         <button (click)="saveChanges()" class="save-button">Salvar</button>
         <button (click)="selectedAppointment.set(null)" class="cancel-button">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação de exclusão -->
+  <div *ngIf="confirmDialog().visible" class="confirm-modal">
+    <div class="confirm-modal-content">
+      <div class="confirm-modal-header">
+        <h3>Confirmar exclusão</h3>
+      </div>
+      <div class="confirm-modal-body">
+        <p>Tem certeza que deseja excluir este agendamento?</p>
+        <p class="confirm-warning">Esta ação não poderá ser desfeita.</p>
+      </div>
+      <div class="confirm-modal-footer">
+        <button class="btn-cancel" (click)="cancelDelete()">Cancelar</button>
+        <button class="btn-confirm" (click)="confirmDelete()">Excluir</button>
       </div>
     </div>
   </div>

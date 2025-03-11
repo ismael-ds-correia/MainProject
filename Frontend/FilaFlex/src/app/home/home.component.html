@@ -1,112 +1,187 @@
 <div class="home-container">
-    <h1>Bem-vindo à página inicial</h1>
-    <button (click)="logout()" class="logout-button">Logout</button>
-    
-    <!-- Botões de filtro e gerenciamento de Agendamento e Serviços -->
-    <div class="filter-buttons">
-      <button (click)="openCategoryModal()" class="search-button">Buscar por Categorias</button>
-      <button (click)="openPriceModal()" class="search-button">Buscar por Preço</button>
-      <button (click)="navigateToAppointmentManagement()" class="management-button">Gerenciar Agendamentos</button>
-      <div class="spacer"></div>
-      <button *ngIf="isAdmin()" (click)="navigateToServiceManagement()" class="admin-button">Gerenciar Serviços</button>
-    </div>
+  <h1>Bem-vindo à página inicial</h1>
+  <button (click)="logout()" class="logout-button">Logout</button>
+  
+  <!-- Botões de filtro e gerenciamento de Agendamento e Serviços -->
+  <div class="filter-buttons">
+    <button (click)="openCategoryModal()" class="search-button">Buscar por Categorias</button>
+    <button (click)="openPriceModal()" class="search-button">Buscar por Preço</button>
+    <!-- Novo botão de tempo aqui -->
+    <button (click)="openTimeModal()" class="search-button">Buscar por Tempo</button>
+    <button (click)="navigateToAppointmentManagement()" class="management-button">Gerenciar Agendamentos</button>
+    <div class="spacer"></div>
+    <button *ngIf="isAdmin()" (click)="navigateToServiceManagement()" class="admin-button">Gerenciar Serviços</button>
+  </div>
 
-    <!-- Modal de seleção de categorias0 -->
-    <div *ngIf="showCategoryModal" class="modal">
-      <div class="modal-content">
-        <span class="close" (click)="closeCategoryModal()">&times;</span>
-        <h2>Selecione Categorias</h2>
-        <div *ngFor="let category of allCategories" class="category-item">
-          <label>
-            <input type="checkbox" [value]="category" (change)="onCategoryChange($event)">
-            <span style="margin-left: 8px;">{{ category }}</span>
-          </label>
-        </div>
-        <button (click)="searchByCategories()" class="search-button">Buscar</button>
+  <!-- Modal de seleção de categorias0 -->
+  <div *ngIf="showCategoryModal" class="modal">
+    <div class="modal-content">
+      <span class="close" (click)="closeCategoryModal()">&times;</span>
+      <h2>Selecione Categorias</h2>
+      <div *ngFor="let category of allCategories" class="category-item">
+        <label>
+          <input type="checkbox" [value]="category" (change)="onCategoryChange($event)">
+          <span style="margin-left: 8px;">{{ category }}</span>
+        </label>
       </div>
+      <button (click)="searchByCategories()" class="search-button">Buscar</button>
     </div>
+  </div>
 
-    <!-- Modal de busca por intervalo de preços (melhorado) -->
-    <div *ngIf="showPriceModal" class="modal">
-        <div class="modal-content price-modal">
-        <span class="close" (click)="closePriceModal()">&times;</span>
-        <h2>Buscar por Intervalo de Preço</h2>
-        
-        <p class="modal-instruction">Defina o intervalo de preço desejado para filtrar os serviços disponíveis:</p>
-        
-        <div class="price-range-container">
-            <div class="price-inputs">
-            <div class="input-group">
-                <label for="minPrice">Preço Mínimo (R$)</label>
-                <input 
-                type="number" 
-                id="minPrice" 
-                [(ngModel)]="minPrice" 
-                min="0" 
-                step="0.01"
-                class="price-input" 
-                >
-            </div>
-            
-            <div class="price-range-separator"> </div>
-            
-            <div class="input-group">
-                <label for="maxPrice">Preço Máximo (R$)</label>
-                <input 
-                type="number" 
-                id="maxPrice" 
-                [(ngModel)]="maxPrice" 
-                min="0" 
-                step="0.01"
-                class="price-input"
-                >
-            </div>
-            </div>
-            
-            <!-- Visualização do intervalo atual -->
-            <div class="price-range-preview" [class.invalid-range]="maxPrice < minPrice">
-            <div class="price-range-bar">
-                <div class="price-range-fill" 
-                    [style.width.%]="100" 
-                    [style.margin-left.%]="0">
-                </div>
-            </div>
-            <div class="price-range-labels">
-                <span>R$ {{minPrice}}</span>
-                <span>R$ {{maxPrice}}</span>
-            </div>
-            </div>
-            
-            <!-- Mensagem de erro para validação -->
-            <p *ngIf="maxPrice < minPrice" class="validation-message">
-            <i class="error-icon">⚠️</i> O preço máximo deve ser maior que o preço mínimo.
-            </p>
-        </div>
-        
-        <div class="modal-footer">
-            <button 
-            (click)="closePriceModal()" 
-            class="cancel-button">
-            Cancelar
-            </button>
-            <button 
-            (click)="searchByPriceRange()" 
-            class="search-button apply-button"
-            [disabled]="maxPrice < minPrice">
-            Aplicar Filtro
-            </button>
-        </div>
-        </div>
-    </div>
-
-    <div class="appointment-grid">
-      <div *ngFor="let appointmentType of filteredAppointmentTypes" 
-           class="appointment-card" 
-           (click)="viewDetails(appointmentType.name)">
-        <h2>{{ appointmentType.name }}</h2>
-        <p class="description">{{ appointmentType.description | slice:0:50 }}...</p>
-        <p class="price">Preço: {{ appointmentType.price | currency:'BRL' }}</p>
-        <p class="time">Tempo estimado: {{ appointmentType.estimatedTime }} minutos</p>
+  <!-- Modal de busca por intervalo de preços (melhorado) -->
+  <div *ngIf="showPriceModal" class="modal">
+      <div class="modal-content price-modal">
+      <span class="close" (click)="closePriceModal()">&times;</span>
+      <h2>Buscar por Intervalo de Preço</h2>
+      
+      <p class="modal-instruction">Defina o intervalo de preço desejado para filtrar os serviços disponíveis:</p>
+      
+      <div class="price-range-container">
+          <div class="price-inputs">
+          <div class="input-group">
+              <label for="minPrice">Preço Mínimo (R$)</label>
+              <input 
+              type="number" 
+              id="minPrice" 
+              [(ngModel)]="minPrice" 
+              min="0" 
+              step="0.01"
+              class="price-input" 
+              >
+          </div>
+          
+          <div class="price-range-separator"> </div>
+          
+          <div class="input-group">
+              <label for="maxPrice">Preço Máximo (R$)</label>
+              <input 
+              type="number" 
+              id="maxPrice" 
+              [(ngModel)]="maxPrice" 
+              min="0" 
+              step="0.01"
+              class="price-input"
+              >
+          </div>
+          </div>
+          
+          <!-- Visualização do intervalo atual -->
+          <div class="price-range-preview" [class.invalid-range]="maxPrice < minPrice">
+          <div class="price-range-bar">
+              <div class="price-range-fill" 
+                  [style.width.%]="100" 
+                  [style.margin-left.%]="0">
+              </div>
+          </div>
+          <div class="price-range-labels">
+              <span>R$ {{minPrice}}</span>
+              <span>R$ {{maxPrice}}</span>
+          </div>
+          </div>
+          
+          <!-- Mensagem de erro para validação -->
+          <p *ngIf="maxPrice < minPrice" class="validation-message">
+          <i class="error-icon">⚠️</i> O preço máximo deve ser maior que o preço mínimo.
+          </p>
       </div>
+      
+      <div class="modal-footer">
+          <button 
+          (click)="closePriceModal()" 
+          class="cancel-button">
+          Cancelar
+          </button>
+          <button 
+          (click)="searchByPriceRange()" 
+          class="search-button apply-button"
+          [disabled]="maxPrice < minPrice">
+          Aplicar Filtro
+          </button>
+      </div>
+      </div>
+  </div>
+
+  <!-- Modal para busca por tempo -->
+  <div *ngIf="showTimeModal" class="modal">
+      <div class="modal-content price-modal">
+      <span class="close" (click)="closeTimeModal()">&times;</span>
+      <h2>Buscar por Tempo Estimado</h2>
+      
+      <p class="modal-instruction">Defina o intervalo de tempo desejado (em minutos) para filtrar os serviços:</p>
+      
+      <div class="price-range-container">
+          <div class="price-inputs">
+          <div class="input-group">
+              <label for="minTime">Tempo Mínimo (min)</label>
+              <input 
+              type="number" 
+              id="minTime" 
+              [(ngModel)]="minTime" 
+              min="0" 
+              step="1"
+              class="price-input" 
+              >
+          </div>
+          
+          <div class="price-range-separator"> </div>
+          
+          <div class="input-group">
+              <label for="maxTime">Tempo Máximo (min)</label>
+              <input 
+              type="number" 
+              id="maxTime" 
+              [(ngModel)]="maxTime" 
+              min="0" 
+              step="1"
+              class="price-input"
+              >
+          </div>
+          </div>
+          
+          <!-- Visualização do intervalo atual -->
+          <div class="price-range-preview" [class.invalid-range]="maxTime < minTime">
+          <div class="price-range-bar">
+              <div class="price-range-fill" 
+                  [style.width.%]="100" 
+                  [style.margin-left.%]="0">
+              </div>
+          </div>
+          <div class="price-range-labels">
+              <span>{{minTime}} min</span>
+              <span>{{maxTime}} min</span>
+          </div>
+          </div>
+          
+          <!-- Mensagem de erro para validação -->
+          <p *ngIf="maxTime < minTime" class="validation-message">
+          <i class="error-icon">⚠️</i> O tempo máximo deve ser maior que o tempo mínimo.
+          </p>
+      </div>
+      
+      <div class="modal-footer">
+          <button 
+          (click)="closeTimeModal()" 
+          class="cancel-button">
+          Cancelar
+          </button>
+          <button 
+          (click)="searchByTimeRange()" 
+          class="search-button apply-button"
+          [disabled]="maxTime < minTime">
+          Aplicar Filtro
+          </button>
+      </div>
+      </div>
+  </div>
+
+  <div class="appointment-grid">
+    <div *ngFor="let appointmentType of filteredAppointmentTypes" 
+         class="appointment-card" 
+         (click)="viewDetails(appointmentType.name)">
+      <h2>{{ appointmentType.name }}</h2>
+      <p class="description">{{ appointmentType.description | slice:0:50 }}...</p>
+      <p class="price">Preço: {{ appointmentType.price | currency:'BRL' }}</p>
+      <p class="time">Tempo estimado: {{ appointmentType.estimatedTime }} minutos</p>
     </div>
+  </div>
 </div>

@@ -25,7 +25,6 @@ import com.qmasters.fila_flex.service.AppointmentService;
 @RestController
 @RequestMapping("/appointment")
 public class AppointmentController {
-    
     @Autowired
     private AppointmentService appointmentService;
 
