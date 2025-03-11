@@ -15,22 +15,22 @@
     <table class="appointments-table">
       <thead>
         <tr>
-          <th>ID</th>
           <th>Usuário</th>
           <th>Data</th>
-          <th>Tipo</th>
+          <th>Hora</th>
+          <th>Serviço</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let appointment of appointments()">
-          <td >{{ appointment.id }}</td>
-          <td>{{ appointment.user?.id }}</td>
-          <td>{{ appointment.scheduledDateTime | date:'yyyy-MM-dd \'T\'HH:mm:ss' }}</td>
-          <td>{{ appointment.appointmentType?.id }}</td>
-          <td>
-            <button (click)="editAppointment(appointment)">Editar</button>
-            <button (click)="deleteAppointment(appointment.id)">Excluir</button>
+          <td>{{ appointment.displayUserName }}</td>
+          <td>{{ appointment.displayDate }}</td>
+          <td>{{ appointment.displayTime }}</td>
+          <td>{{ appointment.displayServiceName }}</td>
+          <td class="action-buttons">
+            <button class="edit-button" (click)="editAppointment(appointment)">Editar</button>
+            <button class="delete-button" (click)="deleteAppointment(appointment.id)">Excluir</button>
           </td>
         </tr>
       </tbody>
@@ -39,22 +39,33 @@
 
   <p *ngIf="!loading() && appointments().length === 0">Nenhum agendamento encontrado.</p>
 
+  <!-- Modal de edição -->
   <div *ngIf="selectedAppointment()" class="modal">
-    <h2>Editar Agendamento</h2>
-    <label>Usuário ID:</label>
-    <input type="number" [value]="selectedAppointment()?.user?.id" 
-           (input)="updateField('user', $event)" />
+    <div class="modal-content">
+      <h2>Editar Agendamento</h2>
+      
+      <div class="form-group">
+        <label>Usuário:</label>
+        <input type="text" [value]="selectedAppointment().displayUserName" disabled />
+      </div>
+      
+      <div class="form-group">
+        <label>Serviço:</label>
+        <input type="text" [value]="selectedAppointment().displayServiceName" disabled />
+      </div>
 
-    <label>Data e Hora:</label>
-    <input type="datetime-local" 
-           [value]="selectedAppointment()?.scheduledDateTime" 
-           (input)="updateField('scheduledDateTime', $event)" />
+      <div class="form-group">
+        <label>Data e Hora:</label>
+        <input 
+          type="datetime-local" 
+          [value]="selectedAppointment().scheduledDateTime?.replace('Z', '')" 
+          (input)="updateDateTime($event)" />
+      </div>
 
-    <label>Tipo:</label>
-    <input type="number" [value]="selectedAppointment()?.appointmentType?.id" 
-           (input)="updateField('appointmentType', $event)" />
-
-    <button (click)="saveChanges()">Salvar</button>
-    <button (click)="selectedAppointment.set(null)">Cancelar</button>
+      <div class="modal-actions">
+        <button (click)="saveChanges()" class="save-button">Salvar</button>
+        <button (click)="selectedAppointment.set(null)" class="cancel-button">Cancelar</button>
+      </div>
+    </div>
   </div>
 </div>

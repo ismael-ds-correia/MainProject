@@ -3,6 +3,28 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+// Interface para o que é recebido da API
+export interface AppointmentResponse {
+  id: number;
+  scheduledDateTime: string;
+  createdDateTime: string;
+  userId: string;
+  userEmail: string;
+  appointmentTypeName: string;
+  appointmentTypeDescription: string;
+  appointmentTypeEstimatedTime: string;
+  appointmentTypePrice: string;
+  appointmentTypeCategory: string[];
+  appointmentTypeAdress?: {
+    id: number;
+    number: string;
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+}
+
 export interface AppointmentSchedule {
   id?: number; // Adicionamos o ID para permitir edição
   appointmentType: { id: number };
