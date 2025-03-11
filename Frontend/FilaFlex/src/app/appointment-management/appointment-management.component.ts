@@ -100,9 +100,9 @@ export class AppointmentManagementComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
     
-    // Chamada diferente baseada na role do usuário
+    //Chamada diferente baseada na role do usuário
     if (this.isAdmin()) {
-      // Admin vê todos os agendamentos
+      //Admin vê todos os agendamentos
       this.appointmentService.getAppointments().subscribe({
         next: (data) => {
           console.log('Dados brutos recebidos (admin):', data);
@@ -112,7 +112,9 @@ export class AppointmentManagementComponent implements OnInit {
             displayUserName: this.getUserName(appointment),
             displayDate: this.formatDate(appointment.scheduledDateTime),
             displayTime: this.formatTime(appointment.scheduledDateTime),
-            displayServiceName: this.getServiceName(appointment)
+            displayServiceName: this.getServiceName(appointment),
+            // Adicionando o campo de endereço para admin também
+            displayAddress: this.getAddress(appointment)
           }));
           
           console.log('Dados processados (admin):', processedData);
@@ -126,7 +128,7 @@ export class AppointmentManagementComponent implements OnInit {
         }
       });
     } else {
-      // Usuário comum vê apenas seus agendamentos usando o novo endpoint
+      //Usuário comum vê apenas seus agendamentos usando o novo endpoint
       const userId = this.currentUserId();
       if (!userId) {
         this.error.set('ID de usuário não encontrado');
@@ -136,7 +138,6 @@ export class AppointmentManagementComponent implements OnInit {
       
       console.log('Buscando agendamentos para o usuário ID:', userId);
       
-      // Usando o novo método do serviço
       this.appointmentService.getAppointmentsByUserId(userId).subscribe({
         next: (data) => {
           console.log('Dados brutos recebidos (usuário específico):', data);
@@ -146,7 +147,8 @@ export class AppointmentManagementComponent implements OnInit {
             displayUserName: this.getUserName(appointment),
             displayDate: this.formatDate(appointment.scheduledDateTime),
             displayTime: this.formatTime(appointment.scheduledDateTime),
-            displayServiceName: this.getServiceName(appointment)
+            displayServiceName: this.getServiceName(appointment),
+            displayAddress: this.getAddress(appointment)
           }));
           
           console.log('Dados processados (usuário específico):', processedData);
@@ -160,6 +162,28 @@ export class AppointmentManagementComponent implements OnInit {
         }
       });
     }
+  }
+
+  getAddress(appointment: any): string {
+    // Verificar se o campo appointmentTypeAdress existe no objeto raiz
+    if (appointment.appointmentTypeAdress) {
+      const adress = appointment.appointmentTypeAdress;
+      return `${adress.street}, ${adress.number} - ${adress.city}, ${adress.state}/${adress.country}`;
+    }
+    
+    //Verificação alternativa se o endereço estiver aninhado no appointmentType
+    if (appointment.appointmentType?.adress) {
+      const adress = appointment.appointmentType.adress;
+      return `${adress.street}, ${adress.number} - ${adress.city}, ${adress.state}/${adress.country}`;
+    }
+    
+    //Mais uma verificação para address com dois 'd's
+    if (appointment.appointmentType?.address) {
+      const adress = appointment.appointmentType.address;
+      return `${adress.street}, ${adress.number} - ${adress.city}, ${adress.state}/${adress.country}`;
+    }
+    
+    return 'Endereço não disponível';
   }
 
   getUserName(appointment: any): string {

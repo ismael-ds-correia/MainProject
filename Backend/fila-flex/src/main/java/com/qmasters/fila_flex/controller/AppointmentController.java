@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.qmasters.fila_flex.dto.AppointmentDTO;
 import com.qmasters.fila_flex.dto.SimpleAppointmentDTO;
+import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.service.AppointmentService;
 
 @RestController
@@ -56,7 +57,8 @@ public class AppointmentController {
     @GetMapping("/user")
     public ResponseEntity<?> getAppointmentsByUserId(@RequestParam("userId") Long userId) {
         try {
-            List<SimpleAppointmentDTO> appointments = appointmentService.findAppointmentsByUserId(userId);
+            // Usando o método que retorna Appointment completos em vez de SimpleAppointmentDTO
+            List<Appointment> appointments = appointmentService.findFullAppointmentsByUserId(userId);
             return ResponseEntity.ok(appointments);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

@@ -74,10 +74,10 @@ export class AppointmentService {
   /** Método para buscar agendamentos por ID de usuário */
   getAppointmentsByUserId(userId: number): Observable<AppointmentSchedule[]> {
     const headers = this.getHeaders();
-    //Criando parâmetros de consulta
+    // Criando parâmetros de consulta
     const params = new HttpParams().set('userId', userId.toString());
     
-    //Fazendo a chamada HTTP com os parâmetros
+    // Fazendo a chamada HTTP com os parâmetros - espera resposta completa
     return this.http.get<AppointmentSchedule[]>(`${this.apiUrl}/user`, { 
       headers, 
       params 

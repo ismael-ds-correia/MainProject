@@ -33,6 +33,8 @@
           <th>Data</th>
           <th>Hora</th>
           <th>Serviço</th>
+          <!-- Nova coluna para endereço -->
+          <th>Endereço</th>
           <th>Ações</th>
         </tr>
       </thead>
@@ -42,6 +44,8 @@
           <td>{{ appointment.displayDate }}</td>
           <td>{{ appointment.displayTime }}</td>
           <td>{{ appointment.displayServiceName }}</td>
+          <!-- Nova célula para endereço -->
+          <td>{{ appointment.displayAddress }}</td>
           <td class="action-buttons">
             <button class="edit-button" (click)="editAppointment(appointment)">Editar</button>
             <button class="delete-button" (click)="deleteAppointment(appointment.id)">Excluir</button>
@@ -66,6 +70,12 @@
       <div class="form-group">
         <label>Serviço:</label>
         <input type="text" [value]="selectedAppointment().displayServiceName" disabled />
+      </div>
+      
+      <!-- Novo campo para endereço no modal -->
+      <div class="form-group">
+        <label>Endereço:</label>
+        <input type="text" [value]="selectedAppointment().displayAddress" disabled />
       </div>
 
       <div class="form-group">
