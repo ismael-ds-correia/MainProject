@@ -1,0 +1,163 @@
+.appointment-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1976d2; /* Fundo azul igual ao scheduling */
+    min-height: 100vh;
+    color: white;
+    border-radius: 8px;
+  }
+  
+  /* Botão de voltar */
+  .back-button {
+    background-color: white;
+    color: #1976d2;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.2s;
+  }
+  
+  .back-button:hover {
+    background-color: #eeeeee;
+  }
+  
+  /* Título */
+  h1 {
+    color: #ffffff;
+    margin-bottom: 20px;
+  }
+  
+  /* Estilização da tabela */
+  .appointments-table {
+    width: 100%;
+    background-color: white;
+    color: black;
+    border-radius: 8px;
+    padding: 10px;
+    border-collapse: collapse;
+  }
+  
+  .appointments-table th,
+  .appointments-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .appointments-table th {
+    background-color: #1565c0;
+    color: white;
+    font-weight: bold;
+  }
+  
+  /* Botões de ação */
+  .appointments-table td button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-right: 5px;
+  }
+  
+  /* Botões estilizados */
+  .appointments-table td button:first-child { /* Editar */
+    background-color: #ffeb3b;
+    color: black;
+  }
+  
+  .appointments-table td button:last-child { /* Excluir */
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .appointments-table td button:first-child:hover {
+    background-color: #fdd835;
+  }
+  
+  .appointments-table td button:last-child:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Mensagens de feedback */
+  .loading-message,
+  .error-message,
+  .success-message {
+    border-radius: 4px;
+    margin: 20px 0;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .loading-message {
+    background-color: #e3f2fd;
+    border: 1px solid #90caf9;
+    color: #0d47a1;
+  }
+  
+  .error-message {
+    background-color: #ffebee;
+    border: 1px solid #ffcdd2;
+    color: #b71c1c;
+  }
+  
+  .success-message {
+    background-color: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    color: #2e7d32;
+  }
+  
+  /* Modal de edição */
+  .modal {
+    background-color: white;
+    color: black;
+    padding: 20px;
+    border-radius: 8px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 300px;
+  }
+  
+  .modal h2 {
+    margin-bottom: 15px;
+  }
+  
+  .modal label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: black;
+  }
+  
+  .modal input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .modal-buttons button {
+    flex: 1;
+    margin: 0 5px;
+  }
+  

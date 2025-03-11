@@ -1,0 +1,60 @@
+<div class="appointment-container">
+  <button (click)="goBack()" class="back-button">← Voltar</button>
+
+  <h1>Gerenciar Agendamentos</h1>
+
+  <div *ngIf="loading()" class="loading-message">
+    <p>Carregando agendamentos...</p>
+  </div>
+
+  <div *ngIf="error() && !loading()" class="error-message">
+    <p>{{ error() }}</p>
+  </div>
+
+  <div *ngIf="!loading() && appointments().length > 0">
+    <table class="appointments-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuário</th>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of appointments()">
+          <td >{{ appointment.id }}</td>
+          <td>{{ appointment.user?.id }}</td>
+          <td>{{ appointment.scheduledDateTime | date:'yyyy-MM-dd \'T\'HH:mm:ss' }}</td>
+          <td>{{ appointment.appointmentType?.id }}</td>
+          <td>
+            <button (click)="editAppointment(appointment)">Editar</button>
+            <button (click)="deleteAppointment(appointment.id)">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p *ngIf="!loading() && appointments().length === 0">Nenhum agendamento encontrado.</p>
+
+  <div *ngIf="selectedAppointment()" class="modal">
+    <h2>Editar Agendamento</h2>
+    <label>Usuário ID:</label>
+    <input type="number" [value]="selectedAppointment()?.user?.id" 
+           (input)="updateField('user', $event)" />
+
+    <label>Data e Hora:</label>
+    <input type="datetime-local" 
+           [value]="selectedAppointment()?.scheduledDateTime" 
+           (input)="updateField('scheduledDateTime', $event)" />
+
+    <label>Tipo:</label>
+    <input type="number" [value]="selectedAppointment()?.appointmentType?.id" 
+           (input)="updateField('appointmentType', $event)" />
+
+    <button (click)="saveChanges()">Salvar</button>
+    <button (click)="selectedAppointment.set(null)">Cancelar</button>
+  </div>
+</div>
