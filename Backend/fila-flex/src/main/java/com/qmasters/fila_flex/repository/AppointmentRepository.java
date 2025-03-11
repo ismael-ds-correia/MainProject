@@ -15,6 +15,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     
     //função de retornar todos os agendamentos entre duas datas
     @Query("SELECT a FROM Appointment a WHERE a.scheduledDateTime BETWEEN :startDate AND :endDate")
-    List<Appointment> findByScheduledDateTime(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate); 
-
+    List<Appointment> findByScheduledDateTime(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    
+    //Função para buscar agendamentos por userId
+    @Query("SELECT a FROM Appointment a WHERE a.user.id = :userId ORDER BY a.scheduledDateTime DESC")
+    List<Appointment> findByUserId(@Param("userId") Long userId);
 }

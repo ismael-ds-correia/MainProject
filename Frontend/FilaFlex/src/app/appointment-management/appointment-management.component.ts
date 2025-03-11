@@ -17,6 +17,8 @@ export class AppointmentManagementComponent implements OnInit {
   error = signal<string | null>(null);
   appointments = signal<any[]>([]);
   selectedAppointment = signal<any | null>(null);
+  isAdmin = signal<boolean>(false);
+  currentUserId = signal<number | null>(null); 
 
   constructor(
     private appointmentService: AppointmentService,
@@ -24,41 +26,143 @@ export class AppointmentManagementComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.debugLocalStorage();
+    this.checkUserRole();
     this.fetchAppointments();
+  }
+
+  checkUserRole() {
+    let isAdminUser = false;
+    
+    //Verifica o token JWT.
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        // Extrair e decodificar a parte de payload do token JWT
+        const payload = token.split('.')[1];
+        const decodedPayload = JSON.parse(atob(payload));
+        console.log('Token payload:', decodedPayload);
+        
+        // Verifica a role diretamente no token
+        if (decodedPayload.role === 'ADMIN') {
+          isAdminUser = true;
+          console.log('Role ADMIN encontrada no token JWT');
+        }
+        
+        // Armazena o ID do usuário para filtrar agendamentos
+        if (decodedPayload.id) {
+          this.currentUserId.set(decodedPayload.id);
+        }
+      } catch (e) {
+        console.log('Erro ao decodificar token:', e);
+      }
+    }
+    
+    // Define o status de admin com base nas verificações
+    this.isAdmin.set(isAdminUser);
+    
+    console.log('Resultado final da verificação: isAdmin =', isAdminUser);
+  }
+
+  debugLocalStorage() {
+    console.log('==== DEBUG: Conteúdo do localStorage ====');
+    
+    //Listar todas as chaves do localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key) {
+        try {
+          const value = localStorage.getItem(key);
+          console.log(`${key}:`, value);
+          
+          //Se o valor parece ser JSON, tenta parsear e mostrar a estrutura
+          if (value && (value.startsWith('{') || value.startsWith('['))) {
+            const parsedValue = JSON.parse(value);
+            console.log(`${key} (parsed):`, parsedValue);
+            
+            //Se for o objeto de usuário, verifica suas propriedades
+            if (key === 'user') {
+              console.log('user.role:', parsedValue.role);
+              console.log('user.roles:', parsedValue.roles);
+              console.log('user.authorities:', parsedValue.authorities);
+            }
+          }
+        } catch (e) {
+          console.log(`Erro ao processar ${key}:`, e);
+        }
+      }
+    }
+    
+    console.log('=======================================');
   }
 
   fetchAppointments() {
     this.loading.set(true);
     this.error.set(null);
     
-    this.appointmentService.getAppointments().subscribe({
-      next: (data) => {
-        console.log('Dados brutos recebidos:', data);
-        
-        // Processar e enriquecer os dados
-        const processedData = data.map(appointment => ({
-          ...appointment,
-          // Adicionar propriedades formatadas para exibição
-          displayUserName: this.getUserName(appointment),
-          displayDate: this.formatDate(appointment.scheduledDateTime),
-          displayTime: this.formatTime(appointment.scheduledDateTime),
-          displayServiceName: this.getServiceName(appointment)
-        }));
-        
-        console.log('Dados processados:', processedData);
-        this.appointments.set(processedData);
+    // Chamada diferente baseada na role do usuário
+    if (this.isAdmin()) {
+      // Admin vê todos os agendamentos
+      this.appointmentService.getAppointments().subscribe({
+        next: (data) => {
+          console.log('Dados brutos recebidos (admin):', data);
+          
+          const processedData = data.map(appointment => ({
+            ...appointment,
+            displayUserName: this.getUserName(appointment),
+            displayDate: this.formatDate(appointment.scheduledDateTime),
+            displayTime: this.formatTime(appointment.scheduledDateTime),
+            displayServiceName: this.getServiceName(appointment)
+          }));
+          
+          console.log('Dados processados (admin):', processedData);
+          this.appointments.set(processedData);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Erro ao buscar agendamentos:', err);
+          this.error.set('Erro ao carregar agendamentos. Por favor, tente novamente.');
+          this.loading.set(false);
+        }
+      });
+    } else {
+      // Usuário comum vê apenas seus agendamentos usando o novo endpoint
+      const userId = this.currentUserId();
+      if (!userId) {
+        this.error.set('ID de usuário não encontrado');
         this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Erro ao buscar agendamentos:', err);
-        this.error.set('Erro ao carregar agendamentos. Por favor, tente novamente.');
-        this.loading.set(false);
+        return;
       }
-    });
+      
+      console.log('Buscando agendamentos para o usuário ID:', userId);
+      
+      // Usando o novo método do serviço
+      this.appointmentService.getAppointmentsByUserId(userId).subscribe({
+        next: (data) => {
+          console.log('Dados brutos recebidos (usuário específico):', data);
+          
+          const processedData = data.map(appointment => ({
+            ...appointment,
+            displayUserName: this.getUserName(appointment),
+            displayDate: this.formatDate(appointment.scheduledDateTime),
+            displayTime: this.formatTime(appointment.scheduledDateTime),
+            displayServiceName: this.getServiceName(appointment)
+          }));
+          
+          console.log('Dados processados (usuário específico):', processedData);
+          this.appointments.set(processedData);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Erro ao buscar agendamentos do usuário:', err);
+          this.error.set('Erro ao carregar seus agendamentos. Por favor, tente novamente.');
+          this.loading.set(false);
+        }
+      });
+    }
   }
 
   getUserName(appointment: any): string {
-    // Tenta várias possibilidades de onde o nome do usuário pode estar
     if (appointment.userEmail) return appointment.userEmail;
     if (appointment.user?.name) return appointment.user.name;
     if (appointment.user?.email) return appointment.user.email;
@@ -67,7 +171,6 @@ export class AppointmentManagementComponent implements OnInit {
   }
 
   getServiceName(appointment: any): string {
-    // Tenta várias possibilidades de onde o nome do serviço pode estar
     if (appointment.appointmentTypeName) return appointment.appointmentTypeName;
     if (appointment.appointmentType?.name) return appointment.appointmentType.name;
     if (appointment.appointmentTypeDescription) return appointment.appointmentTypeDescription;

@@ -52,6 +52,20 @@ public class AppointmentController {
         return ResponseEntity.ok(appointment);
     }
 
+    //Endpoint para buscar agendamentos por ID do usuário
+    @GetMapping("/user")
+    public ResponseEntity<?> getAppointmentsByUserId(@RequestParam("userId") Long userId) {
+        try {
+            List<SimpleAppointmentDTO> appointments = appointmentService.findAppointmentsByUserId(userId);
+            return ResponseEntity.ok(appointments);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao buscar agendamentos: " + e.getMessage());
+        }
+    }
+
     //Endpoint para buscar Appointment por intervalo de datas.
     @GetMapping("/between")
     public ResponseEntity<List<SimpleAppointmentDTO>> getAppointmentBetwenDate(
@@ -84,7 +98,4 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
-
-
 }

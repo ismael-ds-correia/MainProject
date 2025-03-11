@@ -1,7 +1,21 @@
 <div class="appointment-container">
   <button (click)="goBack()" class="back-button">← Voltar</button>
 
-  <h1>Gerenciar Agendamentos</h1>
+  <div class="header-container">
+    <h1>Gerenciar Agendamentos</h1>
+    
+    <!-- Indicador de perfil -->
+    <div class="role-indicator">
+      <span *ngIf="isAdmin()" class="admin-badge">Modo Administrador</span>
+      <span *ngIf="!isAdmin()" class="user-badge">Modo Usuário</span>
+    </div>
+  </div>
+
+  <!-- Mensagem explicativa sobre a visualização -->
+  <div class="view-info">
+    <p *ngIf="isAdmin()">Como administrador, você está visualizando todos os agendamentos.</p>
+    <p *ngIf="!isAdmin()">Você está visualizando apenas seus agendamentos.</p>
+  </div>
 
   <div *ngIf="loading()" class="loading-message">
     <p>Carregando agendamentos...</p>
@@ -15,7 +29,7 @@
     <table class="appointments-table">
       <thead>
         <tr>
-          <th>Usuário</th>
+          <th>E-mail do Usuário</th>
           <th>Data</th>
           <th>Hora</th>
           <th>Serviço</th>
