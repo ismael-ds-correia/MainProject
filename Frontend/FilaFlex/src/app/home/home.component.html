@@ -2,13 +2,16 @@
     <h1>Bem-vindo à página inicial</h1>
     <button (click)="logout()" class="logout-button">Logout</button>
     
-    <!-- Botões de filtro -->
+    <!-- Botões de filtro e gerenciamento de Agendamento e Serviços -->
     <div class="filter-buttons">
       <button (click)="openCategoryModal()" class="search-button">Buscar por Categorias</button>
       <button (click)="openPriceModal()" class="search-button">Buscar por Preço</button>
+      <button (click)="navigateToAppointmentManagement()" class="management-button">Gerenciar Agendamentos</button>
+      <div class="spacer"></div>
+      <button *ngIf="isAdmin()" (click)="navigateToServiceManagement()" class="admin-button">Gerenciar Serviços</button>
     </div>
 
-    <!-- Modal de seleção de categorias (existente) -->
+    <!-- Modal de seleção de categorias0 -->
     <div *ngIf="showCategoryModal" class="modal">
       <div class="modal-content">
         <span class="close" (click)="closeCategoryModal()">&times;</span>
