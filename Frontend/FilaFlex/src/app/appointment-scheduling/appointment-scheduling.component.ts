@@ -103,8 +103,7 @@ export class AppointmentSchedulingComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro detalhado:', err);
-        
-        // Mensagem de erro mais específica em caso de problemas com a data
+
         if (err.status === 400) {
           this.error = 'Erro no formato dos dados. Verifique se a data está correta.';
         } else {
@@ -117,6 +116,6 @@ export class AppointmentSchedulingComponent implements OnInit {
   }
 
   goBack(): void {
-    this.location.back();  // Implementado aqui
+    this.location.back();
   }
 }

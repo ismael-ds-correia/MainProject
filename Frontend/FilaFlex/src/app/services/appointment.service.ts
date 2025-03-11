@@ -1,20 +1,59 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-export interface AppointmentSchedule {
-  id?: number; // Adicionamos o ID para permitir edição
-  appointmentType: { id: number };
-  user: { id: number };
+//Interface para o que é recebido da API
+export interface AppointmentResponse {
+  id: number;
   scheduledDateTime: string;
+  createdDateTime: string;
+  userId: string;
+  userEmail: string;
+  appointmentTypeName: string;
+  appointmentTypeDescription: string;
+  appointmentTypeEstimatedTime: string;
+  appointmentTypePrice: string;
+  appointmentTypeCategory: string[];
+  appointmentTypeAdress?: {
+    id: number;
+    number: string;
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+}
+
+// Interface atualizada para refletir tanto o que é usado pelo componente quanto o que vem da API
+export interface AppointmentSchedule {
+  id?: number;
+  appointmentType: { id: number, name?: string };
+  user: { id: number, name?: string, email?: string, username?: string };
+  scheduledDateTime: string;
+  
+  userId?: number;
+  userEmail?: string;
+  appointmentTypeName?: string;
+  appointmentTypeDescription?: string;
+  appointmentTypeEstimatedTime?: string;
+  appointmentTypePrice?: string;
+  appointmentTypeCategory?: string[];
+  appointmentTypeAdress?: {
+    id: number;
+    number: string;
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+  };
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentService {
-  private apiUrl = 'http://localhost:8080/appointment'; // Ajuste conforme necessário
+  private apiUrl = 'http://localhost:8080/appointment';
 
   constructor(private http: HttpClient) { }
 
@@ -30,6 +69,19 @@ export class AppointmentService {
     const headers = this.getHeaders();
     return this.http.get<AppointmentSchedule[]>(`${this.apiUrl}/all`, { headers })
       .pipe(catchError(this.handleError));
+  }
+
+  /** Método para buscar agendamentos por ID de usuário */
+  getAppointmentsByUserId(userId: number): Observable<AppointmentSchedule[]> {
+    const headers = this.getHeaders();
+    // Criando parâmetros de consulta
+    const params = new HttpParams().set('userId', userId.toString());
+    
+    // Fazendo a chamada HTTP com os parâmetros - espera resposta completa
+    return this.http.get<AppointmentSchedule[]>(`${this.apiUrl}/user`, { 
+      headers, 
+      params 
+    }).pipe(catchError(this.handleError));
   }
 
   /** Atualizar um agendamento */

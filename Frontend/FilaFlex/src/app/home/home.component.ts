@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
   allCategories: string[] = [];
   selectedCategories: string[] = [];
   
-  // Propriedades para busca por preço
+  //Propriedades para busca por preço
   minPrice: number = 0;
   maxPrice: number = 1000;
   showPriceModal: boolean = false;
@@ -87,7 +87,7 @@ export class HomeComponent implements OnInit {
     this.closeCategoryModal();
   }
   
-  // Métodos para busca por intervalo de preço
+  //Método para busca por intervalo de preço
   openPriceModal(): void {
     this.showPriceModal = true;
     console.log('Modal de preço aberto');
@@ -98,11 +98,9 @@ export class HomeComponent implements OnInit {
   }
 
   searchByPriceRange(): void {
-    // Validar valores
     if (this.minPrice < 0) this.minPrice = 0;
     if (this.maxPrice < this.minPrice) this.maxPrice = this.minPrice;
     
-    // Chamar o serviço
     this.appointmentTypeService.findByPriceRange(this.minPrice, this.maxPrice)
       .subscribe({
         next: (results) => {
@@ -112,7 +110,6 @@ export class HomeComponent implements OnInit {
         },
         error: (error) => {
           console.error('Erro ao buscar por intervalo de preço:', error);
-          // Em caso de erro, mantém a lista atual
           this.closePriceModal();
         }
       });
@@ -126,6 +123,20 @@ export class HomeComponent implements OnInit {
         return appointmentType.name.toLowerCase().includes(this.searchTerm.toLowerCase());
       });
     }
+  }
+
+  isAdmin(): boolean {
+    const userRole = localStorage.getItem('userRole');
+    console.log('User-role no localStorage:', userRole);
+    return userRole === 'ADMIN';
+  }
+  
+  navigateToServiceManagement(): void {
+    this.router.navigate(['/service-management']);
+  }
+  
+  navigateToAppointmentManagement(): void {
+    this.router.navigate(['/appointment-management']);
   }
 
   viewDetails(name: string): void {

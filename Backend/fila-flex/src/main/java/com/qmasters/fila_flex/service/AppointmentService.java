@@ -44,6 +44,33 @@ public class AppointmentService {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Busca agendamentos pelo ID do usuário e os converte para SimpleAppointmentDTO
+     * @param userId ID do usuário
+     * @return Lista de agendamentos do usuário em formato SimpleAppointmentDTO
+     */
+    public List<SimpleAppointmentDTO> findAppointmentsByUserId(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("ID do usuário não pode ser nulo");
+        }
+        return appointmentRepository.findByUserId(userId).stream()
+            .map(this::toSimpleDTO)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Busca agendamentos completos pelo ID do usuário
+     * @param userId ID do usuário
+     * @return Lista de agendamentos completos do usuário
+     * @throws IllegalArgumentException se userId for nulo
+     */
+    public List<Appointment> findFullAppointmentsByUserId(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("ID do usuário não pode ser nulo");
+        }
+        return appointmentRepository.findByUserId(userId);
+    }
+
     //necessario para a função findByDateBetween / converte um tipo Appointment para SimpleAppointmentDTO
     private SimpleAppointmentDTO toSimpleDTO(Appointment appointment) {
         return new SimpleAppointmentDTO(
@@ -83,7 +110,5 @@ public class AppointmentService {
         } else {
             throw new IllegalArgumentException("Agendamento não encontrado, remoção não foi realizada");
         }
-
     }
-
 }

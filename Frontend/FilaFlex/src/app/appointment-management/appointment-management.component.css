@@ -1,163 +1,233 @@
 .appointment-container {
-    position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #1976d2; /* Fundo azul igual ao scheduling */
-    min-height: 100vh;
-    color: white;
-    border-radius: 8px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #1976d2; /* Fundo azul para harmonizar com o resto */
+  min-height: 100vh;
+  color: white;
+  border-radius: 8px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  background-color: rgba(211, 47, 47, 0.15);
+  color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  color: white;
+}
+
+/* Estilo da tabela harmonizado */
+.appointments-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.appointments-table th,
+.appointments-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  color: #333; /* Cor de texto escuro para contrastar com fundo branco */
+}
+
+.appointments-table th {
+  background-color: #f7f7f7;
+  color: #333;
+  font-weight: 600;
+}
+
+.appointments-table tr:hover {
+  background-color: #f9f9f9;
+}
+
+.action-buttons {
+  white-space: nowrap;
+}
+
+.action-buttons button {
+  margin-right: 5px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.edit-button {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.edit-button:hover {
+  background-color: #0b5ed7;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+/* Modal harmonizado */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s;
+}
+
+.modal-content h2 {
+  color: #1976d2;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  border-color: #1976d2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  height: 40px;
+  width: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-button {
+  background-color: #28a745;
+  color: white;
+  font-weight: 500;
+}
+
+.save-button:hover {
+  background-color: #218838;
+}
+
+.cancel-button {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.cancel-button:hover {
+  background-color: #d3d3d3;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Espaçamento para mensagem de nenhum agendamento */
+p:not([class]) {
+  color: white;
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
   }
   
-  /* Botão de voltar */
-  .back-button {
-    background-color: white;
-    color: #1976d2;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-bottom: 20px;
-    display: inline-flex;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transition: background-color 0.2s;
-  }
-  
-  .back-button:hover {
-    background-color: #eeeeee;
-  }
-  
-  /* Título */
-  h1 {
-    color: #ffffff;
-    margin-bottom: 20px;
-  }
-  
-  /* Estilização da tabela */
   .appointments-table {
-    width: 100%;
-    background-color: white;
-    color: black;
-    border-radius: 8px;
-    padding: 10px;
-    border-collapse: collapse;
-  }
-  
-  .appointments-table th,
-  .appointments-table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .appointments-table th {
-    background-color: #1565c0;
-    color: white;
-    font-weight: bold;
-  }
-  
-  /* Botões de ação */
-  .appointments-table td button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
     font-size: 14px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-    margin-right: 5px;
   }
   
-  /* Botões estilizados */
-  .appointments-table td button:first-child { /* Editar */
-    background-color: #ffeb3b;
-    color: black;
+  .action-buttons button {
+    padding: 5px 8px;
+    font-size: 12px;
   }
-  
-  .appointments-table td button:last-child { /* Excluir */
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .appointments-table td button:first-child:hover {
-    background-color: #fdd835;
-  }
-  
-  .appointments-table td button:last-child:hover {
-    background-color: #d32f2f;
-  }
-  
-  /* Mensagens de feedback */
-  .loading-message,
-  .error-message,
-  .success-message {
-    border-radius: 4px;
-    margin: 20px 0;
-    padding: 15px;
-    text-align: center;
-  }
-  
-  .loading-message {
-    background-color: #e3f2fd;
-    border: 1px solid #90caf9;
-    color: #0d47a1;
-  }
-  
-  .error-message {
-    background-color: #ffebee;
-    border: 1px solid #ffcdd2;
-    color: #b71c1c;
-  }
-  
-  .success-message {
-    background-color: #e8f5e9;
-    border: 1px solid #c8e6c9;
-    color: #2e7d32;
-  }
-  
-  /* Modal de edição */
-  .modal {
-    background-color: white;
-    color: black;
-    padding: 20px;
-    border-radius: 8px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 300px;
-  }
-  
-  .modal h2 {
-    margin-bottom: 15px;
-  }
-  
-  .modal label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: black;
-  }
-  
-  .modal input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-  
-  .modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-  
-  .modal-buttons button {
-    flex: 1;
-    margin: 0 5px;
-  }
-  
+}

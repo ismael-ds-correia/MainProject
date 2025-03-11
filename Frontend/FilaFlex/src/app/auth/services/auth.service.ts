@@ -16,13 +16,30 @@ export class AuthService {
         body: JSON.stringify({ email, password }),
         credentials: 'include'
       });
-
+  
       if (!response.ok) {
         throw new Error('Login falhou');
       }
-
+  
       const data = await response.json();
       localStorage.setItem('token', data.token);
+      
+      try {
+        const decodedToken: any = jwtDecode(data.token);
+        console.log('Token após login decodificado:', decodedToken);
+        
+        const userRole = decodedToken.role || decodedToken.authorities || 'USER';
+        console.log('Role extraída do token:', userRole);
+        
+        localStorage.setItem('userRole', 
+          typeof userRole === 'string' ? userRole : JSON.stringify(userRole)
+        );
+        
+        console.log('Role salva no localStorage:', localStorage.getItem('userRole'));
+      } catch (error) {
+        console.error('Erro ao extrair role do token:', error);
+      }
+      
       return true;
     } catch (error) {
       console.error('Erro ao fazer login:', error);

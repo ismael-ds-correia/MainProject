@@ -355,6 +355,57 @@
   text-decoration: none;
 }
 
+/* Adicione ao home.component.css */
+.admin-actions {
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.admin-button {
+  background-color: #ff9800; /* Cor laranja para destacar ações administrativas */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: background-color 0.2s;
+}
+
+.admin-button:hover {
+  background-color: #f57c00;
+}
+
+.admin-button::before {
+  content: '⚙️';
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+/* Botão de gerenciamento atualizado para ser igual ao search-button, mudando apenas a cor */
+.management-button {
+  background-color: #2196F3; /* Azul para diferenciar dos botões de busca (verde) */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0px;
+  font-size: 14px;
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.management-button:hover {
+  background-color: #0d87e9; /* Azul mais escuro no hover */
+}
+
 @keyframes modalFadeIn {
   from { opacity: 0; transform: translateY(-20px); }
   to { opacity: 1; transform: translateY(0); }
