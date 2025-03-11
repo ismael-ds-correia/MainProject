@@ -45,21 +45,25 @@
     <div class="user-filter" *ngIf="isAdmin()">
       <h3>Filtrar por usuário</h3>
       <div class="form-group">
-        <label for="userSearch">E-mail ou nome do usuário:</label>
-        <input 
-          type="text" 
+        <label for="userSearch">Selecione um usuário:</label>
+        <select 
           id="userSearch" 
           name="userSearch" 
-          placeholder="Digite para buscar um usuário"
-        />
+          class="user-dropdown"
+        >
+          <option value="">-- Selecione um usuário --</option>
+          <option *ngFor="let user of users()" [value]="user.id">
+            {{ user.email || user.name || user.username || 'Usuário #' + user.id }}
+          </option>
+        </select>
       </div>
     </div>
     
-    <!-- Botões de ação para os filtros (sem funções) -->
+    <!-- Botões de ação para os filtros -->
     <div class="filter-actions">
-      <button class="search-button">Buscar por Data</button>
-      <button class="search-button-user" *ngIf="isAdmin()">Buscar por Usuário</button>
-      <button class="clear-button">Limpar filtros</button>
+      <button class="search-button" (click)="filterByDate()">Buscar por Data</button>
+      <button class="search-button-user" *ngIf="isAdmin()" (click)="filterByUser()">Buscar por Usuário</button>
+      <button class="clear-button" (click)="clearFilters()">Limpar filtros</button>
     </div>
   </div>
 
@@ -79,7 +83,6 @@
           <th>Data</th>
           <th>Hora</th>
           <th>Serviço</th>
-          <!-- Nova coluna para endereço -->
           <th>Endereço</th>
           <th>Ações</th>
         </tr>
@@ -90,7 +93,6 @@
           <td>{{ appointment.displayDate }}</td>
           <td>{{ appointment.displayTime }}</td>
           <td>{{ appointment.displayServiceName }}</td>
-          <!-- Nova célula para endereço -->
           <td>{{ appointment.displayAddress }}</td>
           <td class="action-buttons">
             <button class="edit-button" (click)="editAppointment(appointment)">Editar</button>

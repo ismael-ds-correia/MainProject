@@ -54,6 +54,7 @@ export interface AppointmentSchedule {
 })
 export class AppointmentService {
   private apiUrl = 'http://localhost:8080/appointment';
+  private userApiUrl = 'http://localhost:8080/user';
 
   constructor(private http: HttpClient) { }
 
@@ -104,6 +105,12 @@ export class AppointmentService {
           return throwError(() => err);
         })
       );
+  }
+
+  getUsers(): Observable<any[]> {
+    const headers = this.getHeaders();
+    return this.http.get<any[]>(`${this.userApiUrl}/all`, { headers })
+      .pipe(catchError(this.handleError));
   }
 
   /** Gerar headers com token */

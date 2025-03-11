@@ -19,10 +19,13 @@ export class AppointmentManagementComponent implements OnInit {
   selectedAppointment = signal<any | null>(null);
   isAdmin = signal<boolean>(false);
   currentUserId = signal<number | null>(null); 
+  allAppointments = signal<any[]>([]);
+  users = signal<any[]>([]);
 
   constructor(
     private appointmentService: AppointmentService,
-    private location: Location
+    private location: Location,
+    private http: HttpClient
   ) {}
 
   confirmDialog = signal<{visible: boolean, appointmentId: number | null}>({
@@ -34,6 +37,10 @@ export class AppointmentManagementComponent implements OnInit {
     this.debugLocalStorage();
     this.checkUserRole();
     this.fetchAppointments();
+
+    if (this.isAdmin()) {
+      this.fetchUsers();
+    }
   }
 
   checkUserRole() {
@@ -43,18 +50,18 @@ export class AppointmentManagementComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        // Extrair e decodificar a parte de payload do token JWT
+        //Extrair e decodificar a parte de payload do token JWT
         const payload = token.split('.')[1];
         const decodedPayload = JSON.parse(atob(payload));
         console.log('Token payload:', decodedPayload);
         
-        // Verifica a role diretamente no token
+        //Verifica a role diretamente no token
         if (decodedPayload.role === 'ADMIN') {
           isAdminUser = true;
           console.log('Role ADMIN encontrada no token JWT');
         }
         
-        // Armazena o ID do usuário para filtrar agendamentos
+        //Armazena o ID do usuário para filtrar agendamentos
         if (decodedPayload.id) {
           this.currentUserId.set(decodedPayload.id);
         }
@@ -63,7 +70,6 @@ export class AppointmentManagementComponent implements OnInit {
       }
     }
     
-    // Define o status de admin com base nas verificações
     this.isAdmin.set(isAdminUser);
     
     console.log('Resultado final da verificação: isAdmin =', isAdminUser);
@@ -118,12 +124,12 @@ export class AppointmentManagementComponent implements OnInit {
             displayDate: this.formatDate(appointment.scheduledDateTime),
             displayTime: this.formatTime(appointment.scheduledDateTime),
             displayServiceName: this.getServiceName(appointment),
-            // Adicionando o campo de endereço para admin também
             displayAddress: this.getAddress(appointment)
           }));
           
           console.log('Dados processados (admin):', processedData);
           this.appointments.set(processedData);
+          this.allAppointments.set(processedData);
           this.loading.set(false);
         },
         error: (err) => {
@@ -158,6 +164,7 @@ export class AppointmentManagementComponent implements OnInit {
           
           console.log('Dados processados (usuário específico):', processedData);
           this.appointments.set(processedData);
+          this.allAppointments.set(processedData);
           this.loading.set(false);
         },
         error: (err) => {
@@ -167,6 +174,94 @@ export class AppointmentManagementComponent implements OnInit {
         }
       });
     }
+  }
+
+  //Método para buscar usuários
+  fetchUsers() {
+    this.appointmentService.getUsers().subscribe({
+      next: (data) => {
+        console.log('Usuários carregados:', data);
+        this.users.set(data);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar usuários:', error);
+      }
+    });
+  }
+
+  //Método para filtrar por usuário selecionado
+  filterByUser() {
+    const userSelect = document.getElementById('userSearch') as HTMLSelectElement;
+    const userId = userSelect.value;
+    
+    if (!userId) {
+      //Se nenhum usuário estiver selecionado, mostra todos os agendamentos
+      this.appointments.set(this.allAppointments());
+      return;
+    }
+    
+    console.log('Filtrando por usuário ID:', userId);
+    
+    // Filtra os agendamentos pelo usuário selecionado
+    const filteredAppointments = this.allAppointments().filter(appointment => {
+      const appointmentUserId = 
+        appointment.userId || 
+        (appointment.user ? appointment.user.id : null);
+      
+      return appointmentUserId == userId; //
+    });
+    
+    console.log('Agendamentos filtrados:', filteredAppointments);
+    this.appointments.set(filteredAppointments);
+  }
+
+  //Método para filtrar por intervalo de datas
+  filterByDate() {
+    const startDateInput = document.getElementById('startDate') as HTMLInputElement;
+    const endDateInput = document.getElementById('endDate') as HTMLInputElement;
+    
+    const startDate = startDateInput.value ? new Date(startDateInput.value) : null;
+    const endDate = endDateInput.value ? new Date(endDateInput.value) : null;
+    
+    if (!startDate && !endDate) {
+      this.appointments.set(this.allAppointments());
+      return;
+    }
+    
+    console.log('Filtrando por intervalo de data:', startDate, endDate);
+    
+    // Filtra os agendamentos pelo intervalo de datas
+    const filteredAppointments = this.allAppointments().filter(appointment => {
+      const appointmentDate = new Date(appointment.scheduledDateTime);
+      
+      if (startDate && endDate) {
+        return appointmentDate >= startDate && appointmentDate <= endDate;
+      } else if (startDate) {
+        return appointmentDate >= startDate;
+      } else if (endDate) {
+        return appointmentDate <= endDate;
+      }
+      
+      return true; // Não deve chegar aqui, mas por segurança
+    });
+    
+    console.log('Agendamentos filtrados por data:', filteredAppointments);
+    this.appointments.set(filteredAppointments);
+  }
+
+  // Método para limpar todos os filtros
+  clearFilters() {
+    // Limpar os campos de input
+    const startDateInput = document.getElementById('startDate') as HTMLInputElement;
+    const endDateInput = document.getElementById('endDate') as HTMLInputElement;
+    const userSelect = document.getElementById('userSearch') as HTMLSelectElement;
+    
+    if (startDateInput) startDateInput.value = '';
+    if (endDateInput) endDateInput.value = '';
+    if (userSelect) userSelect.value = '';
+    
+    // Restaurar todos os agendamentos
+    this.appointments.set(this.allAppointments());
   }
 
   getAddress(appointment: any): string {
