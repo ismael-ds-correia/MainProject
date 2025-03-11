@@ -50,15 +50,6 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.GET, "/category/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/category/**").hasRole("ADMIN")
 
-        //TODO: Restringindo o acesso para qualquer funcionalidade de "adress",
-        // onde é uma sub-classe e não deve ser manipulada externamente
-
-        /*
-        .requestMatchers(HttpMethod.GET, "/adress/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/adress/**").hasRole("USER")
-        .requestMatchers(HttpMethod.DELETE, "/adress/**").hasRole("ADMIN")
-         */
-
         .requestMatchers(HttpMethod.GET, "/appointment/**").hasRole("USER")
         .requestMatchers(HttpMethod.PUT, "/appointment/**").hasRole("USER")
         .requestMatchers(HttpMethod.POST, "/appointment/**").hasRole("USER")
