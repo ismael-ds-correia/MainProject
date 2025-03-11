@@ -17,6 +17,52 @@
     <p *ngIf="!isAdmin()">Você está visualizando apenas seus agendamentos.</p>
   </div>
 
+  <!-- Filtros de busca -->
+  <div class="search-filters">
+    <div class="date-filters">
+      <h3>Filtrar por data</h3>
+      <div class="date-inputs">
+        <div class="form-group">
+          <label for="startDate">Data inicial:</label>
+          <input 
+            type="date" 
+            id="startDate" 
+            name="startDate"
+          />
+        </div>
+        <div class="form-group">
+          <label for="endDate">Data final:</label>
+          <input 
+            type="date" 
+            id="endDate" 
+            name="endDate"
+          />
+        </div>
+      </div>
+    </div>
+    
+    <!-- Filtro de usuário (visível apenas para admin) -->
+    <div class="user-filter" *ngIf="isAdmin()">
+      <h3>Filtrar por usuário</h3>
+      <div class="form-group">
+        <label for="userSearch">E-mail ou nome do usuário:</label>
+        <input 
+          type="text" 
+          id="userSearch" 
+          name="userSearch" 
+          placeholder="Digite para buscar um usuário"
+        />
+      </div>
+    </div>
+    
+    <!-- Botões de ação para os filtros (sem funções) -->
+    <div class="filter-actions">
+      <button class="search-button">Buscar por Data</button>
+      <button class="search-button-user" *ngIf="isAdmin()">Buscar por Usuário</button>
+      <button class="clear-button">Limpar filtros</button>
+    </div>
+  </div>
+
   <div *ngIf="loading()" class="loading-message">
     <p>Carregando agendamentos...</p>
   </div>

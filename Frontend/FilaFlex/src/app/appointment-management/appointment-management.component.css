@@ -304,6 +304,51 @@
   font-weight: 500;
 }
 
+/* Estilos para os botões de filtro */
+.search-button, .search-button-user, .clear-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 10px;
+}
+
+.search-button {
+  background-color: #007bff;
+  color: white;
+}
+
+.search-button:hover {
+  background-color: #0069d9;
+}
+
+.search-button-user {
+  background-color: #28a745;
+  color: white;
+}
+
+.search-button-user:hover {
+  background-color: #218838;
+}
+
+.clear-button {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.clear-button:hover {
+  background-color: #e0e0e0;
+}
+
+.filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
