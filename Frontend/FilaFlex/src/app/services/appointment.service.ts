@@ -87,7 +87,7 @@ export class AppointmentService {
   /** Atualizar um agendamento */
   updateAppointment(id: number, updatedData: Partial<AppointmentSchedule>): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.put(`${this.apiUrl}/update/${id}`, updatedData, { headers })
+    return this.http.put(`${this.apiUrl}/${id}`, updatedData, { headers })
       .pipe(catchError(this.handleError));
   }
 
