@@ -25,6 +25,11 @@ export class AppointmentManagementComponent implements OnInit {
     private location: Location
   ) {}
 
+  confirmDialog = signal<{visible: boolean, appointmentId: number | null}>({
+    visible: false,
+    appointmentId: null
+  });
+
   ngOnInit() {
     this.debugLocalStorage();
     this.checkUserRole();
@@ -223,7 +228,6 @@ export class AppointmentManagementComponent implements OnInit {
   }
 
   editAppointment(appointment: any) {
-    // Clonar o objeto para não modificar o original
     this.selectedAppointment.set({ ...appointment });
   }
 
@@ -244,12 +248,9 @@ export class AppointmentManagementComponent implements OnInit {
 
     this.loading.set(true);
     
-    // Extrair os IDs corretamente com base na estrutura dos dados
     const userId = appointment.userId;
-    // Se não tiver um appointmentTypeId direto, tenta outras possibilidades
     const appointmentTypeId = appointment.appointmentTypeId || 
       (appointment.appointmentType?.id ? appointment.appointmentType.id : 
-        // Como último recurso, tenta extrair da URL do serviço, se existir
         appointment.appointmentTypeAdress?.id);
     
     if (!userId || !appointmentTypeId) {
@@ -258,10 +259,10 @@ export class AppointmentManagementComponent implements OnInit {
       return;
     }
     
-    // Formatar a data para o formato esperado pelo backend
+    //Formatar a data para o formato esperado pelo backend
     let formattedDateTime = appointment.scheduledDateTime;
     if (formattedDateTime && !formattedDateTime.includes('T')) {
-      // Se não tiver o 'T' do formato ISO, adiciona
+      //Se não tiver o 'T' do formato ISO, adiciona
       const [date, time] = formattedDateTime.split(' ');
       formattedDateTime = `${date}T${time || '00:00:00'}`;
     }
@@ -289,20 +290,78 @@ export class AppointmentManagementComponent implements OnInit {
   }
 
   deleteAppointment(id: number) {
-    if (!confirm('Tem certeza que deseja excluir este agendamento?')) return;
+    this.confirmDialog.set({
+      visible: true,
+      appointmentId: id
+    });
+  }
+
+  cancelDelete() {
+    this.confirmDialog.set({
+      visible: false,
+      appointmentId: null
+    });
+  }
+
+  confirmDelete() {
+    const id = this.confirmDialog().appointmentId;
+    if (!id) return;
+    
+    this.confirmDialog.set({
+      visible: false,
+      appointmentId: null
+    });
     
     this.loading.set(true);
+    this.error.set(null);
     
     this.appointmentService.deleteAppointment(id).subscribe({
-      next: () => {
-        this.fetchAppointments();
+      next: (response) => {
+        console.log('Exclusão processada com sucesso');
+        this.showSuccessMessage('Agendamento excluído com sucesso!');
+        
+        setTimeout(() => {
+          this.fetchAppointments();
+        }, 300);
       },
       error: (err) => {
+        if (err.status === 200) {
+          console.log('Status 200 tratado como sucesso no componente');
+          this.showSuccessMessage('Agendamento excluído com sucesso!');
+          setTimeout(() => {
+            this.fetchAppointments();
+          }, 300);
+          return;
+        }
+        
         console.error('Erro ao excluir agendamento:', err);
         this.error.set('Erro ao excluir agendamento. Por favor, tente novamente.');
         this.loading.set(false);
+      },
+      complete: () => {
+        console.log('Operação de exclusão completa');
       }
     });
+  }
+
+  //Método para exibir mensagem de sucesso após apagar.
+  private showSuccessMessage(message: string): void {
+    const messageElement = document.createElement('div');
+    messageElement.className = 'success-message';
+    messageElement.textContent = message;
+    
+    const container = document.querySelector('.appointment-container');
+    if (container) {
+      container.appendChild(messageElement);
+      
+      setTimeout(() => {
+        try {
+          container.removeChild(messageElement);
+        } catch (e) {
+          console.log('Elemento de mensagem já removido');
+        }
+      }, 3000);
+    }
   }
 
   goBack() {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 //Interface para o que é recebido da API
@@ -92,10 +92,18 @@ export class AppointmentService {
   }
 
   /** Remover um agendamento */
-  deleteAppointment(id: number): Observable<void> {
+  deleteAppointment(id: number): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.delete<void>(`${this.apiUrl}/delete/${id}`, { headers })
-      .pipe(catchError(this.handleError));
+    
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers })
+      .pipe(
+        catchError(err => {
+          if (err.status === 200) {
+            return of(null); 
+          }
+          return throwError(() => err);
+        })
+      );
   }
 
   /** Gerar headers com token */
