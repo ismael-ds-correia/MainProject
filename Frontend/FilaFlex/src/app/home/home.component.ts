@@ -19,6 +19,9 @@ export class HomeComponent implements OnInit {
   showCategoryModal: boolean = false;
   allCategories: string[] = [];
   selectedCategories: string[] = [];
+  showTimeModal: boolean = false;
+  minTime: number = 0;
+  maxTime: number = 180; 
   
   //Propriedades para busca por preço
   minPrice: number = 0;
@@ -123,6 +126,43 @@ export class HomeComponent implements OnInit {
         return appointmentType.name.toLowerCase().includes(this.searchTerm.toLowerCase());
       });
     }
+  }
+
+  //Método para abrir o modal de tempo estimado
+  openTimeModal(): void {
+    this.showTimeModal = true;
+    console.log('Modal de tempo estimado aberto');
+  }
+
+  //Método para fechar o modal de tempo estimado
+  closeTimeModal(): void {
+    this.showTimeModal = false;
+  }
+
+  //Método para buscar por intervalo de tempo estimado
+  searchByTimeRange(): void {
+    if (this.minTime < 0) this.minTime = 0;
+    if (this.maxTime < this.minTime) this.maxTime = this.minTime;
+    
+    this.filteredAppointmentTypes = this.appointmentTypes.filter(appointmentType => {
+      let estimatedTimeMinutes: number;
+      
+      if (typeof appointmentType.estimatedTime === 'string') {
+        estimatedTimeMinutes = parseInt(appointmentType.estimatedTime);
+      } else if (typeof appointmentType.estimatedTime === 'number') {
+        estimatedTimeMinutes = appointmentType.estimatedTime;
+      } else {
+        estimatedTimeMinutes = 0;
+        console.warn('Tipo de tempo estimado inválido:', appointmentType);
+      }
+      
+      return !isNaN(estimatedTimeMinutes) && 
+            estimatedTimeMinutes >= this.minTime && 
+            estimatedTimeMinutes <= this.maxTime;
+    });
+    
+    console.log(`Encontrados ${this.filteredAppointmentTypes.length} serviços no intervalo de ${this.minTime} a ${this.maxTime} minutos`);
+    this.closeTimeModal();
   }
 
   isAdmin(): boolean {
