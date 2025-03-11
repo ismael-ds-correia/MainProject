@@ -22,4 +22,6 @@ public interface AppointmentTypeRepository extends JpaRepository<AppointmentType
 
     //Busca por nome.
     Optional<AppointmentType> findByName(String name);
+
+    List<AppointmentType> findAllByOrderByEstimatedTimeAsc();
 }

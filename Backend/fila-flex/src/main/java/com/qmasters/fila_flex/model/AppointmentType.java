@@ -9,7 +9,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -51,18 +50,8 @@ public class AppointmentType {
     @JoinColumn(name = "adress_id")   
     private Adress adress;
 
-    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = false, fetch = FetchType.EAGER) //talvez remover orphanRemoval para n�o apagar os appointments
+    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true) //talvez remover orphanRemoval para n�o apagar os appointments
     private List<Appointment> appointments;
-
-    public void addAppointment(Appointment appointment) {
-        appointments.add(appointment);
-        appointment.setAppointmentType(this);
-    }
-    
-    public void removeAppointment(Appointment appointment) {
-        appointments.remove(appointment);
-        appointment.setAppointmentType(null);
-    }
 
     //Construtores
 

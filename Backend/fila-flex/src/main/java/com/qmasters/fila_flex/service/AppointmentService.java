@@ -22,9 +22,11 @@ public class AppointmentService {
 
     @Transactional
     public Appointment saveAppointment(AppointmentDTO appointmentDTO) {
-        Appointment appointment = new Appointment(appointmentDTO.getAppointmentType()
-        , appointmentDTO.getUser()
-        , appointmentDTO.getScheduledDateTime());
+        Appointment appointment = new Appointment(
+            appointmentDTO.getAppointmentType(), 
+            appointmentDTO.getUser(), 
+            appointmentDTO.getScheduledDateTime()
+        );
         
         return appointmentRepository.save(appointment);
     }
@@ -44,11 +46,6 @@ public class AppointmentService {
             .collect(Collectors.toList());
     }
 
-    /**
-     * Busca agendamentos pelo ID do usuário e os converte para SimpleAppointmentDTO
-     * @param userId ID do usuário
-     * @return Lista de agendamentos do usuário em formato SimpleAppointmentDTO
-     */
     public List<SimpleAppointmentDTO> findAppointmentsByUserId(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("ID do usuário não pode ser nulo");
@@ -58,12 +55,6 @@ public class AppointmentService {
             .collect(Collectors.toList());
     }
     
-    /**
-     * Busca agendamentos completos pelo ID do usuário
-     * @param userId ID do usuário
-     * @return Lista de agendamentos completos do usuário
-     * @throws IllegalArgumentException se userId for nulo
-     */
     public List<Appointment> findFullAppointmentsByUserId(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("ID do usuário não pode ser nulo");
@@ -81,7 +72,7 @@ public class AppointmentService {
     }
     
     @Transactional
-    public Appointment updateAppointment(Long id, AppointmentDTO appointmentDto) {//não passei o AppointmentDTO como parametro, pois só preciso da data e hora
+    public Appointment updateAppointment(Long id, AppointmentDTO appointmentDto) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
 
         if (optionalAppointment.isPresent()) {

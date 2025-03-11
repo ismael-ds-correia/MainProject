@@ -71,11 +71,15 @@ public class User implements UserDetails {
         this.name = name;
 
     }
-
+    
     public void setEmail(String email) {
         this.email = email;
     }
-
+    
+    @Override
+    public String getUsername() {
+        return email;
+    }
     public String getEmail() {
         return email;
     }
@@ -107,10 +111,6 @@ public class User implements UserDetails {
         }
     }
 
-    @Override
-    public String getUsername() {
-        return email;
-    }
 
     public List<Appointment> getAppointments() {
         return appointments;

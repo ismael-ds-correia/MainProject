@@ -29,14 +29,23 @@ public class AppointmentTypeController {
     public ResponseEntity<?> listAll() {        
         return ResponseEntity.ok(appointmentTypeService.listAll());
     }
-
+    
     @PostMapping("/create")
     public ResponseEntity<?> saveAppointmentType(@RequestBody AppointmentTypeDTO dto) {
         try {
             var appointmentType = appointmentTypeService.saveAppointmentType(dto);
             return ResponseEntity.ok(appointmentType);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{id}")
+    public AppointmentType findById(@PathVariable Long id) {
+        try {
+            return appointmentTypeService.findById(id);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("AppointmentType não encontrado.");
         }
     }
 
@@ -59,22 +68,28 @@ public class AppointmentTypeController {
         return appointmentTypeService.findByPriceBetween(minPrice, maxPrice);
     }
 
-    @DeleteMapping("/delete/{name}")
-    public void deleteByName(@PathVariable String name) {
-        appointmentTypeService.deleteByName(name);
-    }    
-
-    @GetMapping("/{id}")
-    public AppointmentType findById(@PathVariable Long id) {
-        return appointmentTypeService.findById(id);
+    @GetMapping("/estimatedTime")
+    public List<AppointmentType> findAllByEstimatedTime() {
+        return appointmentTypeService.findAllByOrderByEstimatedTimeAsc();
     }
+
+    @DeleteMapping("/delete/{name}")
+    public ResponseEntity<?> deleteByName(@PathVariable String name) {
+        try {
+            appointmentTypeService.deleteByName(name);
+            return ResponseEntity.ok("Tipo de agendamento removido com sucesso");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+
+    }    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         try {
             appointmentTypeService.deleteAppointmentType(id);
             return ResponseEntity.ok("Tipo de agendamento removido com sucesso");
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
