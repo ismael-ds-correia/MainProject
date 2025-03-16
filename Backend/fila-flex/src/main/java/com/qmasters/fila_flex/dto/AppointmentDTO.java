@@ -49,8 +49,8 @@ public class AppointmentDTO {
     }
 
     //=================================Getter e Setters transients========================================
-    //aparentemente, os getters e setters transients do DTO não são necessarios, pois mesmo apagando eles
-    //a saida no Insomnia fica correta, mas melhor manter eles aqui por precaução.
+    //aparentemente, os getters e setters transients do DTO nao sao necessarios, pois mesmo apagando eles
+    //a saida no Insomnia fica correta, mas melhor manter eles aqui por precaucao.
     public String getAppointmentTypeName() {
         return appointmentTypeName;
     }
