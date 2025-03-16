@@ -1,0 +1,27 @@
+name: Deploy Angular App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Instalar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Instalar dependências
+        run: npm ci
+        working-directory: Frontend/FilaFlex/
+
+      - name: Build do projeto Angular
+        run: npm run build -- --configuration=production
+        working-directory: Frontend/FilaFlex/
