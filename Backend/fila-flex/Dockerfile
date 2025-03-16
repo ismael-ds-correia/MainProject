@@ -1,22 +1,18 @@
 FROM ubuntu:latest AS build
 
-RUN apt-get update
-
-RUN apt-get install -y openjdk-21-jdk
+RUN apt-get update && apt-get install -y openjdk-21-jdk maven
 
 COPY . .
 
-RUN apt-get install -y maven
-
-RUN mvn clean install
+RUN mvn clean install -DskipTests
 
 FROM openjdk:21-jdk-slim
 
 EXPOSE 8080
 
-COPY --from=build /target/*.jar app.jar
+COPY target/*.jar app.jar
 
-ENTRYPOINT [ "java", "-jar", "app.jar" ]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
 
 #FROM eclipse-temurin:21-jdk
 
