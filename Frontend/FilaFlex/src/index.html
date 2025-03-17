@@ -11,15 +11,18 @@
   
   <!-- Script para inicialização das variáveis de ambiente (fallback para desenvolvimento) -->
   <script>
-    // Objeto global para armazenar configurações de ambiente
-    window.__env = window.__env || {};
-    
-    // Valores padrão para desenvolvimento (serão sobrescritos em produção)
-    window.__env.apiUrl = window.__env.apiUrl || 'http://localhost:8080';
-    window.__env.production = window.__env.production !== undefined ? window.__env.production : false;
-    
-    console.log('Ambiente carregado:', window.__env.production ? 'Produção' : 'Desenvolvimento');
-    console.log('API URL:', window.__env.apiUrl);
+    // Aguardar o carregamento completo da página antes de usar fallbacks
+    window.addEventListener('DOMContentLoaded', function() {
+      // Objeto global para armazenar configurações de ambiente
+      window.__env = window.__env || {};
+      
+      // Valores padrão para desenvolvimento (serão sobrescritos em produção)
+      window.__env.apiUrl = window.__env.apiUrl || 'http://localhost:8080';
+      window.__env.production = window.__env.production !== undefined ? window.__env.production : false;
+      
+      console.log('Ambiente carregado:', window.__env.production ? 'Produção' : 'Desenvolvimento');
+      console.log('API URL:', window.__env.apiUrl);
+    });
   </script>
 </head>
 <body>
