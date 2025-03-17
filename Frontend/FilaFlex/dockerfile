@@ -22,7 +22,7 @@ COPY docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
 
 # Definir variáveis de ambiente padrão
-ENV API_URL=http://localhost:8080
+ENV API_URL=https://filaflex-backend.onrender.com
 ENV PRODUCTION=true
 ENV APP_VERSION=1.0.0
 

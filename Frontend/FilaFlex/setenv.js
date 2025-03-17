@@ -4,7 +4,7 @@ const path = require('path');
 
 //Leitura das variáveis de ambiente
 //Se uma variável não estiver definida, usa o valor padrão
-const apiUrl = process.env.API_URL || 'http://localhost:8080';
+const apiUrl = process.env.API_URL || 'https://filaflex-backend.onrender.com';
 const production = process.env.PRODUCTION === 'true';
 const appVersion = process.env.APP_VERSION || '1.0.0';
 
