@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 //Interface para o que é recebido da API
 export interface AppointmentResponse {
@@ -53,10 +54,14 @@ export interface AppointmentSchedule {
   providedIn: 'root'
 })
 export class AppointmentService {
-  private apiUrl = 'http://localhost:8080/appointment';
-  private userApiUrl = 'http://localhost:8080/user';
+  private apiUrl = `${environment.apiUrl}/appointment`;
+  private userApiUrl = `${environment.apiUrl}/user`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    //logs para verificar se a URL da API está correta
+    console.log('Appointment API URL:', this.apiUrl);
+    console.log('User API URL:', this.userApiUrl);
+   }
 
   /** Agendar novo compromisso */
   scheduleAppointment(appointment: AppointmentSchedule): Observable<any> {

@@ -5,6 +5,9 @@ import { AppointmentType, AppointmentTypeService } from '../services/appointment
 import { CommonModule, CurrencyPipe, SlicePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+import { environment } from '../../environments/environment';
+
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -28,13 +31,23 @@ export class HomeComponent implements OnInit {
   maxPrice: number = 1000;
   showPriceModal: boolean = false;
 
+  //Permite flexibilidade para mudar a URL da API
+  apiUrl: string = environment.apiUrl;
+  isProduction: boolean = environment.production;
+
   constructor(
     private authService: AuthService,
     private router: Router,
     private appointmentTypeService: AppointmentTypeService
-  ) {}
+  ) {
+    console.log('Ambiente:', environment.production ? 'Produção' : 'Desenvolvimento');
+    console.log('API URL:', environment.apiUrl);
+  }
 
   ngOnInit(): void {
+    console.log('Environment API URL:', this.apiUrl);
+    console.log('Is Production:', this.isProduction);
+
     this.appointmentTypeService.getAppointmentTypes().subscribe((data) => {
       this.appointmentTypes = data;
       this.filteredAppointmentTypes = data;
