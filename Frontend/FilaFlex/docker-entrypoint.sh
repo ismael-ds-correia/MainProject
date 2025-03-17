@@ -1,5 +1,9 @@
 #!/bin/sh
 
+echo "Variáveis de ambiente no início do script:"
+env | grep API
+env | grep PRODUCTION
+
 # Detectar ambiente Render
 if [ -n "$RENDER" ] || [ -n "$RENDER_EXTERNAL_URL" ]; then
   echo "Ambiente Render detectado - usando URL de produção"
