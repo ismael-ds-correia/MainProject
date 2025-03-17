@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# Detectar ambiente Render
+if [ -n "$RENDER" ] || [ -n "$RENDER_EXTERNAL_URL" ]; then
+  echo "Ambiente Render detectado - usando URL de produção"
+  export API_URL="https://filaflex-backend.onrender.com"
+  export PRODUCTION="true"
+fi
+
 # Caminho para o arquivo env.js
 ENV_FILE=/usr/share/nginx/html/assets/env.js
 
