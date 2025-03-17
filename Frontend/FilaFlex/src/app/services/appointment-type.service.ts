@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { EnvService } from './env.service';
 
 export interface AppointmentType {
   id?: number;
@@ -24,10 +25,20 @@ export interface AppointmentType {
   providedIn: 'root'
 })
 export class AppointmentTypeService {
-  private apiUrl = 'http://localhost:8080/appointment-types';
-  private categoryUrl = 'http://localhost:8080/category';
+  private apiUrl: string; 
+  private categoryUrl: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private envService: EnvService) {
+    this.apiUrl = `${this.envService.apiUrl}/appointment-types`;
+    this.categoryUrl = `${this.envService.apiUrl}/category`;
+
+    //logs para debug
+    console.log('AppointmentType usando EnvService:');
+    console.log('- API Base URL:', this.envService.apiUrl);
+    console.log('- AppointmentType API URL:', this.apiUrl);
+    console.log('- Category API URL:', this.categoryUrl);
+    console.log('- Ambiente:', this.envService.environmentName);
+  }
 
   getAppointmentTypes(): Observable<AppointmentType[]> {
     return this.http.get<AppointmentType[]>(`${this.apiUrl}/all`).pipe(

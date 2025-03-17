@@ -1,12 +1,23 @@
 import { Injectable } from '@angular/core';
 import { User } from '../user';
 import { jwtDecode } from 'jwt-decode';
+import { EnvService } from '../../services/env.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/auth';
+  private apiUrl: string;
+
+  constructor(private envService: EnvService) {
+    this.apiUrl = `${this.envService.apiUrl}/auth`;
+    
+    //logs para debug
+    console.log('Auth Service inicializado:');
+    console.log('- API URL:', this.apiUrl);
+    console.log('- Ambiente:', this.envService.environmentName);
+  }
+
 
   async login(email: string, password: string): Promise<boolean> {
     try {
