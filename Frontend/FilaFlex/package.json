@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "postbuild": "node setenv.js",
-    "config:dev": "cross-env API_URL=http://localhost:8080 PRODUCTION=false node setenv.js",
+    "config:dev": "cross-env API_URL=https://filaflex-backend.onrender.com PRODUCTION=false node setenv.js",
     "config:prod": "cross-env API_URL=https://filaflex-backend.onrender.com PRODUCTION=true node setenv.js"
   },
   "private": true,
