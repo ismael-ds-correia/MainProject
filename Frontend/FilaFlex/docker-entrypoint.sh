@@ -32,7 +32,7 @@ echo "(function(window) {
 })(this);" > $ENV_FILE
 
 echo "Ambiente configurado:"
-echo "- API URL: ${API_URL:-http://localhost:8080}"
+echo "- API URL: ${API_URL:-https://filaflex-backend.onrender.com}"
 echo "- Ambiente: ${PRODUCTION:-true}"
 echo "- Versão: ${APP_VERSION:-1.0.0}"
 

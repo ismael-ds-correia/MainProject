@@ -15,7 +15,7 @@ declare global {
 })
 export class EnvService {
   //Valores padrão
-  private _apiUrl = 'http://localhost:8080';
+  private _apiUrl = 'https://filaflex-backend.onrender.com';
   private _production = false;
   private _appVersion = '1.0.0';
 

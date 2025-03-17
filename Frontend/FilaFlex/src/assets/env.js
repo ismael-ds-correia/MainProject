@@ -2,7 +2,7 @@
     window.__env = window.__env || {};
     
     //API URL
-    window.__env.apiUrl = 'http://localhost:8080';
+    window.__env.apiUrl = 'https://filaflex-backend.onrender.com';
     
     //Ambiente (true para produção, false para desenvolvimento)
     window.__env.production = false;

@@ -17,7 +17,7 @@
       window.__env = window.__env || {};
       
       // Valores padrão para desenvolvimento (serão sobrescritos em produção)
-      window.__env.apiUrl = window.__env.apiUrl || 'http://localhost:8080';
+      window.__env.apiUrl = window.__env.apiUrl || 'https://filaflex-backend.onrender.com';
       window.__env.production = window.__env.production !== undefined ? window.__env.production : false;
       
       console.log('Ambiente carregado:', window.__env.production ? 'Produção' : 'Desenvolvimento');
