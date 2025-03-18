@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User } from '../user';
 import { jwtDecode } from 'jwt-decode';
-import { EnvService } from '../../services/env.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,13 +9,13 @@ import { EnvService } from '../../services/env.service';
 export class AuthService {
   private apiUrl: string;
 
-  constructor(private envService: EnvService) {
-    this.apiUrl = `${this.envService.apiUrl}/auth`;
+  constructor() {
+    this.apiUrl = `${environment.apiUrl}/auth`;
     
     //logs para debug
-    console.log('Auth Service inicializado:');
+    console.log('Auth Service usando:');
     console.log('- API URL:', this.apiUrl);
-    console.log('- Ambiente:', this.envService.environmentName);
+    console.log('- Ambiente:', environment.production ? 'Produção' : 'Desenvolvimento');
   }
 
 
