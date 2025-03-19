@@ -29,7 +29,7 @@ public class SecurityConfig {
         return httpSecurity
         .cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(List.of("http://localhost:4200")); // Altere conforme necessário
+            config.setAllowedOrigins(List.of("http://localhost:4200", "https://fila-flex-frontend.onrender.com")); // Altere conforme necessário
             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));  
             config.setAllowCredentials(true);
             config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
