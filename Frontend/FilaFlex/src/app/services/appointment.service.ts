@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { EnvService } from './env.service';
+import { environment } from '../../environments/environment';
 
 //Interface para o que é recebido da API
 export interface AppointmentResponse {
@@ -57,15 +57,14 @@ export class AppointmentService {
   private apiUrl: string;
   private userApiUrl: string;
 
-  constructor(private http: HttpClient, private envService: EnvService) {
-    this.apiUrl = `${this.envService.apiUrl}/appointment`;
-    this.userApiUrl = `${this.envService.apiUrl}/user`;
+  constructor(private http: HttpClient) {
+    this.apiUrl = `${environment.apiUrl}/appointment`;
+    this.userApiUrl = `${environment.apiUrl}/user`;
 
     //logs para verificar se a URL da API está correta
-    console.log('Appointment Service inicializado:');
+    console.log('Appointment usando enviroment:');
     console.log('- API URL:', this.apiUrl);
-    console.log('- User API URL:', this.userApiUrl);
-    console.log('- Ambiente:', this.envService.environmentName);
+    console.log('- Ambiente:', environment.production ? 'Produção' : 'Desenvolvimento');
    }
 
   /** Agendar novo compromisso */

@@ -1,29 +1,11 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <title>FilaFlex</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!-- Script de configuração de ambiente (será substituído em tempo de execução) -->
-  <script src="assets/env.js"></script>
-  
-  <!-- Script para inicialização das variáveis de ambiente (fallback para desenvolvimento) -->
-  <script>
-    // Aguardar o carregamento completo da página antes de usar fallbacks
-    window.addEventListener('DOMContentLoaded', function() {
-      // Objeto global para armazenar configurações de ambiente
-      window.__env = window.__env || {};
-      
-      // Valores padrão para desenvolvimento (serão sobrescritos em produção)
-      window.__env.apiUrl = window.__env.apiUrl || 'https://filaflex-backend.onrender.com';
-      window.__env.production = window.__env.production !== undefined ? window.__env.production : false;
-      
-      console.log('Ambiente carregado:', window.__env.production ? 'Produção' : 'Desenvolvimento');
-      console.log('API URL:', window.__env.apiUrl);
-    });
-  </script>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
   <app-root></app-root>
