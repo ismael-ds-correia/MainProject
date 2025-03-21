@@ -29,8 +29,10 @@ public class EvaluationController {
         EvaluationDTO responseDTO = new EvaluationDTO();
         responseDTO.setRating(evaluation.getRating());
         responseDTO.setComment(evaluation.getComment());
+        responseDTO.setAppointmentTypeId(evaluation.getAppointmentType().getId());
         return responseDTO;
     }
+
     @GetMapping
     public List<EvaluationDTO> listEvaluations() {
         return evaluationService.getAllEvaluations().stream()
@@ -38,6 +40,7 @@ public class EvaluationController {
                     EvaluationDTO dto = new EvaluationDTO();
                     dto.setRating(evaluation.getRating());
                     dto.setComment(evaluation.getComment());
+                    dto.setAppointmentTypeId(evaluation.getAppointmentType().getId());
                     return dto;
                 })
                 .toList();
