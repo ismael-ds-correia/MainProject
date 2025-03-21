@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.AppointmentType;
 
 @Repository
@@ -24,4 +25,26 @@ public interface AppointmentTypeRepository extends JpaRepository<AppointmentType
     Optional<AppointmentType> findByName(String name);
 
     List<AppointmentType> findAllByOrderByEstimatedTimeAsc();
+
+    //Busca próximo número disponível para um appointmentType.
+    @Query("SELECT COALESCE(MAX(a.queueOrder), 0) + 1 FROM Appointment a WHERE a.appointmentType.id = :appointmentTypeId")
+    Integer findNextQueueNumberForAppointmentType(@Param("appointmentTypeId") Long appointmentTypeId);
+
+    //Busca maior ordem atual na fila.
+    @Query("SELECT COALESCE(MAX(a.queueOrder), 0) FROM Appointment a WHERE a.appointmentType.id = :appointmentTypeId")
+    Integer findMaxQueueOrderForAppointmentType(@Param("appointmentTypeId") Long appointmentTypeId);
+
+    //Busca todos os appointments em ordem para um tipo específico (por id).
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentType.id = :appointmentTypeId ORDER BY a.queueOrder ASC")
+    List<Appointment> findAllByAppointmentTypeIdOrderByQueueOrder(@Param("appointmentTypeId") Long appointmentTypeId);
+
+    //Buscar appointments com ordem maior que um valor específico.
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentType.id = :appointmentTypeId AND a.queueOrder > :queueOrder ORDER BY a.queueOrder ASC")
+    List<Appointment> findAllWithQueueOrderGreaterThan(
+            @Param("appointmentTypeId") Long appointmentTypeId, 
+            @Param("queueOrder") Integer queueOrder);
+
+    //Busca por nome do appointmentType.
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentType.name = :appointmentTypeName ORDER BY a.queueOrder ASC")
+    List<Appointment> findByAppointmentTypeNameOrderByQueueOrder(@Param("appointmentTypeName") String appointmentTypeName);
 }

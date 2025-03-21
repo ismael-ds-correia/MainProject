@@ -41,7 +41,8 @@ public class Appointment {
     //as variaveis transients não são obrigatorias nesta classe, mas baseado na ordem que elas estão
     //listadas aqui, elas serão exibidas desta mesma ordem no Insomnia
 
-
+    @Column(nullable = false)
+    private Integer queueOrder;
 
     //=================================Construtores======================================
 
@@ -54,6 +55,7 @@ public class Appointment {
         this.user = user;
         this.scheduledDateTime = scheduledDateTime;
         this.createdDateTime = LocalDateTime.now();//registra a hora atual
+        this.queueOrder = 0; //Valor temporário, será atualizado pelo service.
     }
 
     //================================Getters e Setters Transients================================
@@ -135,5 +137,13 @@ public class Appointment {
 
     public void setCreatedDateTime(LocalDateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public Integer getQueueOrder() {
+        return queueOrder;
+    }
+    
+    public void setQueueOrder(Integer queueOrder) {
+        this.queueOrder = queueOrder;
     }
 }

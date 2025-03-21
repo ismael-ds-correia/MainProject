@@ -20,4 +20,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     //Função para buscar agendamentos por userId
     @Query("SELECT a FROM Appointment a WHERE a.user.id = :userId ORDER BY a.scheduledDateTime DESC")
     List<Appointment> findByUserId(@Param("userId") Long userId);
+
+    //Função para buscar agendamentos num dado intervalo.
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentType.id = :appointmentTypeId AND a.queueOrder BETWEEN :startPosition AND :endPosition ORDER BY a.queueOrder ASC")
+    List<Appointment> findAllWithPositionBetween(
+            @Param("appointmentTypeId") Long appointmentTypeId,
+            @Param("startPosition") Integer startPosition,
+            @Param("endPosition") Integer endPosition);
 }

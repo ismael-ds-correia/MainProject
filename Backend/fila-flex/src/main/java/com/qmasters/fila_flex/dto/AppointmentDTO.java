@@ -11,6 +11,7 @@ public class AppointmentDTO {
     private User user;
     private LocalDateTime scheduledDateTime;
     private LocalDateTime createdDateTime;
+    private Integer queueOrder;
     
     private String userId; //transient
     private String userEmail; //transient
@@ -45,7 +46,27 @@ public class AppointmentDTO {
         this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime()); //transient
         this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation(); //transient
         this.appointmentTypeAdress = appointmentType.getAdressAsString(); //transient
-        
+    }
+
+    //Construtor para incluir queueOrder.
+    public AppointmentDTO(AppointmentType appointmentType, User user, LocalDateTime scheduledDateTime, 
+                         LocalDateTime createdDateTime, Integer queueOrder) {
+        this.appointmentType = appointmentType;
+        this.user = user;
+        this.scheduledDateTime = scheduledDateTime;
+        this.createdDateTime = createdDateTime;
+        this.queueOrder = queueOrder;
+
+        this.userId = user.getId().toString();
+        this.userEmail = user.getEmail();
+
+        this.appointmentTypeName = appointmentType.getName();
+        this.appointmentTypeDescription = appointmentType.getDescription();
+        this.appointmentTypeCategory = appointmentType.getCategory();
+        this.appointmentTypePrice = String.valueOf(appointmentType.getPrice());
+        this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime());
+        this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation();
+        this.appointmentTypeAdress = appointmentType.getAdressAsString();
     }
 
     //=================================Getter e Setters transients========================================
@@ -155,5 +176,13 @@ public class AppointmentDTO {
 
     public void setCreatedDateTime(LocalDateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public Integer getQueueOrder() {
+        return queueOrder;
+    }
+
+    public void setQueueOrder(Integer queueOrder) {
+        this.queueOrder = queueOrder;
     }
 }
