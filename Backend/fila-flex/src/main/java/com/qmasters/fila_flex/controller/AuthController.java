@@ -1,6 +1,5 @@
 package com.qmasters.fila_flex.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,19 +24,23 @@ import jakarta.validation.Valid;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired 
-    private AuthService authService;
+    private final AuthService authService;
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
+
+    public AuthController(AuthenticationManager authenticationManager, AuthService authService, TokenService tokenService) {
+        this.authenticationManager = authenticationManager;
+        this.authService = authService;
+        this.tokenService = tokenService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthDTO authDTO) {
         var usernamePassword = new UsernamePasswordAuthenticationToken(
             authDTO.getEmail(), authDTO.getPassword());
+
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
         String token = this.tokenService.generateToken((User) auth.getPrincipal());
@@ -47,9 +50,9 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody @Valid UserDTO userDTO) {
-        User registeredUser = this.authService.register(userDTO);
+        User user = this.authService.register(userDTO);
         
-        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUser);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/logout")

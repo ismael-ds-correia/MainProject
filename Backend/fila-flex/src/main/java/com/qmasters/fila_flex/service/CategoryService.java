@@ -3,7 +3,6 @@ package com.qmasters.fila_flex.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.dto.CategoryDTO;
@@ -14,8 +13,12 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class CategoryService {
-    @Autowired
-    private CategoryRepository categoryRepository;
+
+    private final CategoryRepository categoryRepository;
+
+    public CategoryService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Transactional
     public Category saveCategory(CategoryDTO categoryDTO) {

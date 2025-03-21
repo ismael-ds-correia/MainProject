@@ -50,12 +50,17 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.GET, "/category/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/category/**").hasRole("ADMIN")
 
+        .requestMatchers(HttpMethod.GET, "/adress/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/adress/**").permitAll()
+        .requestMatchers(HttpMethod.DELETE, "/adress/**").permitAll()
+
         .requestMatchers(HttpMethod.GET, "/appointment/**").hasRole("USER")
         .requestMatchers(HttpMethod.PUT, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/appointment/**").hasRole("USER")
         .requestMatchers(HttpMethod.DELETE, "/appointment/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/evaluations/**").permitAll() // Permitir acesso ao endpoint /evaluations
-        .requestMatchers(HttpMethod.GET, "/evaluations/**").permitAll() // Permitir acesso ao endpoint /evaluations
+
+        .requestMatchers(HttpMethod.POST, "/evaluations/**").permitAll()
+        .requestMatchers(HttpMethod.GET, "/evaluations/**").permitAll()
 
         .anyRequest().authenticated())
 
