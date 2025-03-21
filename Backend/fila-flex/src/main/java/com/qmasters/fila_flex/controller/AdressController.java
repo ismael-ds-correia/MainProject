@@ -46,7 +46,7 @@ public class AdressController {
         var adress = adressService.findAdressById(id);
         //é necessario usar throw pois um optional retornar vazio não é identificado como erro pelo globalExceptionHandler
         if (adress.isEmpty()) {
-            throw new NoSuchElementException("Usuario não encontrado"); 
+            throw new NoSuchElementException("Endereco não encontrado"); 
         }
         return ResponseEntity.ok(adress);
     }

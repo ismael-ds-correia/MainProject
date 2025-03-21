@@ -2,7 +2,6 @@ package com.qmasters.fila_flex.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +13,11 @@ import jakarta.transaction.Transactional;
 @Service
 public class UserService {
     
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public List<User> findAll() {
         return userRepository.findAll();
@@ -24,6 +26,7 @@ public class UserService {
     public User findById(Long id) {
         return userRepository.findById(id).orElse(null);
     }
+    
     public UserDetails findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
