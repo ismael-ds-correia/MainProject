@@ -37,36 +37,18 @@ public class QueueService {
     private AppointmentRepository appointmentRepository;
 
     //Adiciona um appointment ao final da fila.
-    @Transactional
-    public Appointment addToQueue(Appointment appointment) {
-        //Obtendo o próximo número da fila.
+    public Appointment assignQueuePosition(Appointment appointment) {
         Integer nextQueueNumber = appointmentTypeRepository.findNextQueueNumberForAppointmentType(
                 appointment.getAppointmentType().getId());
-        
-        //Atribuindo o número ao appointment.
         appointment.setQueueOrder(nextQueueNumber);
-        
         return appointment;
     }
 
-    //Remove um appointment da fila e reorganiza as posições.
-    @Transactional
-    public void removeFromQueue(Long appointmentId) {
-        //Buscando o appointment.
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment não encontrado"));
-        
-        Long appointmentTypeId = appointment.getAppointmentType().getId();
-        Integer currentOrder = appointment.getQueueOrder();
-        
-        //Removendo o appointment.
-        appointmentRepository.delete(appointment);
-        
-        //Buscando todos os appointments com ordem maior.
+    //Reorganiza a fila após remoção.
+    public void reorganizeQueueAfterRemoval(Long appointmentTypeId, Integer removedPosition) {
         List<Appointment> subsequentAppointments = appointmentTypeRepository
-                .findAllWithQueueOrderGreaterThan(appointmentTypeId, currentOrder);
+                .findAllWithQueueOrderGreaterThan(appointmentTypeId, removedPosition);
         
-        //Decrementando a ordem de cada um.
         for (Appointment app : subsequentAppointments) {
             app.setQueueOrder(app.getQueueOrder() - 1);
             appointmentRepository.save(app);
@@ -76,26 +58,32 @@ public class QueueService {
     //Reordena um appointment na fila (move para cima ou para baixo).
     @Transactional
     public void reorderQueue(Long appointmentId, Integer newPosition) {
-        //Buscando o appointment.
+        // Buscando o appointment
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RuntimeException("Appointment não encontrado"));
         
         Long appointmentTypeId = appointment.getAppointmentType().getId();
         Integer currentPosition = appointment.getQueueOrder();
         
-        //Verificando se a nova posição é válida.
+        // Verificando se a nova posição é válida
         Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentTypeId);
         if (newPosition < 1 || newPosition > maxPosition) {
             throw new IllegalArgumentException("Posição inválida. Deve estar entre 1 e " + maxPosition);
         }
         
-        //Se a posição for a mesma, não faz nada.
+        // Se a posição for a mesma, não faz nada
         if (currentPosition.equals(newPosition)) {
             return;
         }
         
-        //Movendo para baixo (aumentando posição).
+        // FASE 1: Temporariamente mover o appointment para uma posição negativa
+        // para evitar conflitos de chave única durante a reorganização
+        appointment.setQueueOrder(-999); // Valor temporário negativo
+        appointmentRepository.save(appointment);
+        
+        // FASE 2: Reorganizar os outros appointments
         if (newPosition > currentPosition) {
+            // Movendo para baixo (aumentando posição)
             List<Appointment> appointmentsToUpdate = appointmentRepository.findAllWithPositionBetween(
                     appointmentTypeId, currentPosition + 1, newPosition);
             
@@ -103,9 +91,8 @@ public class QueueService {
                 app.setQueueOrder(app.getQueueOrder() - 1);
                 appointmentRepository.save(app);
             }
-        } 
-        //Movendo para cima (diminuindo posição).
-        else {
+        } else {
+            // Movendo para cima (diminuindo posição)
             List<Appointment> appointmentsToUpdate = appointmentRepository.findAllWithPositionBetween(
                     appointmentTypeId, newPosition, currentPosition - 1);
             
@@ -115,7 +102,7 @@ public class QueueService {
             }
         }
         
-        //Atualizando a posição do appointment.
+        // FASE 3: Finalmente, colocar o appointment na sua posição final
         appointment.setQueueOrder(newPosition);
         appointmentRepository.save(appointment);
     }

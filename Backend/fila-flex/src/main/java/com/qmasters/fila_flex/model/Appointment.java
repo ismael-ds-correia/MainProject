@@ -13,12 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name = "appointments", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"appointment_type_id", "queue_order"})
-}) //QueueOrder deve ser único para cada AppointmentType.
+@Table(name = "appointments")
 public class Appointment {
     
     @Id

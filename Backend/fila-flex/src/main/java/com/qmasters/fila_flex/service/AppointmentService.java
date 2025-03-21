@@ -28,6 +28,9 @@ public class AppointmentService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private QueueService queueService;
+
     @Transactional
     public Appointment saveAppointment(AppointmentDTO appointmentDTO) {
         Appointment appointment = new Appointment(
@@ -35,6 +38,9 @@ public class AppointmentService {
             appointmentDTO.getUser(), 
             appointmentDTO.getScheduledDateTime()
         );
+
+        // Atribuir posição na fila
+        appointment = queueService.assignQueuePosition(appointment);
         
         return appointmentRepository.save(appointment);
     }
@@ -104,11 +110,19 @@ public class AppointmentService {
 
     @Transactional
     public void deleteAppointment(Long id) {
-        if (appointmentRepository.existsById(id)) {
+        //Recuperaando o appointment completo antes da exclusão.
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        
+        if (appointmentOpt.isPresent()) {
             try {
+                //Capturando informações necessárias para reorganização da fila.
+                Appointment appointment = appointmentOpt.get();
+                Long appointmentTypeId = appointment.getAppointmentType().getId();
+                Integer queuePosition = appointment.getQueueOrder();
+                
                 System.out.println("Iniciando exclusão do agendamento ID: " + id);
                 
-                //Usar uma consulta JPQL direta para forçar a exclusão
+                //Usando uma consulta JPQL direta para forçar a exclusão.
                 int deletedCount = entityManager.createQuery(
                     "DELETE FROM Appointment a WHERE a.id = :id")
                     .setParameter("id", id)
@@ -116,21 +130,23 @@ public class AppointmentService {
                 
                 System.out.println("Registros excluídos: " + deletedCount);
                 
-                //Força a sincronização com o banco de dados
+                //Forçando a sincronização com o banco de dados.
                 entityManager.flush();
-                
-                //Limpa o cache do JPA para garantir estado consistente
                 entityManager.clear();
                 
-                //Verifica se a exclusão foi bem-sucedida
+                // INALTERADO: Verifica se a exclusão foi bem-sucedida
                 boolean stillExists = appointmentRepository.existsById(id);
                 if (stillExists) {
                     System.err.println("AVISO: Agendamento continua existindo após tentativa de exclusão");
                     throw new RuntimeException("Falha ao remover agendamento: ainda existe após exclusão");
                 }
                 
+                //Reorganizando a fila após exclusão bem-sucedida.
+                queueService.reorganizeQueueAfterRemoval(appointmentTypeId, queuePosition);
+                
                 System.out.println("Agendamento ID: " + id + " removido com sucesso");
             } catch (DataIntegrityViolationException e) {
+                //Tratamento de erros.
                 System.err.println("Erro de integridade de dados ao excluir agendamento: " + e.getMessage());
                 throw new RuntimeException("Não foi possível excluir o agendamento devido a restrições de integridade. " +
                     "Verifique se há registros relacionados.", e);
