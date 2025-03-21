@@ -3,7 +3,6 @@ package com.qmasters.fila_flex.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.dto.AdressDTO;
@@ -15,8 +14,11 @@ import jakarta.transaction.Transactional;
 @Service
 public class AdressService {
 
-	@Autowired
-	private AdressRepository adressRepository;
+	private final AdressRepository adressRepository;
+
+	public AdressService(AdressRepository adressRepository) {
+		this.adressRepository = adressRepository;
+	}
 	
 	@Transactional
 	public Adress saveAdress(AdressDTO adressDTO) {
