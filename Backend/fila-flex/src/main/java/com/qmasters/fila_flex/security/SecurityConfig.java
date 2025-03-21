@@ -54,6 +54,8 @@ public class SecurityConfig {
         .requestMatchers(HttpMethod.PUT, "/appointment/**").permitAll()
         .requestMatchers(HttpMethod.POST, "/appointment/**").hasRole("USER")
         .requestMatchers(HttpMethod.DELETE, "/appointment/**").permitAll()
+        .requestMatchers(HttpMethod.POST, "/evaluations/**").permitAll() // Permitir acesso ao endpoint /evaluations
+        .requestMatchers(HttpMethod.GET, "/evaluations/**").permitAll() // Permitir acesso ao endpoint /evaluations
 
         .anyRequest().authenticated())
 
