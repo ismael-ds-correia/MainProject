@@ -77,6 +77,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar token JWT.");
     }
 
+    @ExceptionHandler(CannotFindQueueException.class) //erro de não encontrar a fila
+    public ResponseEntity<String> handleCannotFindQueueException(CannotFindQueueException ex) {
+        logger.warn("Erro ao buscar fila: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar fila.");
+    }
+
     // =============================== Erros do JPA ==============================
     @ExceptionHandler(ConstraintViolationException.class) //erro de validação que é jogado pelo Model da classe
     public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException ex) {
