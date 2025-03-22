@@ -13,8 +13,6 @@ import com.qmasters.fila_flex.exception.TooLateToChangeException;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -23,9 +21,10 @@ public class AppointmentService {
 
     private final QueueService queueService;
 
+    /*
     @PersistenceContext
     private EntityManager entityManager;
-
+    */
     public AppointmentService(AppointmentRepository appointmentRepository, QueueService queueService) {
         this.appointmentRepository = appointmentRepository;
         this.queueService = queueService;
