@@ -49,7 +49,6 @@ public class AdressService {
 		} else {
 			throw new NoSuchElementException("Endereço não encontrado, remoção não foi realizada");
 		}
-
 	}
 
 }
