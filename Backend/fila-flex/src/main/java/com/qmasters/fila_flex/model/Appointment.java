@@ -4,15 +4,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "appointments")
@@ -37,6 +41,11 @@ public class Appointment {
 
     private LocalDateTime createdDateTime; //talvez seja util no futuro
 
+    @NotNull(message = "É obrigatório informar a condição de prioridade")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING) //Usando para salvar o enum como string no banco de dados, e não como um número.
+    private PriorityCondition priorityCondition;
+
     //=================================variaveis Transients======================================
     //as variaveis transients não são obrigatorias nesta classe, mas baseado na ordem que elas estão
     //listadas aqui, elas serão exibidas desta mesma ordem no Insomnia
@@ -56,6 +65,7 @@ public class Appointment {
         this.scheduledDateTime = scheduledDateTime;
         this.createdDateTime = LocalDateTime.now();//registra a hora atual
         this.queueOrder = 0; //Valor temporário, será atualizado pelo service.
+        this.priorityCondition = PriorityCondition.NO_PRIORITY; //Valor padrão, para alterar usar o setter.
     }
 
     //================================Getters e Setters Transients================================
@@ -145,5 +155,13 @@ public class Appointment {
     
     public void setQueueOrder(Integer queueOrder) {
         this.queueOrder = queueOrder;
+    }
+
+    public PriorityCondition getPriorityCondition() {
+        return priorityCondition;
+    }
+
+    public void setPriorityCondition(PriorityCondition priorityCondition) {
+        this.priorityCondition = priorityCondition;
     }
 }
