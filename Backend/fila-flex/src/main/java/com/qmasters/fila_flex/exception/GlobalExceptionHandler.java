@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage())
         );
 
-        logger.warn("Erro de validacao: " + errors);
+        logger.warn("Erro de validacao: {}", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
@@ -67,20 +67,26 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException.class) //erro do 404, elemento não encontrado
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
-        logger.warn("Recurso nao encontrado: " + ex.getMessage());
+        logger.warn("Recurso nao encontrado: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(CannotCreateTokenException.class) //erro de criação de token
+    public ResponseEntity<String> handleCannotCreateTokenException(CannotCreateTokenException ex) {
+        logger.error("Erro ao criar token JWT: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao criar token JWT.");
     }
 
     // =============================== Erros do JPA ==============================
     @ExceptionHandler(ConstraintViolationException.class) //erro de validação que é jogado pelo Model da classe
     public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException ex) {
-        logger.warn("Violação de restricao: " + ex.getMessage());
+        logger.warn("Violação de restricao: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro: " + ex.getMessage());
     }
     
     @ExceptionHandler(DataIntegrityViolationException.class) //erro de integridade do banco de dados
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        logger.warn("Erro de integridade do banco de dados: " + ex.getMessage());
+        logger.warn("Erro de integridade do banco de dados: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro: Violação de integridade do banco de dados.");
     }
 }
