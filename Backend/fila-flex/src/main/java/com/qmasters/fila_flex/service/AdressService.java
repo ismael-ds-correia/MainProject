@@ -1,6 +1,7 @@
 package com.qmasters.fila_flex.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +23,14 @@ public class AdressService {
 	
 	@Transactional
 	public Adress saveAdress(AdressDTO adressDTO) {
-		Adress adress = new Adress(adressDTO.getNumber(), adressDTO.getStreet(), adressDTO.getCity(), adressDTO.getState(), adressDTO.getCountry());
+		Adress adress = new Adress(
+			adressDTO.getNumber(), 
+			adressDTO.getStreet(), 
+			adressDTO.getCity(), 
+			adressDTO.getState(), 
+			adressDTO.getCountry()
+		);
+		
 		return adressRepository.save(adress);
 	}
 
@@ -39,7 +47,7 @@ public class AdressService {
 		if (adressRepository.existsById(id)) {
 			adressRepository.deleteById(id);
 		} else {
-			throw new IllegalArgumentException("Endereço não encontrado, remoção não foi realizada");
+			throw new NoSuchElementException("Endereço não encontrado, remoção não foi realizada");
 		}
 
 	}

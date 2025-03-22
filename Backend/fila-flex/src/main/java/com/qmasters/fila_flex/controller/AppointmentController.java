@@ -2,8 +2,9 @@ package com.qmasters.fila_flex.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,36 +19,40 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qmasters.fila_flex.dto.AppointmentDTO;
-import com.qmasters.fila_flex.dto.SimpleAppointmentDTO;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.service.AppointmentService;
 
 @RestController
 @RequestMapping("/appointment")
 public class AppointmentController {
-    @Autowired
-    private AppointmentService appointmentService;
+    private final AppointmentService appointmentService;
+
+    public AppointmentController(AppointmentService appointmentService) {
+        this.appointmentService = appointmentService;
+    }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllAppointment() {
+    public ResponseEntity<List<Appointment>> getAllAppointment() {
         return ResponseEntity.ok(appointmentService.getAllAppointment());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createAppointment(@RequestBody AppointmentDTO appointmentDTO) {
-        try {
-            var appointment = appointmentService.saveAppointment(appointmentDTO);
-            return ResponseEntity.ok(appointment);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<Appointment> createAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        var appointment = appointmentService.saveAppointment(appointmentDTO);
+        return ResponseEntity.ok(appointment);
     }
-
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO appointmentDTO) {
+        var appointment = appointmentService.updateAppointment(id, appointmentDTO);
+        return ResponseEntity.ok(appointment);
+    }
+    
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAppointmentById(@PathVariable Long id) {
+    public ResponseEntity<Optional<Appointment>> getAppointmentById(@PathVariable Long id) {
         var appointment = appointmentService.findAppointmentById(id);
         if (appointment.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Agendamento não encontrado");
+            throw new NoSuchElementException("Agendamento não encontrado");
         }
         return ResponseEntity.ok(appointment);
     }
@@ -69,29 +74,21 @@ public class AppointmentController {
 
     //Endpoint para buscar Appointment por intervalo de datas.
     @GetMapping("/between")
-    public ResponseEntity<List<SimpleAppointmentDTO>> getAppointmentBetwenDate(
+    public ResponseEntity<List<Appointment>> getAppointmentBetwenDate(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         
-        if (startDate.isAfter(endDate)) {
-            throw new IllegalArgumentException("Data de inicio deve ser anterior a data final");
-        }
+        var Appointment = appointmentService.findByScheduledDateTime(startDate, endDate);
 
-        return ResponseEntity.ok(appointmentService.findByScheduledDateTime(startDate, endDate));
+        if (Appointment.isEmpty()) {
+            throw new NoSuchElementException("Nenhum agendamento encontrado entre essas datas");
+        }
+        return ResponseEntity.ok(Appointment);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO appointmentDTO) {
-        try {
-            var appointment = appointmentService.updateAppointment(id, appointmentDTO);
-            return ResponseEntity.ok(appointment);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAppointmentById(@PathVariable Long id) {
+    public ResponseEntity<String> deleteAppointmentById(@PathVariable Long id) {
         try {
             appointmentService.deleteAppointment(id);
             return ResponseEntity.ok("Agendamento removido com sucesso");

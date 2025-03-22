@@ -35,7 +35,7 @@ public class AdressController {
         return ResponseEntity.ok(adressService.getAllAdress());
     }
     
-    @PostMapping("/create") //teoricamente o globalException captura erros
+    @PostMapping("/create") //globalException não esta capturando os erros de validação do Model
     public ResponseEntity<Adress> createAdress(@RequestBody AdressDTO adressDTO) {
         var adress = adressService.saveAdress(adressDTO);
         return ResponseEntity.ok(adress);
