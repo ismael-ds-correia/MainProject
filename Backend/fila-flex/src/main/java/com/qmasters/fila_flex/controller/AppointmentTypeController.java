@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,10 +22,12 @@ import com.qmasters.fila_flex.service.AppointmentTypeService;
 @RestController
 @RequestMapping("/appointment-types")
 public class AppointmentTypeController {
+    private final AppointmentTypeService appointmentTypeService;
 
-    @Autowired
-    private AppointmentTypeService appointmentTypeService;
-    
+    public AppointmentTypeController(AppointmentTypeService appointmentTypeService) {
+        this.appointmentTypeService = appointmentTypeService;
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<AppointmentType>> listAll() {        
         return ResponseEntity.ok(appointmentTypeService.listAll());
