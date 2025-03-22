@@ -2,7 +2,6 @@ package com.qmasters.fila_flex.security;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,8 +21,14 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private SecurityFilter securityFilter;
+    private static final String ROLE_ADMIN = "ADMIN";
+    private static final String ROLE_USER = "USER";
+
+    private final SecurityFilter securityFilter;
+
+    public SecurityConfig(SecurityFilter securityFilter) {
+        this.securityFilter = securityFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -38,32 +44,16 @@ public class SecurityConfig {
         //qualquer saida API deve ser adicionada aqui
         .csrf(csrf -> csrf.disable())
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authorizeHttpRequests(authorize -> authorize
-        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-        .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
-        .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole("ADMIN")
+        .authorizeHttpRequests(authorize -> {
+            configureUserEndpoints(authorize);
+            configureAppointmentEndpoints(authorize);
+            configureAppointmentTypeEndpoints(authorize);
+            configureCategoryEndpoints(authorize);
+            configureAdressEndpoints(authorize);
+            configureEvaluationEndpoints(authorize);
 
-        .requestMatchers(HttpMethod.GET, "/appointment-types/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/appointment-types/**").hasRole("ADMIN")
-        .requestMatchers(HttpMethod.DELETE, "/appointment-types/**").hasRole("ADMIN")
-
-        .requestMatchers(HttpMethod.GET, "/category/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/category/**").hasRole("ADMIN")
-
-        .requestMatchers(HttpMethod.GET, "/adress/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/adress/**").permitAll()
-        .requestMatchers(HttpMethod.DELETE, "/adress/**").permitAll()
-
-        .requestMatchers(HttpMethod.GET, "/appointment/**").hasRole("USER")
-        .requestMatchers(HttpMethod.PUT, "/appointment/**").permitAll()
-        .requestMatchers(HttpMethod.POST, "/appointment/**").hasRole("USER")
-        .requestMatchers(HttpMethod.DELETE, "/appointment/**").permitAll()
-
-        .requestMatchers(HttpMethod.POST, "/evaluations/**").permitAll()
-        .requestMatchers(HttpMethod.GET, "/evaluations/**").permitAll()
-
-        .anyRequest().authenticated())
-
+            authorize.anyRequest().authenticated();
+        })
         .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
     }
@@ -73,8 +63,62 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    @Bean//aparentemente sem uso neste formato
+    //==================================== Definições de Endpoints =============================================================
+
+    private void configureUserEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        authorize
+            .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+            .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
+            .requestMatchers(HttpMethod.DELETE, "/user/**").hasRole(ROLE_ADMIN);
+    }
+
+    private void configureAppointmentEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] appointmentEndpoint = {"/appointment/**"};
+
+        authorize
+            .requestMatchers(HttpMethod.GET, appointmentEndpoint).hasRole(ROLE_USER)
+            .requestMatchers(HttpMethod.PUT, appointmentEndpoint).permitAll()
+            .requestMatchers(HttpMethod.POST, appointmentEndpoint).hasRole(ROLE_USER)
+            .requestMatchers(HttpMethod.DELETE, appointmentEndpoint).permitAll();
+    }
+
+    private void configureAppointmentTypeEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] appointmentTypeEndpoint = {"/appointment-types/**"};
+
+        authorize
+            .requestMatchers(HttpMethod.GET, appointmentTypeEndpoint).permitAll()
+            .requestMatchers(HttpMethod.POST, appointmentTypeEndpoint).hasRole(ROLE_ADMIN)
+            .requestMatchers(HttpMethod.DELETE, appointmentTypeEndpoint).hasRole(ROLE_ADMIN);
+    }
+
+    private void configureCategoryEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] categoryEndpoint = {"/category/**"};
+
+        authorize
+            .requestMatchers(HttpMethod.GET, categoryEndpoint).permitAll()
+            .requestMatchers(HttpMethod.POST, categoryEndpoint).hasRole(ROLE_ADMIN);
+    }
+
+    private void configureAdressEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] adressEndpoint = {"/adress/**"};
+
+        authorize
+            .requestMatchers(HttpMethod.GET, adressEndpoint).permitAll()
+            .requestMatchers(HttpMethod.POST, adressEndpoint).permitAll()
+            .requestMatchers(HttpMethod.DELETE, adressEndpoint).permitAll();
+    }
+
+    private void configureEvaluationEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] evaluationEndpoint = {"/evaluations/**"};
+
+        authorize
+            .requestMatchers(HttpMethod.POST, evaluationEndpoint).permitAll()
+            .requestMatchers(HttpMethod.GET, evaluationEndpoint).permitAll();
+    }
+
+    @Bean //mesmo sem ser chamada, se não for declarada aqui a autenticação não funciona
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }

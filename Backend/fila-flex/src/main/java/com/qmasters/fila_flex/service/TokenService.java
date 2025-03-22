@@ -3,7 +3,6 @@ package com.qmasters.fila_flex.service;
 import java.util.Date;
 import java.util.function.Function;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +10,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.qmasters.fila_flex.exception.CannotCreateTokenException;
 import com.qmasters.fila_flex.model.RevokedToken;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.repository.RevokedTokenRepository;
@@ -22,8 +22,11 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class TokenService {
 
-    @Autowired
-    private RevokedTokenRepository revokedTokenRepository;
+    private final RevokedTokenRepository revokedTokenRepository;
+
+    public TokenService(RevokedTokenRepository revokedTokenRepository) {
+        this.revokedTokenRepository = revokedTokenRepository;
+    }
 
     @Value("${api.security.token.secret}")
     private String secret;
@@ -33,16 +36,16 @@ public class TokenService {
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(this.secret);
-            String token = JWT.create()
+            return JWT.create()
                 .withIssuer("FilaFlex")
                 .withSubject(user.getEmail()) //aqui tava user.getUsername()
                 .withClaim("role", user.getRole().name()) // Inclui a função do usuário no token
                 .withClaim("id", user.getId())
                 .withExpiresAt(this.getExpirationAt())
                 .sign(algorithm);
-            return token;
+
         } catch (JWTCreationException e) {
-            throw new RuntimeException("Erro ao criar o token JWT em TokenService: " + e.getMessage());
+            throw new CannotCreateTokenException("Erro ao criar o token JWT em TokenService: " + e.getMessage());
         }
     }
 
