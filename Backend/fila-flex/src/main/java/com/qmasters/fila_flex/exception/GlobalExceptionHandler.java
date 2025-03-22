@@ -28,19 +28,24 @@ public class GlobalExceptionHandler {
             errors.put(error.getField(), error.getDefaultMessage())
         );
 
-        logger.warn("Erro de validação: " + errors);
+        logger.warn("Erro de validacao: " + errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     
-    @ExceptionHandler(InvalidRatingException.class) //erro de avaliacao invalida
+    @ExceptionHandler(InvalidRatingException.class) //erro de avaliação invalida
     public ResponseEntity<String> handleInvalidRatingException(InvalidRatingException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidPriceRangeException.class) 
+    public ResponseEntity<String> handleInvalidPriceRangeException(InvalidPriceRangeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class) //erro de argumento invalido
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        logger.error("Erro de argumento inválido: ", ex);
+        logger.error("Erro de argumento invalido: ", ex);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
@@ -50,16 +55,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ocorreu um erro interno no servidor.");
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
+    @ExceptionHandler(NoSuchElementException.class) //erro do 404, elemento não encontrado
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
-        logger.warn("Recurso não encontrado: " + ex.getMessage());
+        logger.warn("Recurso nao encontrado: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     // =============================== Erros do JPA ==============================
     @ExceptionHandler(ConstraintViolationException.class) //erro de validação que é jogado pelo Model da classe
     public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException ex) {
-        logger.warn("Violação de restrição: " + ex.getMessage());
+        logger.warn("Violação de restricao: " + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro: " + ex.getMessage());
     }
     

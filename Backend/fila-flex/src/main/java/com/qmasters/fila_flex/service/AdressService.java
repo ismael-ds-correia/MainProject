@@ -22,7 +22,14 @@ public class AdressService {
 	
 	@Transactional
 	public Adress saveAdress(AdressDTO adressDTO) {
-		Adress adress = new Adress(adressDTO.getNumber(), adressDTO.getStreet(), adressDTO.getCity(), adressDTO.getState(), adressDTO.getCountry());
+		Adress adress = new Adress(
+			adressDTO.getNumber(), 
+			adressDTO.getStreet(), 
+			adressDTO.getCity(), 
+			adressDTO.getState(), 
+			adressDTO.getCountry()
+		);
+		
 		return adressRepository.save(adress);
 	}
 

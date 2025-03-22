@@ -21,7 +21,6 @@ public interface AppointmentTypeRepository extends JpaRepository<AppointmentType
     @Query("SELECT a FROM AppointmentType a WHERE a.price BETWEEN :minPrice AND :maxPrice")
     List<AppointmentType> findByPriceBetween(@Param("minPrice") Double minPrice, @Param("maxPrice") Double maxPrice);
 
-    //Busca por nome.
     Optional<AppointmentType> findByName(String name);
 
     List<AppointmentType> findAllByOrderByEstimatedTimeAsc();
