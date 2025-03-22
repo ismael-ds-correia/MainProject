@@ -38,8 +38,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidPriceRangeException.class) 
+    @ExceptionHandler(InvalidPriceRangeException.class) //erro de intervalo de preço na busca de appointmentType
     public ResponseEntity<String> handleInvalidPriceRangeException(InvalidPriceRangeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidDateRangeException.class) //erro de datas invalidas na busca de appointments
+    public ResponseEntity<String> handleInvalidTimeException(InvalidDateRangeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(TooLateToChangeException.class) //erro de tentativa de alterar um agendamento muito tarde
+    public ResponseEntity<String> handleTooLateToChangeException(TooLateToChangeException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

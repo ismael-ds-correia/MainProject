@@ -65,6 +65,10 @@ public class AppointmentTypeService {
         return appointmentTypeRepository.findByCategory(category);
     }
 
+    public List<AppointmentType> findAllByOrderByEstimatedTimeAsc() {
+        return appointmentTypeRepository.findAllByOrderByEstimatedTimeAsc();
+    }
+    
     //buscar AppointmentTypes por intervalo de preços.
     public List<AppointmentType> findByPriceBetween(double minPrice, double maxPrice) {
         if (minPrice > maxPrice) {
@@ -75,15 +79,12 @@ public class AppointmentTypeService {
     }
     
     //buscar AppointmentTypes por ordem de tempo estimado.
-    public List<AppointmentType> findAllByOrderByEstimatedTimeAsc() {
-        return appointmentTypeRepository.findAllByOrderByEstimatedTimeAsc();
-    }
     
     @Transactional
     public void deleteByName(String name) {
         var appointmentType = appointmentTypeRepository.findByName(name);
         if (appointmentType.isEmpty()) {
-            throw new IllegalArgumentException("Tipo de agendamento não encontrado.");
+            throw new NoSuchElementException("Tipo de agendamento não encontrado.");
         } else {
             appointmentTypeRepository.delete(appointmentType.get());
         }
