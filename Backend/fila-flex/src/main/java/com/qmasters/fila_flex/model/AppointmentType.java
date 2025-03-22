@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -52,6 +54,10 @@ public class AppointmentType {
 
     @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true) //talvez remover orphanRemoval para n�o apagar os appointments
     private List<Appointment> appointments;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Evaluation> evaluations = new ArrayList<>();
 
     //Construtores
 
@@ -157,6 +163,13 @@ public class AppointmentType {
             return adress.toString(); 
         }
         return null;
+    }
+    public List<Evaluation> getEvaluations() {
+        return evaluations;
+    }
+
+    public void setEvaluations(List<Evaluation> evaluations) {
+        this.evaluations = evaluations;
     }
 }
 
