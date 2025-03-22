@@ -2,7 +2,6 @@ package com.qmasters.fila_flex.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.model.Appointment;
@@ -31,10 +30,13 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class QueueService {
-    @Autowired
-    private  AppointmentTypeRepository appointmentTypeRepository;
-    @Autowired
-    private AppointmentRepository appointmentRepository;
+    private final AppointmentTypeRepository appointmentTypeRepository;
+    private final AppointmentRepository appointmentRepository;
+
+    public QueueService(AppointmentTypeRepository appointmentTypeRepository, AppointmentRepository appointmentRepository) {
+        this.appointmentTypeRepository = appointmentTypeRepository;
+        this.appointmentRepository = appointmentRepository;
+    }
 
     //Adiciona um appointment ao final da fila.
     public Appointment assignQueuePosition(Appointment appointment) {
