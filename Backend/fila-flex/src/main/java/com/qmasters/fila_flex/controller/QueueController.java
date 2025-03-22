@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.qmasters.fila_flex.exception.CannotFindQueueException;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.service.QueueService;
 
@@ -35,7 +36,7 @@ public class QueueController {
         }catch (NoSuchElementException e) {
             throw e;
         }catch(Exception e) {
-            throw new RuntimeException("Erro ao buscar fila de agendamentos: " + e.getMessage());
+            throw new CannotFindQueueException("Erro ao buscar fila de agendamentos: " + e.getMessage());
         }
     }
 

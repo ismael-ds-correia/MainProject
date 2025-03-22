@@ -78,12 +78,12 @@ public class AppointmentController {
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         
-        var Appointment = appointmentService.findByScheduledDateTime(startDate, endDate);
+        var appointment = appointmentService.findByScheduledDateTime(startDate, endDate);
 
-        if (Appointment.isEmpty()) {
+        if (appointment.isEmpty()) {
             throw new NoSuchElementException("Nenhum agendamento encontrado entre essas datas");
         }
-        return ResponseEntity.ok(Appointment);
+        return ResponseEntity.ok(appointment);
     }
 
 
