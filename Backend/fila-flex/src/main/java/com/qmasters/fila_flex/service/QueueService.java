@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.model.Appointment;
+import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
+import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.transaction.Transactional;
 
@@ -45,6 +47,11 @@ public class QueueService {
         appointment.setQueueOrder(nextQueueNumber);
         return appointment;
     }
+    
+    //Retorna a fila ordenada para um determinado tipo de agendamento.
+    public List<Appointment> getQueueByName(String appointmentTypeName) {
+        return appointmentTypeRepository.findByAppointmentTypeNameOrderByQueueOrder(appointmentTypeName);
+    }
 
     //Reorganiza a fila após remoção.
     public void reorganizeQueueAfterRemoval(Long appointmentTypeId, Integer removedPosition) {
@@ -77,6 +84,18 @@ public class QueueService {
         reorganizeOtherAppointments(appointmentTypeId, currentPosition, newPosition);
         moveToFinalPosition(appointment, newPosition);
     }
+
+    @Transactional
+    public void insertWithPriority(Long appointmentID) {
+        Appointment appointment = findAppointmentById(appointmentID);
+        AppointmentType appointmentType = appointment.getAppointmentType();
+        
+        int newPosition = this.lockForNewPositionForPriority(appointmentType);
+
+        reorderQueue(appointmentID, newPosition);
+    }
+
+    /*======================== MÉTODOS AUXILIARES ========================*/
 
     //Método auxiliar para buscar o agendamento por ID.
     private Appointment findAppointmentById(Long appointmentId) {
@@ -135,8 +154,21 @@ public class QueueService {
         appointmentRepository.save(appointment);
     }
 
-    //Retorna a fila ordenada para um determinado tipo de agendamento.
-    public List<Appointment> getQueueByName(String appointmentTypeName) {
-        return appointmentTypeRepository.findByAppointmentTypeNameOrderByQueueOrder(appointmentTypeName);
+    //Método auxiliar para percorrer a lista de Appointments de um AppointmentType
+    //e retornar a maior posição na fila de um agendamento com prioridade.
+    private int lockForNewPositionForPriority(AppointmentType appointmentType){
+        List<Appointment> appointments = appointmentType.getAppointments();
+        
+        int largestQueueOrderOfPriority = 0; //Inicialmente, assume que não há appointments com prioridade.
+
+        for(Appointment app : appointments){
+            if(app.getPriorityCondition() != PriorityCondition.NO_PRIORITY){
+                if(app.getQueueOrder() > largestQueueOrderOfPriority){
+                    largestQueueOrderOfPriority = app.getQueueOrder();
+                }
+            }
+        }
+
+        return largestQueueOrderOfPriority + 1; //+1 para a nova posição.
     }
 }
