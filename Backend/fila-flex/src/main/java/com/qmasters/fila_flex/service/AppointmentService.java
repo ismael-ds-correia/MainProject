@@ -76,7 +76,7 @@ public class AppointmentService {
             Appointment appointment = optionalAppointment.get();
             LocalDateTime now = LocalDateTime.now();
 
-            if (appointment.getScheduledDateTime().isAfter(now.plusHours(1))) {//se o agendamento vai ocorrer em mais de 12 horas permite reagendar
+            if (appointmentDto.getScheduledDateTime().isAfter(now.plusHours(12))) {//se o agendamento vai ocorrer em mais de 12 horas permite reagendar
                 LocalDateTime createdDateTime = appointment.getCreatedDateTime();//mantem a data de criação original
                 
                 appointment.setScheduledDateTime(appointmentDto.getScheduledDateTime());
