@@ -22,10 +22,6 @@ public class AppointmentService {
 
     private final QueueService queueService;
 
-    /*
-    @PersistenceContext
-    private EntityManager entityManager;
-    */
     public AppointmentService(AppointmentRepository appointmentRepository, QueueService queueService) {
         this.appointmentRepository = appointmentRepository;
         this.queueService = queueService;
