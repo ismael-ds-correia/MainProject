@@ -12,6 +12,7 @@ import com.qmasters.fila_flex.exception.InvalidDateRangeException;
 import com.qmasters.fila_flex.exception.TooLateToChangeException;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
+import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.transaction.Transactional;
 
@@ -50,6 +51,25 @@ public class AppointmentService {
 
     public Optional<Appointment> findAppointmentById(Long id) {
         return appointmentRepository.findById(id);
+    }
+
+    public Appointment setPriorityCondition(Long appointmentId, PriorityCondition priorityCondition) {
+        Optional<Appointment> optionalAppointment = appointmentRepository.findById(appointmentId);
+
+        if(optionalAppointment.isEmpty()){
+            throw new NoSuchElementException("Agendamento não encontrado.");
+        } 
+
+        Appointment appointment = optionalAppointment.get();
+
+        appointment.setPriorityCondition(priorityCondition);
+        appointmentRepository.save(appointment);
+
+        if (priorityCondition != PriorityCondition.NO_PRIORITY) {
+            queueService.insertWithPriority(appointmentId);
+        }
+        
+        return appointment;
     }
 
     //função para buscar Appointment por intervalo de datas.

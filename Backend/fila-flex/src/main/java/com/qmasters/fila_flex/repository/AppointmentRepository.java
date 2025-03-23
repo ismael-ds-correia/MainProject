@@ -27,4 +27,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("appointmentTypeId") Long appointmentTypeId,
             @Param("startPosition") Integer startPosition,
             @Param("endPosition") Integer endPosition);
+
+            List<Appointment> findByAppointmentTypeIdOrderByQueueOrder(Long appointmentTypeId);
 }
