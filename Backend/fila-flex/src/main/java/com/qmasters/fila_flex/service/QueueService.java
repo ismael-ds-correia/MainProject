@@ -1,6 +1,7 @@
 package com.qmasters.fila_flex.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
@@ -101,10 +102,10 @@ public class QueueService {
             
             //Aplica a nova posição, respeitando os limites da fila.
             applyNewPosition(appointmentID, newPosition, appointmentType);
-        } catch (Exception e) {
-            System.err.println("Erro em insertWithPriority: " + e.getMessage());
-            e.printStackTrace();
+        } catch (NoSuchElementException | IllegalArgumentException e) {
             throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao processar prioridade: " + e.getMessage());
         }
     }
 
@@ -113,7 +114,7 @@ public class QueueService {
     //Método auxiliar para buscar o agendamento por ID.
     private Appointment findAppointmentById(Long appointmentId) {
         return appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment não encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Agendamento não encontrado"));
     }
 
     //Método auxiliar para validar a nova posição.
