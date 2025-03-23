@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.model.User;
+import com.qmasters.fila_flex.util.PriorityCondition;
 
 public class AppointmentDTO {
     private AppointmentType appointmentType;
@@ -12,6 +13,7 @@ public class AppointmentDTO {
     private LocalDateTime scheduledDateTime;
     private LocalDateTime createdDateTime;
     private Integer queueOrder;
+    private PriorityCondition priorityCondition;
     
     private String userId; //transient
     private String userEmail; //transient
@@ -56,6 +58,28 @@ public class AppointmentDTO {
         this.scheduledDateTime = scheduledDateTime;
         this.createdDateTime = createdDateTime;
         this.queueOrder = queueOrder;
+
+        this.userId = user.getId().toString();
+        this.userEmail = user.getEmail();
+
+        this.appointmentTypeName = appointmentType.getName();
+        this.appointmentTypeDescription = appointmentType.getDescription();
+        this.appointmentTypeCategory = appointmentType.getCategory();
+        this.appointmentTypePrice = String.valueOf(appointmentType.getPrice());
+        this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime());
+        this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation();
+        this.appointmentTypeAdress = appointmentType.getAdressAsString();
+    }
+
+    //Mais uma sobrecarga de construtor para incluir priorityCondition.
+    public AppointmentDTO(AppointmentType appointmentType, User user, LocalDateTime scheduledDateTime, 
+                         LocalDateTime createdDateTime, Integer queueOrder, PriorityCondition priorityCondition) {
+        this.appointmentType = appointmentType;
+        this.user = user;
+        this.scheduledDateTime = scheduledDateTime;
+        this.createdDateTime = createdDateTime;
+        this.queueOrder = queueOrder;
+        this.priorityCondition = priorityCondition;
 
         this.userId = user.getId().toString();
         this.userEmail = user.getEmail();
@@ -184,5 +208,13 @@ public class AppointmentDTO {
 
     public void setQueueOrder(Integer queueOrder) {
         this.queueOrder = queueOrder;
+    }
+
+    public PriorityCondition getPriorityCondition() {
+        return priorityCondition;
+    }
+
+    public void setPriorityCondition(PriorityCondition priorityCondition) {
+        this.priorityCondition = priorityCondition;
     }
 }

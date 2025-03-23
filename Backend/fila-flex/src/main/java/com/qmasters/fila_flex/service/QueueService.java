@@ -1,12 +1,15 @@
 package com.qmasters.fila_flex.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.model.Appointment;
+import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
+import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.transaction.Transactional;
 
@@ -45,6 +48,11 @@ public class QueueService {
         appointment.setQueueOrder(nextQueueNumber);
         return appointment;
     }
+    
+    //Retorna a fila ordenada para um determinado tipo de agendamento.
+    public List<Appointment> getQueueByName(String appointmentTypeName) {
+        return appointmentTypeRepository.findByAppointmentTypeNameOrderByQueueOrder(appointmentTypeName);
+    }
 
     //Reorganiza a fila após remoção.
     public void reorganizeQueueAfterRemoval(Long appointmentTypeId, Integer removedPosition) {
@@ -60,57 +68,147 @@ public class QueueService {
     //Reordena um appointment na fila (move para cima ou para baixo).
     @Transactional
     public void reorderQueue(Long appointmentId, Integer newPosition) {
-        // Buscando o appointment
-        Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment não encontrado"));
-        
+        //Obter e validar o agendamento e posições.
+        Appointment appointment = findAppointmentById(appointmentId);
         Long appointmentTypeId = appointment.getAppointmentType().getId();
         Integer currentPosition = appointment.getQueueOrder();
         
-        // Verificando se a nova posição é válida
-        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentTypeId);
-        if (newPosition < 1 || newPosition > maxPosition) {
-            throw new IllegalArgumentException("Posição inválida. Deve estar entre 1 e " + maxPosition);
-        }
+        validateNewPosition(appointmentTypeId, newPosition);
         
-        // Se a posição for a mesma, não faz nada
+        //Se a posição for a mesma, não faz nada.
         if (currentPosition.equals(newPosition)) {
             return;
         }
         
-        // FASE 1: Temporariamente mover o appointment para uma posição negativa
-        // para evitar conflitos de chave única durante a reorganização
-        appointment.setQueueOrder(-999); // Valor temporário negativo
-        appointmentRepository.save(appointment);
-        
-        // FASE 2: Reorganizar os outros appointments
-        if (newPosition > currentPosition) {
-            // Movendo para baixo (aumentando posição)
-            List<Appointment> appointmentsToUpdate = appointmentRepository.findAllWithPositionBetween(
-                    appointmentTypeId, currentPosition + 1, newPosition);
+        //Processo de reordenação em três passos.
+        moveToTemporaryPosition(appointment);
+        reorganizeOtherAppointments(appointmentTypeId, currentPosition, newPosition);
+        moveToFinalPosition(appointment, newPosition);
+    }
+
+    @Transactional
+    public void insertWithPriority(Long appointmentID) {
+        try {
+            Appointment appointment = findAppointmentById(appointmentID);
+            AppointmentType appointmentType = appointment.getAppointmentType();
             
-            for (Appointment app : appointmentsToUpdate) {
-                app.setQueueOrder(app.getQueueOrder() - 1);
-                appointmentRepository.save(app);
+            //Verifica se há necessidade de reposicionamento.
+            if (!shouldRepositionAppointment(appointment, appointmentType)) {
+                return;
             }
-        } else {
-            // Movendo para cima (diminuindo posição)
-            List<Appointment> appointmentsToUpdate = appointmentRepository.findAllWithPositionBetween(
-                    appointmentTypeId, newPosition, currentPosition - 1);
             
-            for (Appointment app : appointmentsToUpdate) {
-                app.setQueueOrder(app.getQueueOrder() + 1);
-                appointmentRepository.save(app);
-            }
+            //Calcula a nova posição ideal para o agendamento prioritário.
+            int newPosition = calculatePriorityPosition(appointmentType);
+            
+            //Aplica a nova posição, respeitando os limites da fila.
+            applyNewPosition(appointmentID, newPosition, appointmentType);
+        } catch (NoSuchElementException | IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao processar prioridade: " + e.getMessage());
         }
+    }
+
+    /*======================== MÉTODOS AUXILIARES ========================*/
+
+    //Método auxiliar para buscar o agendamento por ID.
+    private Appointment findAppointmentById(Long appointmentId) {
+        return appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new NoSuchElementException("Agendamento não encontrado"));
+    }
+
+    //Método auxiliar para validar a nova posição.
+    private void validateNewPosition(Long appointmentTypeId, Integer newPosition) {
+        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentTypeId);
+        if (newPosition < 1 || newPosition > maxPosition) {
+            throw new IllegalArgumentException("Posição inválida. Deve estar entre 1 e " + maxPosition);
+        }
+    }
+
+    //Método auxiliar para mover para posição temporária.
+    private void moveToTemporaryPosition(Appointment appointment) {
+        appointment.setQueueOrder(-999); //Valor temporário negativo.
+        appointmentRepository.save(appointment);
+    }
+
+    //Método auxiliar para reorganizar os outros agendamentos.
+    private void reorganizeOtherAppointments(Long appointmentTypeId, Integer currentPosition, Integer newPosition) {
+        if (newPosition > currentPosition) {
+            moveAppointmentsDown(appointmentTypeId, currentPosition, newPosition);
+        } else {
+            moveAppointmentsUp(appointmentTypeId, newPosition, currentPosition);
+        }
+    }
+    
+    //Método auxiliar para mover agendamentos para baixo (aumentando posição).
+    private void moveAppointmentsDown(Long appointmentTypeId, Integer fromPosition, Integer toPosition) {
+        List<Appointment> appointmentsToUpdate = appointmentRepository.findAllWithPositionBetween(
+                appointmentTypeId, fromPosition + 1, toPosition);
         
-        // FASE 3: Finalmente, colocar o appointment na sua posição final
+        for (Appointment app : appointmentsToUpdate) {
+            app.setQueueOrder(app.getQueueOrder() - 1);
+            appointmentRepository.save(app);
+        }
+    }    
+
+    //Método auxiliar para mover agendamentos para cima (diminuindo posição).
+    private void moveAppointmentsUp(Long appointmentTypeId, Integer fromPosition, Integer toPosition) {
+        List<Appointment> appointmentsToUpdate = appointmentRepository.findAllWithPositionBetween(
+                appointmentTypeId, fromPosition, toPosition - 1);
+        
+        for (Appointment app : appointmentsToUpdate) {
+            app.setQueueOrder(app.getQueueOrder() + 1);
+            appointmentRepository.save(app);
+        }
+    }
+    
+    //Método auxiliar para mover para posição final.
+    private void moveToFinalPosition(Appointment appointment, Integer newPosition) {
         appointment.setQueueOrder(newPosition);
         appointmentRepository.save(appointment);
     }
 
-    //Retorna a fila ordenada para um determinado tipo de agendamento.
-    public List<Appointment> getQueueByName(String appointmentTypeName) {
-        return appointmentTypeRepository.findByAppointmentTypeNameOrderByQueueOrder(appointmentTypeName);
+    private boolean shouldRepositionAppointment(Appointment appointment, AppointmentType appointmentType) {
+        //Se a fila estiver vazia, não reposiciona.
+        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentType.getId());
+        if (maxPosition == null || maxPosition == 0) {
+            return false;
+        }
+        
+        //Se já estiver em posição privilegiada, não reposiciona.
+        int firstNonPriorityPosition = findFirstNonPriorityPosition(appointmentType);
+        Integer currentPosition = appointment.getQueueOrder();
+        
+        return !(currentPosition < firstNonPriorityPosition && 
+                 appointment.getPriorityCondition() != PriorityCondition.NO_PRIORITY);
+    }    
+
+    private int findFirstNonPriorityPosition(AppointmentType appointmentType) {
+        List<Appointment> appointments = appointmentRepository.findByAppointmentTypeIdOrderByQueueOrder(appointmentType.getId());
+        
+        for (Appointment app : appointments) {
+            if (app.getPriorityCondition() == PriorityCondition.NO_PRIORITY) {
+                return app.getQueueOrder();
+            }
+        }
+        
+        //Se todos têm prioridade, retorna posição após o último.
+        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentType.getId());
+        return maxPosition + 1;
+    }
+
+    private int calculatePriorityPosition(AppointmentType appointmentType) {
+        return findFirstNonPriorityPosition(appointmentType);
+    }
+
+    private void applyNewPosition(Long appointmentId, int newPosition, AppointmentType appointmentType) {
+        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentType.getId());
+        
+        if (newPosition <= maxPosition) {
+            reorderQueue(appointmentId, newPosition);
+        } else {
+            //Se a posição calculada exceder o tamanho da fila, coloca no final.
+            reorderQueue(appointmentId, maxPosition);
+        }
     }
 }
