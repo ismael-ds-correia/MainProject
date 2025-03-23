@@ -16,7 +16,7 @@ import com.qmasters.fila_flex.service.EvaluationService;
 @RestController
 @RequestMapping("/evaluations")
 public class EvaluationController {
-    @Autowired
+    @Autowired //não precisa de autowired
     private final EvaluationService evaluationService;
 
     public EvaluationController(EvaluationService evaluationService) {
@@ -34,7 +34,7 @@ public class EvaluationController {
     }
 
     @GetMapping
-    public List<EvaluationDTO> listEvaluations() {
+    public List<EvaluationDTO> listEvaluations() { //a pra simplificar isso daqui
         return evaluationService.getAllEvaluations().stream()
                 .map(evaluation -> {
                     EvaluationDTO dto = new EvaluationDTO();

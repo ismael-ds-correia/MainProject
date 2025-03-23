@@ -28,6 +28,7 @@ public class EvaluationService {
 
         AppointmentType appointmentType = appointmentTypeRepository.findById(evaluationDTO.getAppointmentTypeId())
                 .orElseThrow(() -> new RuntimeException("AppointmentType not found"));
+        // trocar o runtimeException para NoSuchElementException
 
         Evaluation evaluation = new Evaluation();
         evaluation.setRating(evaluationDTO.getRating());

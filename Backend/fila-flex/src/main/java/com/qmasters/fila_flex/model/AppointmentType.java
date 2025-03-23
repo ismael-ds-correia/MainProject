@@ -55,7 +55,7 @@ public class AppointmentType {
     @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true) //talvez remover orphanRemoval para n�o apagar os appointments
     private List<Appointment> appointments;
 
-    @JsonManagedReference
+    @JsonManagedReference //talvez só usar o JsonIgnore na classe Evaluation
     @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Evaluation> evaluations = new ArrayList<>();
 

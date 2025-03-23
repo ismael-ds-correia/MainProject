@@ -20,9 +20,11 @@ public class Evaluation {
     private String comment;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonBackReference //só usar o JsonIgnore aqui, e a AppType ja funciona
     @JoinColumn(name = "appointment_type_id")
     private AppointmentType appointmentType;
+
+    //falta construtor
 
     // Getters and Setters
     public Long getId() {
