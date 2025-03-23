@@ -91,52 +91,16 @@ public class QueueService {
             Appointment appointment = findAppointmentById(appointmentID);
             AppointmentType appointmentType = appointment.getAppointmentType();
             
-            // Obter o número máximo atual na fila
-            Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentType.getId());
-            if (maxPosition == null || maxPosition == 0) {
-                // Se a fila estiver vazia, não precisamos reposicionar
+            //Verifica se há necessidade de reposicionamento.
+            if (!shouldRepositionAppointment(appointment, appointmentType)) {
                 return;
             }
             
-            // Buscar todos os agendamentos deste tipo, ordenados por posição
-            List<Appointment> appointments = appointmentRepository.findByAppointmentTypeIdOrderByQueueOrder(appointmentType.getId());
+            //Calcula a nova posição ideal para o agendamento prioritário.
+            int newPosition = calculatePriorityPosition(appointmentType);
             
-            // Encontrar a primeira posição de um agendamento sem prioridade
-            int firstNonPriorityPosition = 0;
-            
-            for (Appointment app : appointments) {
-                if (app.getPriorityCondition() == PriorityCondition.NO_PRIORITY) {
-                    firstNonPriorityPosition = app.getQueueOrder();
-                    break;
-                }
-            }
-            
-            // Se não encontrou nenhum sem prioridade (todos têm prioridade), 
-            // coloca no final da lista
-            if (firstNonPriorityPosition == 0) {
-                firstNonPriorityPosition = maxPosition + 1;
-            }
-            
-            // A posição atual do agendamento
-            Integer currentPosition = appointment.getQueueOrder();
-            
-            // Se já estiver em posição privilegiada (antes do primeiro não prioritário)
-            // e já tiver prioridade, não precisamos reposicionar
-            if (currentPosition < firstNonPriorityPosition && 
-                appointment.getPriorityCondition() != PriorityCondition.NO_PRIORITY) {
-                return;
-            }
-            
-            // Nova posição será logo antes do primeiro não prioritário
-            int newPosition = firstNonPriorityPosition;
-            
-            // Garantir que a posição é válida
-            if (newPosition <= maxPosition) {
-                reorderQueue(appointmentID, newPosition);
-            } else {
-                // Este caso ocorre quando todos têm prioridade e estamos adicionando ao final
-                reorderQueue(appointmentID, maxPosition);
-            }
+            //Aplica a nova posição, respeitando os limites da fila.
+            applyNewPosition(appointmentID, newPosition, appointmentType);
         } catch (Exception e) {
             System.err.println("Erro em insertWithPriority: " + e.getMessage());
             e.printStackTrace();
@@ -203,21 +167,47 @@ public class QueueService {
         appointmentRepository.save(appointment);
     }
 
-    //Método auxiliar para percorrer a lista de Appointments de um AppointmentType
-    //e retornar a maior posição na fila de um agendamento com prioridade.
-    private int lockForNewPositionForPriority(AppointmentType appointmentType){
+    private boolean shouldRepositionAppointment(Appointment appointment, AppointmentType appointmentType) {
+        //Se a fila estiver vazia, não reposiciona.
+        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentType.getId());
+        if (maxPosition == null || maxPosition == 0) {
+            return false;
+        }
+        
+        //Se já estiver em posição privilegiada, não reposiciona.
+        int firstNonPriorityPosition = findFirstNonPriorityPosition(appointmentType);
+        Integer currentPosition = appointment.getQueueOrder();
+        
+        return !(currentPosition < firstNonPriorityPosition && 
+                 appointment.getPriorityCondition() != PriorityCondition.NO_PRIORITY);
+    }    
+
+    private int findFirstNonPriorityPosition(AppointmentType appointmentType) {
         List<Appointment> appointments = appointmentRepository.findByAppointmentTypeIdOrderByQueueOrder(appointmentType.getId());
         
-        int largestQueueOrderOfPriority = 0; //Inicialmente, assume que não há appointments com prioridade.
-
-        for(Appointment app : appointments){
-            if(app.getPriorityCondition() != PriorityCondition.NO_PRIORITY){
-                if(app.getQueueOrder() > largestQueueOrderOfPriority){
-                    largestQueueOrderOfPriority = app.getQueueOrder();
-                }
+        for (Appointment app : appointments) {
+            if (app.getPriorityCondition() == PriorityCondition.NO_PRIORITY) {
+                return app.getQueueOrder();
             }
         }
+        
+        //Se todos têm prioridade, retorna posição após o último.
+        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentType.getId());
+        return maxPosition + 1;
+    }
 
-        return largestQueueOrderOfPriority + 1; //+1 para a nova posição.
+    private int calculatePriorityPosition(AppointmentType appointmentType) {
+        return findFirstNonPriorityPosition(appointmentType);
+    }
+
+    private void applyNewPosition(Long appointmentId, int newPosition, AppointmentType appointmentType) {
+        Integer maxPosition = appointmentTypeRepository.findMaxQueueOrderForAppointmentType(appointmentType.getId());
+        
+        if (newPosition <= maxPosition) {
+            reorderQueue(appointmentId, newPosition);
+        } else {
+            //Se a posição calculada exceder o tamanho da fila, coloca no final.
+            reorderQueue(appointmentId, maxPosition);
+        }
     }
 }
