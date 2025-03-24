@@ -80,7 +80,7 @@ public class Appointment {
         return appointmentType.getDescription();
     }
 
-    public List<String>getAppointmentTypeCategory() {
+    public List<String> getAppointmentTypeCategory() {
         return appointmentType.getCategory();
     }
 
@@ -152,7 +152,7 @@ public class Appointment {
     public Integer getQueueOrder() {
         return queueOrder;
     }
-    
+
     public void setQueueOrder(Integer queueOrder) {
         this.queueOrder = queueOrder;
     }
@@ -163,5 +163,43 @@ public class Appointment {
 
     public void setPriorityCondition(PriorityCondition priorityCondition) {
         this.priorityCondition = priorityCondition;
+    }
+
+    // Adicione a variável startTime para armazenar o horário de início do atendimento
+    private LocalDateTime startTime;
+
+    // Getter para o startTime
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    // Setter para o startTime
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    // Adicionando os métodos para checkInTime e endTime
+
+    private LocalDateTime checkInTime;
+    private LocalDateTime endTime;
+
+    // Getter para o checkInTime
+    public LocalDateTime getCheckInTime() {
+        return checkInTime;
+    }
+
+    // Setter para o checkInTime
+    public void setCheckInTime(LocalDateTime checkInTime) {
+        this.checkInTime = checkInTime;
+    }
+
+    // Getter para o endTime
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    // Setter para o endTime
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }
