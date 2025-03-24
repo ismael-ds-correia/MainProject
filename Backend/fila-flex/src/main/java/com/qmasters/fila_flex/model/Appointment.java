@@ -186,7 +186,7 @@ public class Appointment {
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
-
+    }
     public LocalDateTime getStartTime() {
         return startTime;
     }
