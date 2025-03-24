@@ -50,6 +50,12 @@ public class Appointment {
     
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+  
+    private LocalDateTime checkInTime; //horario que a pessoa chegou no local
+  
+    private LocalDateTime startTime; //horario que a pessoa foi atendida
+  
+    private LocalDateTime endTime; //horario que o atendimento foi finalizado
 
     //=================================variaveis Transients======================================
     //as variaveis transients não são obrigatorias nesta classe, mas baseado na ordem que elas estão
@@ -89,7 +95,7 @@ public class Appointment {
         return appointmentType.getDescription();
     }
 
-    public List<String>getAppointmentTypeCategory() {
+    public List<String> getAppointmentTypeCategory() {
         return appointmentType.getCategory();
     }
 
@@ -161,7 +167,7 @@ public class Appointment {
     public Integer getQueueOrder() {
         return queueOrder;
     }
-    
+
     public void setQueueOrder(Integer queueOrder) {
         this.queueOrder = queueOrder;
     }
@@ -173,11 +179,36 @@ public class Appointment {
     public void setPriorityCondition(PriorityCondition priorityCondition) {
         this.priorityCondition = priorityCondition;
     }
+
     public AppointmentStatus getStatus() {
         return status;
     }
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getCheckInTime() {
+        return checkInTime;
+    }
+
+    public void setCheckInTime(LocalDateTime checkInTime) {
+        this.checkInTime = checkInTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+
     }
 }
