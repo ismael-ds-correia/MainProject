@@ -60,7 +60,7 @@ class EvaluationServiceTest {
     @Test
     void testAddEvaluation_InvalidRating() {
         EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(6);
+        dto.setRating(6);  // Classificação inválida
         
         assertThrows(InvalidRatingException.class, () -> evaluationService.addEvaluation(dto));
     }
@@ -88,8 +88,9 @@ class EvaluationServiceTest {
         
         when(evaluationRepository.findAll()).thenReturn(List.of(eval1, eval2));
         
-        List<Evaluation> evaluations = evaluationService.getAllEvaluations();
+        List<Evaluation> evaluations = evaluationService.getAllEvaluations().getBody();
         
+        assertNotNull(evaluations);
         assertEquals(2, evaluations.size());
         assertEquals("Excellent", evaluations.get(0).getComment());
     }

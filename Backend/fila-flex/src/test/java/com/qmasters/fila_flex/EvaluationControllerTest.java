@@ -61,7 +61,7 @@ class EvaluationControllerTest {
 
         ResponseEntity<Double> response = evaluationController.getAverageRating();
 
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(4.0, response.getBody());
     }
 
@@ -72,7 +72,7 @@ class EvaluationControllerTest {
         evaluation.setComment("Good");
         evaluation.setAppointmentType(new AppointmentType());
 
-        when(evaluationService.getAllEvaluations()).thenReturn(List.of(evaluation));
+        when(evaluationService.getAllEvaluations()).thenReturn(ResponseEntity.ok(List.of(evaluation)));
 
         List<EvaluationDTO> evaluations = evaluationController.listEvaluations();
 

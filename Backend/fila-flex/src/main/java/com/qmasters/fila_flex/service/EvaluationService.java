@@ -24,22 +24,35 @@ public class EvaluationService {
         this.appointmentTypeRepository = appointmentTypeRepository;
     }
 
+    // Método para salvar a avaliação
     public Evaluation save(EvaluationDTO evaluationDTO) {
         if (evaluationDTO.getRating() < 0 || evaluationDTO.getRating() > 5) {
             throw new InvalidRatingException("Rating must be between 0 and 5");
         }
 
         AppointmentType appointmentType = appointmentTypeRepository.findById(evaluationDTO.getAppointmentTypeId())
-
                 .orElseThrow(() -> new NoSuchElementException("AppointmentType not found"));
 
-
         Evaluation evaluation = new Evaluation(evaluationDTO.getRating(), evaluationDTO.getComment(), appointmentType);
-    
 
         return evaluationRepository.save(evaluation);
     }
 
+    // Método para adicionar uma avaliação
+    public Evaluation addEvaluation(EvaluationDTO evaluationDTO) {
+        if (evaluationDTO.getRating() < 1 || evaluationDTO.getRating() > 5) {
+            throw new InvalidRatingException("A classificação deve ser entre 1 e 5.");
+        }
+
+        AppointmentType appointmentType = appointmentTypeRepository.findById(evaluationDTO.getAppointmentTypeId())
+                .orElseThrow(() -> new NoSuchElementException("Tipo de agendamento não encontrado"));
+
+        Evaluation evaluation = new Evaluation(evaluationDTO.getRating(), evaluationDTO.getComment(), appointmentType);
+
+        return evaluationRepository.save(evaluation);
+    }
+
+    // Método para obter todas as avaliações
     public ResponseEntity<List<Evaluation>> getAllEvaluations() {
         List<Evaluation> evaluations = evaluationRepository.findAll();
         return ResponseEntity.ok(evaluations);
