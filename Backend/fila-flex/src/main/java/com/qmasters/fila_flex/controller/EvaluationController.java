@@ -1,7 +1,6 @@
 package com.qmasters.fila_flex.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,16 +35,18 @@ public class EvaluationController {
 
     @GetMapping
     public List<EvaluationDTO> listEvaluations() {
-        return evaluationService.getAllEvaluations().stream()
-                .map(evaluation -> {
-                    EvaluationDTO dto = new EvaluationDTO();
-                    dto.setRating(evaluation.getRating());
-                    dto.setComment(evaluation.getComment());
-                    dto.setAppointmentTypeId(evaluation.getAppointmentType().getId());
-                    return dto;
-                })
-                .collect(Collectors.toList());
+    return evaluationService.getAllEvaluations().stream()
+            // Usando o método toList() recomendado pelo SonarCloud para evitar problemas de manutenção
+            .map(evaluation -> {
+                EvaluationDTO dto = new EvaluationDTO();
+                dto.setRating(evaluation.getRating());
+                dto.setComment(evaluation.getComment());
+                dto.setAppointmentTypeId(evaluation.getAppointmentType().getId());
+                return dto;
+            })
+            .toList();  
     }
+
 
     @GetMapping("/average")
     public ResponseEntity<Double> getAverageRating() {
