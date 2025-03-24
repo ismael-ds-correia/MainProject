@@ -1,13 +1,13 @@
 package com.qmasters.fila_flex.controller;
 
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
 import com.qmasters.fila_flex.dto.EvaluationDTO;
 import com.qmasters.fila_flex.model.Evaluation;
@@ -16,9 +16,10 @@ import com.qmasters.fila_flex.service.EvaluationService;
 @RestController
 @RequestMapping("/evaluations")
 public class EvaluationController {
-    @Autowired //não precisa de autowired
+    
     private final EvaluationService evaluationService;
 
+    // Remover a anotação @Autowired, pois a injeção é feita via construtor
     public EvaluationController(EvaluationService evaluationService) {
         this.evaluationService = evaluationService;
     }
@@ -34,7 +35,7 @@ public class EvaluationController {
     }
 
     @GetMapping
-    public List<EvaluationDTO> listEvaluations() { //a pra simplificar isso daqui
+    public List<EvaluationDTO> listEvaluations() {
         return evaluationService.getAllEvaluations().stream()
                 .map(evaluation -> {
                     EvaluationDTO dto = new EvaluationDTO();
@@ -43,6 +44,12 @@ public class EvaluationController {
                     dto.setAppointmentTypeId(evaluation.getAppointmentType().getId());
                     return dto;
                 })
-                .toList();
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/average")
+    public ResponseEntity<Double> getAverageRating() {
+        double average = evaluationService.calculateAverageRating();
+        return ResponseEntity.ok(average);
     }
 }

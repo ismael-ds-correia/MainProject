@@ -13,6 +13,7 @@ import com.qmasters.fila_flex.repository.EvaluationRepository;
 
 @Service
 public class EvaluationService {
+    
     private final EvaluationRepository evaluationRepository;
     private final AppointmentTypeRepository appointmentTypeRepository;
 
@@ -28,7 +29,6 @@ public class EvaluationService {
 
         AppointmentType appointmentType = appointmentTypeRepository.findById(evaluationDTO.getAppointmentTypeId())
                 .orElseThrow(() -> new RuntimeException("AppointmentType not found"));
-        // trocar o runtimeException para NoSuchElementException
 
         Evaluation evaluation = new Evaluation();
         evaluation.setRating(evaluationDTO.getRating());
@@ -40,5 +40,14 @@ public class EvaluationService {
 
     public List<Evaluation> getAllEvaluations() {
         return evaluationRepository.findAll();
+    }
+
+    // Método que calcula a média das avaliações
+    public double calculateAverageRating() {
+        List<Evaluation> evaluations = evaluationRepository.findAll();
+        return evaluations.stream()
+                .mapToInt(Evaluation::getRating)
+                .average()
+                .orElse(0.0);
     }
 }
