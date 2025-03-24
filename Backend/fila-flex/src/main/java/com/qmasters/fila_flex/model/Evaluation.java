@@ -20,11 +20,20 @@ public class Evaluation {
     private String comment;
 
     @ManyToOne
-    @JsonBackReference //só usar o JsonIgnore aqui, e a AppType ja funciona
+    @JsonBackReference
     @JoinColumn(name = "appointment_type_id")
     private AppointmentType appointmentType;
 
-    //falta construtor
+    // Construtor padrão
+    public Evaluation() {
+    }
+
+    // Construtor com parâmetros
+    public Evaluation(int rating, String comment, AppointmentType appointmentType) {
+        this.rating = rating;
+        this.comment = comment;
+        this.appointmentType = appointmentType;
+    }
 
     // Getters and Setters
     public Long getId() {
@@ -50,6 +59,7 @@ public class Evaluation {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
     public AppointmentType getAppointmentType() {
         return appointmentType;
     }
@@ -57,5 +67,4 @@ public class Evaluation {
     public void setAppointmentType(AppointmentType appointmentType) {
         this.appointmentType = appointmentType;
     }
-    
 }

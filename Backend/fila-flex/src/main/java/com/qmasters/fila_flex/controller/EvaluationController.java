@@ -2,7 +2,7 @@ package com.qmasters.fila_flex.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,13 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qmasters.fila_flex.dto.EvaluationDTO;
-import com.qmasters.fila_flex.model.Evaluation;
 import com.qmasters.fila_flex.service.EvaluationService;
 
 @RestController
 @RequestMapping("/evaluations")
 public class EvaluationController {
-    @Autowired //não precisa de autowired
     private final EvaluationService evaluationService;
 
     public EvaluationController(EvaluationService evaluationService) {
@@ -24,25 +22,12 @@ public class EvaluationController {
     }
 
     @PostMapping
-    public EvaluationDTO createEvaluation(@RequestBody EvaluationDTO evaluationDTO) {
-        Evaluation evaluation = evaluationService.addEvaluation(evaluationDTO);
-        EvaluationDTO responseDTO = new EvaluationDTO();
-        responseDTO.setRating(evaluation.getRating());
-        responseDTO.setComment(evaluation.getComment());
-        responseDTO.setAppointmentTypeId(evaluation.getAppointmentType().getId());
-        return responseDTO;
+    public ResponseEntity<EvaluationDTO> createEvaluation(@RequestBody EvaluationDTO evaluationDTO) {
+        return evaluationService.addEvaluation(evaluationDTO);
     }
 
     @GetMapping
-    public List<EvaluationDTO> listEvaluations() { //a pra simplificar isso daqui
-        return evaluationService.getAllEvaluations().stream()
-                .map(evaluation -> {
-                    EvaluationDTO dto = new EvaluationDTO();
-                    dto.setRating(evaluation.getRating());
-                    dto.setComment(evaluation.getComment());
-                    dto.setAppointmentTypeId(evaluation.getAppointmentType().getId());
-                    return dto;
-                })
-                .toList();
+    public ResponseEntity<List<EvaluationDTO>> listEvaluations() {
+        return evaluationService.getAllEvaluations();
     }
 }

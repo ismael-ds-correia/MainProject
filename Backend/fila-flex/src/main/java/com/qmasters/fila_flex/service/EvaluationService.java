@@ -1,7 +1,9 @@
 package com.qmasters.fila_flex.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.dto.EvaluationDTO;
@@ -21,24 +23,38 @@ public class EvaluationService {
         this.appointmentTypeRepository = appointmentTypeRepository;
     }
 
-    public Evaluation addEvaluation(EvaluationDTO evaluationDTO) {
+    public ResponseEntity<EvaluationDTO> addEvaluation(EvaluationDTO evaluationDTO) {
         if (evaluationDTO.getRating() < 0 || evaluationDTO.getRating() > 5) {
             throw new InvalidRatingException("Rating must be between 0 and 5");
         }
 
         AppointmentType appointmentType = appointmentTypeRepository.findById(evaluationDTO.getAppointmentTypeId())
-                .orElseThrow(() -> new RuntimeException("AppointmentType not found"));
-        // trocar o runtimeException para NoSuchElementException
+                .orElseThrow(() -> new NoSuchElementException("AppointmentType not found"));
 
         Evaluation evaluation = new Evaluation();
         evaluation.setRating(evaluationDTO.getRating());
         evaluation.setComment(evaluationDTO.getComment());
         evaluation.setAppointmentType(appointmentType);
 
-        return evaluationRepository.save(evaluation);
+        Evaluation savedEvaluation = evaluationRepository.save(evaluation);
+        EvaluationDTO responseDTO = new EvaluationDTO();
+        responseDTO.setRating(savedEvaluation.getRating());
+        responseDTO.setComment(savedEvaluation.getComment());
+        responseDTO.setAppointmentTypeId(savedEvaluation.getAppointmentType().getId());
+
+        return ResponseEntity.ok(responseDTO);
     }
 
-    public List<Evaluation> getAllEvaluations() {
-        return evaluationRepository.findAll();
+    public ResponseEntity<List<EvaluationDTO>> getAllEvaluations() {
+        List<EvaluationDTO> evaluations = evaluationRepository.findAll().stream()
+                .map(evaluation -> {
+                    EvaluationDTO dto = new EvaluationDTO();
+                    dto.setRating(evaluation.getRating());
+                    dto.setComment(evaluation.getComment());
+                    dto.setAppointmentTypeId(evaluation.getAppointmentType().getId());
+                    return dto;
+                })
+                .toList();
+        return ResponseEntity.ok(evaluations);
     }
 }
