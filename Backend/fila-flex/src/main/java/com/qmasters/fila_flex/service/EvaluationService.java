@@ -1,7 +1,9 @@
 package com.qmasters.fila_flex.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.dto.EvaluationDTO;
@@ -22,24 +24,25 @@ public class EvaluationService {
         this.appointmentTypeRepository = appointmentTypeRepository;
     }
 
-    public Evaluation addEvaluation(EvaluationDTO evaluationDTO) {
+    public Evaluation save(EvaluationDTO evaluationDTO) {
         if (evaluationDTO.getRating() < 0 || evaluationDTO.getRating() > 5) {
             throw new InvalidRatingException("Rating must be between 0 and 5");
         }
 
         AppointmentType appointmentType = appointmentTypeRepository.findById(evaluationDTO.getAppointmentTypeId())
-                .orElseThrow(() -> new RuntimeException("AppointmentType not found"));
 
-        Evaluation evaluation = new Evaluation();
-        evaluation.setRating(evaluationDTO.getRating());
-        evaluation.setComment(evaluationDTO.getComment());
-        evaluation.setAppointmentType(appointmentType);
+                .orElseThrow(() -> new NoSuchElementException("AppointmentType not found"));
+
+
+        Evaluation evaluation = new Evaluation(evaluationDTO.getRating(), evaluationDTO.getComment(), appointmentType);
+    
 
         return evaluationRepository.save(evaluation);
     }
 
-    public List<Evaluation> getAllEvaluations() {
-        return evaluationRepository.findAll();
+    public ResponseEntity<List<Evaluation>> getAllEvaluations() {
+        List<Evaluation> evaluations = evaluationRepository.findAll();
+        return ResponseEntity.ok(evaluations);
     }
 
     // Método que calcula a média das avaliações
