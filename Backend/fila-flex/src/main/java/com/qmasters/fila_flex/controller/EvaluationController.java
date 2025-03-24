@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qmasters.fila_flex.dto.EvaluationDTO;
+import com.qmasters.fila_flex.model.Evaluation;
 import com.qmasters.fila_flex.service.EvaluationService;
 
 @RestController
@@ -22,12 +23,13 @@ public class EvaluationController {
     }
 
     @PostMapping
-    public ResponseEntity<EvaluationDTO> createEvaluation(@RequestBody EvaluationDTO evaluationDTO) {
-        return evaluationService.addEvaluation(evaluationDTO);
+    public ResponseEntity<Evaluation> createEvaluation(@RequestBody EvaluationDTO evaluationDTO) {
+        var evaluation = evaluationService.save(evaluationDTO);
+        return ResponseEntity.ok(evaluation);
     }
 
     @GetMapping
-    public ResponseEntity<List<EvaluationDTO>> listEvaluations() {
+    public ResponseEntity<List<Evaluation>> listEvaluations() {
         return evaluationService.getAllEvaluations();
     }
 }

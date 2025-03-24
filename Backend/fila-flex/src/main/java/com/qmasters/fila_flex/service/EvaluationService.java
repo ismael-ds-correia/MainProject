@@ -23,7 +23,7 @@ public class EvaluationService {
         this.appointmentTypeRepository = appointmentTypeRepository;
     }
 
-    public ResponseEntity<EvaluationDTO> addEvaluation(EvaluationDTO evaluationDTO) {
+    public Evaluation save(EvaluationDTO evaluationDTO) {
         if (evaluationDTO.getRating() < 0 || evaluationDTO.getRating() > 5) {
             throw new InvalidRatingException("Rating must be between 0 and 5");
         }
@@ -31,30 +31,14 @@ public class EvaluationService {
         AppointmentType appointmentType = appointmentTypeRepository.findById(evaluationDTO.getAppointmentTypeId())
                 .orElseThrow(() -> new NoSuchElementException("AppointmentType not found"));
 
-        Evaluation evaluation = new Evaluation();
-        evaluation.setRating(evaluationDTO.getRating());
-        evaluation.setComment(evaluationDTO.getComment());
-        evaluation.setAppointmentType(appointmentType);
+        Evaluation evaluation = new Evaluation(evaluationDTO.getRating(), evaluationDTO.getComment(), appointmentType);
+    
 
-        Evaluation savedEvaluation = evaluationRepository.save(evaluation);
-        EvaluationDTO responseDTO = new EvaluationDTO();
-        responseDTO.setRating(savedEvaluation.getRating());
-        responseDTO.setComment(savedEvaluation.getComment());
-        responseDTO.setAppointmentTypeId(savedEvaluation.getAppointmentType().getId());
-
-        return ResponseEntity.ok(responseDTO);
+        return evaluationRepository.save(evaluation);
     }
 
-    public ResponseEntity<List<EvaluationDTO>> getAllEvaluations() {
-        List<EvaluationDTO> evaluations = evaluationRepository.findAll().stream()
-                .map(evaluation -> {
-                    EvaluationDTO dto = new EvaluationDTO();
-                    dto.setRating(evaluation.getRating());
-                    dto.setComment(evaluation.getComment());
-                    dto.setAppointmentTypeId(evaluation.getAppointmentType().getId());
-                    return dto;
-                })
-                .toList();
+    public ResponseEntity<List<Evaluation>> getAllEvaluations() {
+        List<Evaluation> evaluations = evaluationRepository.findAll();
         return ResponseEntity.ok(evaluations);
     }
 }
