@@ -1,21 +1,22 @@
-package com.qmasters.fila_flex;
+/* */
+package com.qmasters.fila_flex.testController;
 
-import com.qmasters.fila_flex.dto.EvaluationDTO;
-import com.qmasters.fila_flex.model.AppointmentType;
-import com.qmasters.fila_flex.model.Evaluation;
-import com.qmasters.fila_flex.service.EvaluationService;
-import com.qmasters.fila_flex.controller.EvaluationController;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.ResponseEntity;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.List;
+import com.qmasters.fila_flex.controller.EvaluationController;
+import com.qmasters.fila_flex.dto.EvaluationDTO;
+import com.qmasters.fila_flex.model.AppointmentType;
+import com.qmasters.fila_flex.model.Evaluation;
+import com.qmasters.fila_flex.service.EvaluationService;
 
 class EvaluationControllerTest {
 

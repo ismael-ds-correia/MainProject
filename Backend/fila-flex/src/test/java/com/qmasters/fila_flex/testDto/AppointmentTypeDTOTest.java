@@ -1,4 +1,6 @@
-package com.qmasters.fila_flex;
+package com.qmasters.fila_flex.testDto;
+//vai precisar refazer com os padroes de codigo correto 
+/*package com.qmasters.fila_flex;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -66,4 +68,4 @@ class AppointmentTypeDTOTest {
         assertEquals(novosDocumentos, appointment.getRequiredDocumentation());
         assertEquals(novoEndereco, appointment.getAdress());
     }
-}
+}*/

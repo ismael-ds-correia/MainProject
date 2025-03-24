@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.persistence.Column;
@@ -46,6 +47,10 @@ public class Appointment {
     @Enumerated(EnumType.STRING) //Usando para salvar o enum como string no banco de dados, e não como um número.
     private PriorityCondition priorityCondition;
 
+    
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
+
     //=================================variaveis Transients======================================
     //as variaveis transients não são obrigatorias nesta classe, mas baseado na ordem que elas estão
     //listadas aqui, elas serão exibidas desta mesma ordem no Insomnia
@@ -54,6 +59,9 @@ public class Appointment {
     private Integer queueOrder;
 
     //=================================Construtores======================================
+
+    // Getters e setters
+
 
     public Appointment() {
     
@@ -66,6 +74,7 @@ public class Appointment {
         this.createdDateTime = LocalDateTime.now();//registra a hora atual
         this.queueOrder = 0; //Valor temporário, será atualizado pelo service.
         this.priorityCondition = PriorityCondition.NO_PRIORITY; //Valor padrão, para alterar usar o setter.
+        this.status = AppointmentStatus.MARKED;
     }
 
     //================================Getters e Setters Transients================================
@@ -163,5 +172,12 @@ public class Appointment {
 
     public void setPriorityCondition(PriorityCondition priorityCondition) {
         this.priorityCondition = priorityCondition;
+    }
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
     }
 }

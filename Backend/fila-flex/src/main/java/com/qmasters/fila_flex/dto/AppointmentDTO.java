@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.qmasters.fila_flex.model.AppointmentType;
+import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
@@ -25,6 +26,7 @@ public class AppointmentDTO {
     private String appointmentTypeEstimatedTime; //transient
     private List<String> appointmentTypeRequiredDocumentation; //transient
     private String appointmentTypeAdress; //transient
+    private AppointmentStatus status;
 
 
     //================================Construtores===================================
@@ -48,6 +50,7 @@ public class AppointmentDTO {
         this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime()); //transient
         this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation(); //transient
         this.appointmentTypeAdress = appointmentType.getAdressAsString(); //transient
+        this.status = AppointmentStatus.MARKED; // Status padrão ao criar
     }
 
     //Construtor para incluir queueOrder.
@@ -69,6 +72,7 @@ public class AppointmentDTO {
         this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime());
         this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation();
         this.appointmentTypeAdress = appointmentType.getAdressAsString();
+        this.status = AppointmentStatus.MARKED;
     }
 
     //Mais uma sobrecarga de construtor para incluir priorityCondition.
@@ -91,6 +95,7 @@ public class AppointmentDTO {
         this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime());
         this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation();
         this.appointmentTypeAdress = appointmentType.getAdressAsString();
+        this.status = AppointmentStatus.MARKED;
     }
 
     //=================================Getter e Setters transients========================================
@@ -216,5 +221,12 @@ public class AppointmentDTO {
 
     public void setPriorityCondition(PriorityCondition priorityCondition) {
         this.priorityCondition = priorityCondition;
+    }
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status; // Para alterar dinamicamente conforme a fila
     }
 }
