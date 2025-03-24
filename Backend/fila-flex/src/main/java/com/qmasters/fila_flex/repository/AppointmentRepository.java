@@ -9,9 +9,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.qmasters.fila_flex.model.Appointment;
+import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+    //para listar os agendamentos pelo status dele e conseguirmos pegar os que ainda estão na fila
+    List<Appointment> findByStatusInOrderByQueueOrder(List<AppointmentStatus> statuses);
+    
+    Appointment findFirstByAppointmentTypeIdAndStatusOrderByQueueOrder(Long appointmentTypeId, AppointmentStatus status);
     
     //função de retornar todos os agendamentos entre duas datas
     @Query("SELECT a FROM Appointment a WHERE a.scheduledDateTime BETWEEN :startDate AND :endDate")
@@ -29,4 +34,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             @Param("endPosition") Integer endPosition);
 
             List<Appointment> findByAppointmentTypeIdOrderByQueueOrder(Long appointmentTypeId);
+    
 }

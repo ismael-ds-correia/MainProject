@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.persistence.Column;
@@ -46,6 +47,16 @@ public class Appointment {
     @Enumerated(EnumType.STRING) //Usando para salvar o enum como string no banco de dados, e não como um número.
     private PriorityCondition priorityCondition;
 
+    
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
+  
+    private LocalDateTime checkInTime; //horario que a pessoa chegou no local
+  
+    private LocalDateTime startTime; //horario que a pessoa foi atendida
+  
+    private LocalDateTime endTime; //horario que o atendimento foi finalizado
+
     //=================================variaveis Transients======================================
     //as variaveis transients não são obrigatorias nesta classe, mas baseado na ordem que elas estão
     //listadas aqui, elas serão exibidas desta mesma ordem no Insomnia
@@ -54,6 +65,9 @@ public class Appointment {
     private Integer queueOrder;
 
     //=================================Construtores======================================
+
+    // Getters e setters
+
 
     public Appointment() {
     
@@ -66,6 +80,7 @@ public class Appointment {
         this.createdDateTime = LocalDateTime.now();//registra a hora atual
         this.queueOrder = 0; //Valor temporário, será atualizado pelo service.
         this.priorityCondition = PriorityCondition.NO_PRIORITY; //Valor padrão, para alterar usar o setter.
+        this.status = AppointmentStatus.MARKED;
     }
 
     //================================Getters e Setters Transients================================
@@ -165,41 +180,35 @@ public class Appointment {
         this.priorityCondition = priorityCondition;
     }
 
-    // Adicione a variável startTime para armazenar o horário de início do atendimento
-    private LocalDateTime startTime;
+    public AppointmentStatus getStatus() {
+        return status;
+    }
 
-    // Getter para o startTime
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
+
     public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    // Setter para o startTime
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    // Adicionando os métodos para checkInTime e endTime
-
-    private LocalDateTime checkInTime;
-    private LocalDateTime endTime;
-
-    // Getter para o checkInTime
     public LocalDateTime getCheckInTime() {
         return checkInTime;
     }
 
-    // Setter para o checkInTime
     public void setCheckInTime(LocalDateTime checkInTime) {
         this.checkInTime = checkInTime;
     }
 
-    // Getter para o endTime
     public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    // Setter para o endTime
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+
     }
 }
