@@ -5,7 +5,6 @@ import java.util.List;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.model.Appointment;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +12,6 @@ public class ReportService {
 
     private final AppointmentRepository appointmentRepository;
 
-    @Autowired
     public ReportService(AppointmentRepository appointmentRepository) {
         this.appointmentRepository = appointmentRepository;
     }

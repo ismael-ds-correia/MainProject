@@ -3,7 +3,6 @@ package com.qmasters.fila_flex.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import com.qmasters.fila_flex.service.ReportService;
 import com.qmasters.fila_flex.model.Appointment;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +17,6 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    @Autowired
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
     }
