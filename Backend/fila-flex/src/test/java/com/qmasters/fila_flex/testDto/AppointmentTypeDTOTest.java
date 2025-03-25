@@ -1,11 +1,11 @@
 package com.qmasters.fila_flex.testDto;
-//vai precisar refazer com os padroes de codigo correto 
-/*package com.qmasters.fila_flex;
+
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.qmasters.fila_flex.dto.AppointmentTypeDTO;
@@ -13,59 +13,120 @@ import com.qmasters.fila_flex.model.Adress;
 
 class AppointmentTypeDTOTest {
 
-    @Test
-    void testConstrutorComParametros() {
-        LocalDate data = LocalDate.of(2025, 3, 19);
-        List<String> categorias = Arrays.asList("Saúde", "Beleza");
-        List<String> documentos = Arrays.asList("RG", "Comprovante de Endereço");
-        Adress endereco = new Adress("Rua Exemplo", "123", "Bairro Exemplo", "Cidade Exemplo", "Estado Exemplo");
+    private AppointmentTypeDTO appointmentTypeDTO;
+    private Adress adress;
 
-        AppointmentTypeDTO appointment = new AppointmentTypeDTO(
-            "Consulta",
-            "Consulta médica geral",
-            categorias,
-            150.0,
-            30,
-            data,
-            documentos,
-            endereco
+    @BeforeEach
+    void setUp() {
+        // Inicialização dos objetos antes de cada teste
+        adress = new Adress();
+        adress.setStreet("Rua ABC");
+        adress.setNumber("123");
+        adress.setCity("Cidade");
+        adress.setState("Estado");
+        adress.setCountry("Brasil");
+
+        appointmentTypeDTO = new AppointmentTypeDTO(
+            "Consulta Médica", 
+            "Consulta geral", 
+            Arrays.asList("Saúde", "Clínica"), 
+            100.0, 
+            30, 
+            LocalDate.now(), 
+            Arrays.asList("RG", "Comprovante de Residência"), 
+            adress
         );
-
-        assertEquals("Consulta", appointment.getName());
-        assertEquals("Consulta médica geral", appointment.getDescription());
-        assertEquals(categorias, appointment.getCategory());
-        assertEquals(150.0, appointment.getPrice());
-        assertEquals(30, appointment.getEstimatedTime());
-        assertEquals(data, appointment.getAppointmentDate());
-        assertEquals(documentos, appointment.getRequiredDocumentation());
-        assertEquals(endereco, appointment.getAdress());
     }
 
     @Test
-    void testSettersEGetters() {
-        AppointmentTypeDTO appointment = new AppointmentTypeDTO();
-        
-        LocalDate novaData = LocalDate.of(2025, 4, 10);
-        List<String> novasCategorias = Arrays.asList("Educação", "Tecnologia");
-        List<String> novosDocumentos = Arrays.asList("CPF", "Certificado");
-        Adress novoEndereco = new Adress("Avenida Principal", "456", "Bairro Principal", "Cidade Principal", "Estado Principal");
-
-        appointment.setName("Aula Particular");
-        appointment.setDescription("Aula de programação");
-        appointment.setCategory(novasCategorias);
-        appointment.setPrice(200.0);
-        appointment.setEstimatedTime(60);
-        appointment.setAppointmentDate(novaData);
-        appointment.setRequiredDocumentation(novosDocumentos);
-        appointment.setAdress(novoEndereco);
-
-        assertEquals("Aula Particular", appointment.getName());
-        assertEquals("Aula de programação", appointment.getDescription());
-        assertEquals(novasCategorias, appointment.getCategory());
-        assertEquals(200.0, appointment.getPrice());
-        assertEquals(60, appointment.getEstimatedTime());
-        assertEquals(novaData, appointment.getAppointmentDate());
-        assertEquals(novosDocumentos, appointment.getRequiredDocumentation());
-        assertEquals(novoEndereco, appointment.getAdress());
+    void testConstructor() {
+        // Verifica se o construtor está funcionando corretamente
+        assertNotNull(appointmentTypeDTO);
+        assertEquals("Consulta Médica", appointmentTypeDTO.getName());
+        assertEquals("Consulta geral", appointmentTypeDTO.getDescription());
+        assertEquals(100.0, appointmentTypeDTO.getPrice());
+        assertEquals(30, appointmentTypeDTO.getEstimatedTime());
+        assertEquals(LocalDate.now(), appointmentTypeDTO.getAppointmentDate());
+        assertEquals(2, appointmentTypeDTO.getRequiredDocumentation().size());
+        assertEquals("Rua ABC", appointmentTypeDTO.getAdress().getStreet());
     }
-}*/
+
+    @Test
+    void testSettersAndGetters() {
+        // Teste dos setters e getters
+        appointmentTypeDTO.setName("Vacinação");
+        appointmentTypeDTO.setDescription("Vacinação contra gripe");
+        appointmentTypeDTO.setCategory(Arrays.asList("Vacina", "Saúde"));
+        appointmentTypeDTO.setPrice(150.0);
+        appointmentTypeDTO.setEstimatedTime(20);
+        appointmentTypeDTO.setAppointmentDate(LocalDate.now().plusDays(1));
+        appointmentTypeDTO.setRequiredDocumentation(Arrays.asList("Cartão de Vacinas"));
+        
+        Adress newAdress = new Adress();
+        newAdress.setStreet("Rua XYZ");
+        newAdress.setNumber("456");
+        newAdress.setCity("Nova Cidade");
+        newAdress.setState("Novo Estado");
+        newAdress.setCountry("Novo País");
+
+        appointmentTypeDTO.setAdress(newAdress);
+
+        // Verificar se os valores foram corretamente definidos
+        assertEquals("Vacinação", appointmentTypeDTO.getName());
+        assertEquals("Vacinação contra gripe", appointmentTypeDTO.getDescription());
+        assertEquals(150.0, appointmentTypeDTO.getPrice());
+        assertEquals(20, appointmentTypeDTO.getEstimatedTime());
+        assertEquals(LocalDate.now().plusDays(1), appointmentTypeDTO.getAppointmentDate());
+        assertEquals(1, appointmentTypeDTO.getRequiredDocumentation().size());
+        assertEquals("Rua XYZ", appointmentTypeDTO.getAdress().getStreet());
+    }
+
+    @Test
+    void testAdressGetterAndSetter() {
+        // Teste para verificar se o getter e setter de "Adress" funcionam corretamente
+        Adress testAdress = new Adress();
+        testAdress.setStreet("Rua Teste");
+        testAdress.setNumber("999");
+        testAdress.setCity("Cidade Teste");
+        testAdress.setState("Estado Teste");
+        testAdress.setCountry("País Teste");
+
+        appointmentTypeDTO.setAdress(testAdress);
+
+        assertNotNull(appointmentTypeDTO.getAdress());
+        assertEquals("Rua Teste", appointmentTypeDTO.getAdress().getStreet());
+        assertEquals("Cidade Teste", appointmentTypeDTO.getAdress().getCity());
+        assertEquals("Estado Teste", appointmentTypeDTO.getAdress().getState());
+        assertEquals("País Teste", appointmentTypeDTO.getAdress().getCountry());
+    }
+
+    @Test
+    void testGetCategory() {
+        // Verificando o getter para category
+        assertNotNull(appointmentTypeDTO.getCategory());
+        assertEquals(2, appointmentTypeDTO.getCategory().size());
+        assertEquals("Saúde", appointmentTypeDTO.getCategory().get(0));
+    }
+
+    @Test
+    void testGetRequiredDocumentation() {
+        // Verificando o getter para requiredDocumentation
+        assertNotNull(appointmentTypeDTO.getRequiredDocumentation());
+        assertEquals(2, appointmentTypeDTO.getRequiredDocumentation().size());
+        assertEquals("RG", appointmentTypeDTO.getRequiredDocumentation().get(0));
+    }
+
+    @Test
+    void testEmptyConstructor() {
+        // Verificando o construtor vazio
+        AppointmentTypeDTO emptyDto = new AppointmentTypeDTO();
+        assertNotNull(emptyDto);
+        assertEquals(null, emptyDto.getName());
+        assertEquals(null, emptyDto.getDescription());
+        assertEquals(0.0, emptyDto.getPrice());
+        assertEquals(null, emptyDto.getEstimatedTime());
+        assertEquals(null, emptyDto.getAppointmentDate());
+        assertEquals(null, emptyDto.getRequiredDocumentation());
+        assertEquals(null, emptyDto.getAdress());
+    }
+}
