@@ -1,5 +1,8 @@
 package com.qmasters.fila_flex.dto;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import com.qmasters.fila_flex.model.Adress;
 import com.qmasters.fila_flex.model.AppointmentTypeDetails;
 
@@ -39,4 +42,58 @@ public class AppointmentTypeDTO {
     public void setAdress(Adress adress) {
         this.adress = adress;
     }
+
+    public void setName(String name) {
+        appointmentTypeDetails.setName(name);
+    }
+
+    public String getName() {
+        return appointmentTypeDetails.getName();
+    }
+
+    public void setDescription(String description) {
+        appointmentTypeDetails.setDescription(description);
+    }
+
+    public String getDescription() {
+        return appointmentTypeDetails.getDescription();
+    }
+
+    public void setCategory(String category) {
+        appointmentTypeDetails.setCategory(category);
+    }
+
+    public List<String> getCategory() {
+        return appointmentTypeDetails.getCategory();
+    }
+
+    public void setCategory(List<String> category) {
+        appointmentTypeDetails.setCategory(category);
+    }
+
+    public void setPrice(Double price) {
+        appointmentTypeDetails.setPrice(price);
+    }
+
+    public Double getPrice() {
+        return appointmentTypeDetails.getPrice();
+    }
+
+    public void setAppointmentDate(LocalDate appointmentDate) {
+        appointmentTypeDetails.setAppointmentDate(appointmentDate);
+    }
+
+    public LocalDate getAppointmentDate() {
+        return appointmentTypeDetails.getAppointmentDate();
+    }
+
+    public void setRequiredDocumentation(List<String> requiredDocumentation) {
+        appointmentTypeDetails.setRequiredDocumentation(requiredDocumentation);
+    }
+
+    public List<String> getRequiredDocumentation() {
+        return appointmentTypeDetails.getRequiredDocumentation();
+    }
+
+    
 }

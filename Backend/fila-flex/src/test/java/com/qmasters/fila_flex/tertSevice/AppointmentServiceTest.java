@@ -1,28 +1,34 @@
 package com.qmasters.fila_flex.tertSevice;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
+import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
+
 import com.qmasters.fila_flex.dto.AppointmentDTO;
 import com.qmasters.fila_flex.exception.TooLateToChangeException;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.model.User;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
-
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.repository.UserRepository;
 import com.qmasters.fila_flex.service.AppointmentService;
 import com.qmasters.fila_flex.service.QueueService;
-
-import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class AppointmentServiceTest {
 

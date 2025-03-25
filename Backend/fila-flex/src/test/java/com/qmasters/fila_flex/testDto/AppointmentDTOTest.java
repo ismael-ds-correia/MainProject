@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import com.qmasters.fila_flex.dto.AppointmentDTO;
 import com.qmasters.fila_flex.model.Adress;
 import com.qmasters.fila_flex.model.AppointmentType;
-import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
 import com.qmasters.fila_flex.model.User;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
 class AppointmentDTOTest {

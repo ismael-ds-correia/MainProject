@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.qmasters.fila_flex.dto.AppointmentTypeDTO;
 import com.qmasters.fila_flex.model.Adress;
+import com.qmasters.fila_flex.model.AppointmentTypeDetails;
 
 class AppointmentTypeDTOTest {
 
@@ -26,14 +27,18 @@ class AppointmentTypeDTOTest {
         adress.setState("Estado");
         adress.setCountry("Brasil");
 
+        AppointmentTypeDetails details = new AppointmentTypeDetails();
+        details.setName("Consulta Médica");
+        details.setDescription("Consulta geral");
+        details.setCategory(Arrays.asList("Saúde", "Clínica"));
+        details.setPrice(100.0);
+        details.setAppointmentDate(LocalDate.now());
+        details.setRequiredDocumentation(Arrays.asList("RG", "Comprovante de Residência"));
+
+        // Usar o construtor atual do DTO
         appointmentTypeDTO = new AppointmentTypeDTO(
-            "Consulta Médica", 
-            "Consulta geral", 
-            Arrays.asList("Saúde", "Clínica"), 
-            100.0, 
+            details, 
             30, 
-            LocalDate.now(), 
-            Arrays.asList("RG", "Comprovante de Residência"), 
             adress
         );
     }
