@@ -60,7 +60,7 @@ public class AppointmentTypeDTO {
     }
 
     public void setCategory(String category) {
-        appointmentTypeDetails.setCategory(category);
+        appointmentTypeDetails.addCategory(category);
     }
 
     public List<String> getCategory() {
