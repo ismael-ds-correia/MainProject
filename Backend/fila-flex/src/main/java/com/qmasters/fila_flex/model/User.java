@@ -12,6 +12,7 @@ import com.qmasters.fila_flex.util.UserRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,8 +39,8 @@ public class User implements UserDetails {
     @NotNull(message = "Nome é obrigatório")
     private String name;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointment> appointments;//talvez tirar o orphan removal caso queira manter os dados após remover User
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Appointment> appointments; //talvez tirar o orphan removal caso queira manter os dados após remover User
 
     //construtores
 
@@ -115,10 +116,10 @@ public class User implements UserDetails {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
-
+    
     @Override
     public String getUsername() {//função sem uso no momento está assim só por obrigação de existir
-        return name;
+        return getName();
     }
 
 }

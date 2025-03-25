@@ -61,16 +61,18 @@ public class AppointmentController {
 
     //Endpoint para buscar agendamentos por ID do usuário
     @GetMapping("/user")
-    public ResponseEntity<?> getAppointmentsByUserId(@RequestParam("userId") Long userId) {
+    public List<Appointment> getAppointmentsByUserId(@RequestParam("userId") Long userId) {
         try {
-            // Usando o método que retorna Appointment completos em vez de SimpleAppointmentDTO
             List<Appointment> appointments = appointmentService.findFullAppointmentsByUserId(userId);
-            return ResponseEntity.ok(appointments);
+
+            if (appointments.isEmpty()) {
+                throw new NoSuchElementException("Nenhum agendamento encontrado para esse usuário");
+            }
+            return appointments;
+
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao buscar agendamentos: " + e.getMessage());
+            throw new IllegalArgumentException("Erro ao buscar agendamentos: " + e.getMessage());
+    
         }
     }
 
