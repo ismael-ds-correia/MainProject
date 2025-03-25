@@ -57,26 +57,46 @@ public class QueueController {
                     .body("Erro ao reordenar: " + e.getMessage());
         }
     }
-    @PutMapping("/queue/{appointmentTypeId}/next")
-    public ResponseEntity<String> callNextInQueue(@PathVariable Long appointmentTypeId) {
+
+    @PutMapping("/appointment-type/{appointmentTypeId}/next")
+    public ResponseEntity<Appointment> callNextAppointment(@PathVariable Long appointmentTypeId) {
         try {
-            queueService.callNextInQueue(appointmentTypeId); // Chama o método para movimentar a fila
-            return ResponseEntity.ok("Próximo agendamento chamado com sucesso.");
+            Appointment nextAppointment = queueService.callNextInQueue(appointmentTypeId);
+            return ResponseEntity.ok(nextAppointment);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao chamar o próximo na fila: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }  
+    
+    @PutMapping("/appointment/{appointmentId}/complete")
+    public ResponseEntity<Appointment> completeAppointment(@PathVariable Long appointmentId) {
+        try {
+            Appointment completedAppointment = queueService.completeAppointment(appointmentId);
+            return ResponseEntity.ok(completedAppointment);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
-    @GetMapping("/in-queue")
-    public ResponseEntity<List<Appointment>> getAppointmentsInQueue() {
-    List<Appointment> appointments = queueService.getAppointmentsInQueue();
-    if (appointments.isEmpty()) {
-        return ResponseEntity.noContent().build(); // Retorna 204 se não houver agendamentos
+    @PutMapping("/appointment/{appointmentId}/check-in")
+    public ResponseEntity<Appointment> registerCheckIn(@PathVariable Long appointmentId) {
+        try {
+            Appointment checkedInAppointment = queueService.registerCheckIn(appointmentId);
+            return ResponseEntity.ok(checkedInAppointment);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
-    return ResponseEntity.ok(appointments); // Retorna a lista com status 200 OK
-}
-    
 }

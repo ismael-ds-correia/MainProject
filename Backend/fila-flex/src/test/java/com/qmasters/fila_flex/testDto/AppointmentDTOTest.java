@@ -102,8 +102,8 @@ class AppointmentDTOTest {
     @Test
     void testSetStatus() {
         AppointmentDTO dto = new AppointmentDTO();
-        dto.setStatus(AppointmentStatus.CANCELLED);
-        assertEquals(AppointmentStatus.CANCELLED, dto.getStatus());
+        dto.setStatus(AppointmentStatus.ATTENDING);
+        assertEquals(AppointmentStatus.ATTENDING, dto.getStatus());
     }
     
 }

@@ -1,5 +1,6 @@
 package com.qmasters.fila_flex.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -110,6 +111,68 @@ public class QueueService {
         }
     }
 
+    @Transactional
+    public Appointment callNextInQueue(Long appointmentTypeId){
+        //Buscando o Appointment com queueOrder = 1 para o AppointmentType especificado
+        Appointment next = appointmentRepository.findByAppointmentTypeIdAndQueueOrder(appointmentTypeId, 1);
+        
+        if (next == null) {
+            throw new NoSuchElementException("Não há agendamento na primeira posição da fila para esse tipo de serviço.");
+        }
+        //Verificando se o appointment está em um status adequado para atendimento (MARKED ou WAITING).
+        if (next.getStatus() != AppointmentStatus.MARKED && next.getStatus() != AppointmentStatus.WAITING) {
+            throw new IllegalStateException("O agendamento na primeira posição não está disponível para atendimento.");
+        }
+
+        //Atualizando o status para ATTENDING e registra o horário de início.
+        next.setStatus(AppointmentStatus.ATTENDING);
+        next.setStartTime(LocalDateTime.now());
+        next.setQueueOrder(-1);
+        return appointmentRepository.save(next);
+    }
+
+    @Transactional
+    public Appointment completeAppointment(Long appointmentId) {
+        Appointment appointment = findAppointmentById(appointmentId);
+        
+        //Verificando se o agendamento está em atendimento.
+        if (appointment.getStatus() != AppointmentStatus.ATTENDING) {
+            throw new IllegalStateException("Não é possível finalizar um agendamento que não está em atendimento.");
+        }
+        
+        //Salvando a posição atual para reorganização futura.
+        Integer currentPosition = appointment.getQueueOrder();
+        Long appointmentTypeId = appointment.getAppointmentType().getId();
+        
+        //Registrando o término, muda o status e define queueOrder como -1.
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        appointment.setEndTime(LocalDateTime.now());
+        appointment.setQueueOrder(-1);
+        
+        //Salvando o agendamento atualizado.
+        Appointment completedAppointment = appointmentRepository.save(appointment);
+        
+        //Reorganizando a fila.
+        reorganizeQueueAfterRemoval(appointmentTypeId, currentPosition);
+        
+        return completedAppointment;
+    }
+
+    @Transactional
+    public Appointment registerCheckIn(Long appointmentId){
+        Appointment appointment = findAppointmentById(appointmentId);
+        
+        //Verificando se o agendamento está marcado.
+        if (appointment.getStatus() != AppointmentStatus.MARKED) {
+            throw new IllegalStateException("Não é possível registrar check-in para um agendamento que não está marcado.");
+        }
+        
+        //Atualizando o status para WAITING e registra o horário de check-in.
+        appointment.setStatus(AppointmentStatus.WAITING);
+        appointment.setCheckInTime(LocalDateTime.now());
+        return appointmentRepository.save(appointment);
+    }
+
     /*======================== MÉTODOS AUXILIARES ========================*/
 
     //Método auxiliar para buscar o agendamento por ID.
@@ -212,33 +275,5 @@ public class QueueService {
             reorderQueue(appointmentId, maxPosition);
         }
     }
-    @Transactional
-    public void callNextInQueue(Long appointmentTypeId) {
-        // Buscar o primeiro agendamento marcado
-        Appointment nextAppointment = appointmentRepository.findFirstByAppointmentTypeIdAndStatusOrderByQueueOrder(appointmentTypeId, AppointmentStatus.MARKED);
     
-        if (nextAppointment == null) {
-            throw new NoSuchElementException("Nenhum agendamento encontrado na fila para esse tipo de serviço.");
-        }
-    
-        // Marcar o agendamento atual como "ATENDENDO"
-        nextAppointment.setStatus(AppointmentStatus.ATTENDING);
-        appointmentRepository.save(nextAppointment);
-    
-        // Buscar o próximo agendamento marcado na fila e mover para o início (opcional)
-        Appointment nextInLine = appointmentRepository.findFirstByAppointmentTypeIdAndStatusOrderByQueueOrder(appointmentTypeId, AppointmentStatus.MARKED);
-    
-        if (nextInLine != null) {
-            nextInLine.setQueueOrder(1); // Mover para o início da fila
-            nextInLine.setStatus(AppointmentStatus.ATTENDING);
-            appointmentRepository.save(nextInLine);
-        }
-    }
-
-    public List<Appointment> getAppointmentsInQueue() {
-        // Filtrar agendamentos com status MARKED ou ATTENDING
-        return appointmentRepository.findByStatusInOrderByQueueOrder(
-                List.of(AppointmentStatus.MARKED, AppointmentStatus.ATTENDING)
-        );
-    }
 }

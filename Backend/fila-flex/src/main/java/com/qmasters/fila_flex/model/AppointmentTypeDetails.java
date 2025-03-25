@@ -1,6 +1,7 @@
 package com.qmasters.fila_flex.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -117,7 +118,10 @@ public class AppointmentTypeDetails {
                 + requiredDocumentation + "]";
     }
 
-    public void setCategory(String category) {
+    public void addCategory(String category) {
+        if (this.category == null) {
+            this.category = new ArrayList<>();
+        }
         this.category.add(category);
     }
 }
