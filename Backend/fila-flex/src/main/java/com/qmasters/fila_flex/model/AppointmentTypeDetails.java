@@ -117,4 +117,7 @@ public class AppointmentTypeDetails {
                 + requiredDocumentation + "]";
     }
 
+    public void setCategory(String category) {
+        this.category.add(category);
+    }
 }

@@ -1,98 +1,108 @@
 package com.qmasters.fila_flex.tertSevice;
-//vai precisar refazer com os padroes de codigo correto
-
-/*package com.qmasters.fila_flex;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.anyLong;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.repository.UserRepository;
 import com.qmasters.fila_flex.service.UserService;
 import com.qmasters.fila_flex.util.UserRole;
 
-@SpringBootTest
 public class UserServiceTest {
 
-    @InjectMocks  
+    @InjectMocks
     private UserService userService;
 
-    @Mock  
+    @Mock
     private UserRepository userRepository;
 
     private User user;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
+        // Cria um usuário de exemplo
+        user = new User("user@example.com", "password", UserRole.USER, "John Doe");
+        user.setId(1L);
+    }
 
-        user = new User();
-        user.setId(1L);  
-        user.setEmail("test@example.com");
-        user.setName("Test User");
-        user.setPassword("securepassword");
-        user.setRole(UserRole.USER);
-
+    @Test
+    public void testFindAll() {
         when(userRepository.findAll()).thenReturn(List.of(user));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));  // Correção do tipo
-        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));  // Correção aqui
-        when(userRepository.existsById(1L)).thenReturn(true);
+        List<User> result = userService.findAll();
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(userRepository, times(1)).findAll();
     }
 
     @Test
-    void testFindAll() {
-        List<User> users = userService.findAll();
-        assertNotNull(users);
-        assertFalse(users.isEmpty()); 
-        verify(userRepository, times(1)).findAll(); 
-    }
-
-    @Test
-    void testFindById() {
-        User foundUser = userService.findById(1L);
-        assertNotNull(foundUser);
-        assertEquals("Test User", foundUser.getName());
+    public void testFindByIdFound() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        User result = userService.findById(1L);
+        assertNotNull(result);
+        assertEquals("user@example.com", result.getEmail());
         verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
-    void testFindByEmail() {
-        User foundUser = userService.findByEmail("test@example.com").orElse(null);  // Ajustado para Optional
-        assertNotNull(foundUser);
-        assertEquals("Test User", foundUser.getName());
-        verify(userRepository, times(1)).findByEmail("test@example.com");
+    public void testFindByIdNotFound() {
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
+        User result = userService.findById(2L);
+        assertNull(result);
+        verify(userRepository, times(1)).findById(2L);
     }
 
     @Test
-    void testDeleteUser_Success() {
-        userService.deleteUser(1L);
-        verify(userRepository, times(1)).deleteById(1L);  
+    public void testFindByEmail() {
+        when(userRepository.findByEmail("user@example.com")).thenReturn(user);
+        UserDetails result = userService.findByEmail("user@example.com");
+        assertNotNull(result);
+        assertEquals("user@example.com", result.getUsername());
+        verify(userRepository, times(1)).findByEmail("user@example.com");
     }
 
     @Test
-    void testDeleteUser_UserNotFound() {
-        when(userRepository.existsById(999L)).thenReturn(false);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(999L));
+    public void testDeleteUserSuccess() {
+        when(userRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(userRepository).deleteById(1L);
+        assertDoesNotThrow(() -> userService.deleteUser(1L));
+        verify(userRepository, times(1)).existsById(1L);
+        verify(userRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void testDeleteUserNotFound() {
+        when(userRepository.existsById(2L)).thenReturn(false);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(2L));
         assertEquals("Usuário não encontrado, remoção não foi realizada", exception.getMessage());
+        verify(userRepository, times(1)).existsById(2L);
+        verify(userRepository, never()).deleteById(anyLong());
     }
 
     @Test
-    void testUpdate() {
-        user.setName("Updated User");
+    public void testUpdateUser() {
         when(userRepository.save(user)).thenReturn(user);
-        User updatedUser = userService.update(user);
-        assertNotNull(updatedUser);
-        assertEquals("Updated User", updatedUser.getName());
+        User result = userService.update(user);
+        assertNotNull(result);
+        assertEquals("John Doe", result.getName());
+        verify(userRepository, times(1)).save(user);
     }
 }
-*/

@@ -1,5 +1,6 @@
 package com.qmasters.fila_flex.model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,5 +111,52 @@ public class AppointmentType {
         this.evaluations = evaluations;
     }
 
+    public void setName(String name) {
+        appointmentTypeDetails.setName(name);
+    }
+
+    public String getName() {
+        return appointmentTypeDetails.getName();
+    }
+
+    public void setDescription(String description) {
+        appointmentTypeDetails.setDescription(description);
+    }
+
+    public String getDescription() {
+        return appointmentTypeDetails.getDescription();
+    }
+
+    public void setCategory(List<String> category) {
+        appointmentTypeDetails.setCategory(category);
+    }
+
+    public List<String> getCategory() {
+        return appointmentTypeDetails.getCategory();
+    }
+
+    public void setPrice(double price) {
+        appointmentTypeDetails.setPrice(price);
+    }
+
+    public double getPrice() {
+        return appointmentTypeDetails.getPrice();
+    }
+
+    public void setAppointmentDate(LocalDate appointmentDate) {
+        appointmentTypeDetails.setAppointmentDate(appointmentDate);
+    }
+
+    public LocalDate getAppointmentDate() {
+        return appointmentTypeDetails.getAppointmentDate();
+    }
+
+    public void setRequiredDocumentation(List<String> requiredDocumentation) {
+        appointmentTypeDetails.setRequiredDocumentation(requiredDocumentation);
+    }
+
+    public List<String> getRequiredDocumentation() {
+        return appointmentTypeDetails.getRequiredDocumentation();
+    }
 }
 
