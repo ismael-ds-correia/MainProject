@@ -35,4 +35,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
             List<Appointment> findByAppointmentTypeIdOrderByQueueOrder(Long appointmentTypeId);
     
+    //Encontra o agendamento com queueOrder = 1 para um AppointmentType específico.
+Appointment findByAppointmentTypeIdAndQueueOrder(Long appointmentTypeId, Integer queueOrder);
 }

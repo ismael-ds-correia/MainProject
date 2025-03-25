@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.AppointmentType;
-import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 import com.qmasters.fila_flex.util.PriorityCondition;
@@ -212,33 +211,5 @@ public class QueueService {
             reorderQueue(appointmentId, maxPosition);
         }
     }
-    @Transactional
-    public void callNextInQueue(Long appointmentTypeId) {
-        // Buscar o primeiro agendamento marcado
-        Appointment nextAppointment = appointmentRepository.findFirstByAppointmentTypeIdAndStatusOrderByQueueOrder(appointmentTypeId, AppointmentStatus.MARKED);
     
-        if (nextAppointment == null) {
-            throw new NoSuchElementException("Nenhum agendamento encontrado na fila para esse tipo de serviço.");
-        }
-    
-        // Marcar o agendamento atual como "ATENDENDO"
-        nextAppointment.setStatus(AppointmentStatus.ATTENDING);
-        appointmentRepository.save(nextAppointment);
-    
-        // Buscar o próximo agendamento marcado na fila e mover para o início (opcional)
-        Appointment nextInLine = appointmentRepository.findFirstByAppointmentTypeIdAndStatusOrderByQueueOrder(appointmentTypeId, AppointmentStatus.MARKED);
-    
-        if (nextInLine != null) {
-            nextInLine.setQueueOrder(1); // Mover para o início da fila
-            nextInLine.setStatus(AppointmentStatus.ATTENDING);
-            appointmentRepository.save(nextInLine);
-        }
-    }
-
-    public List<Appointment> getAppointmentsInQueue() {
-        // Filtrar agendamentos com status MARKED ou ATTENDING
-        return appointmentRepository.findByStatusInOrderByQueueOrder(
-                List.of(AppointmentStatus.MARKED, AppointmentStatus.ATTENDING)
-        );
-    }
 }

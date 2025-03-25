@@ -57,26 +57,5 @@ public class QueueController {
                     .body("Erro ao reordenar: " + e.getMessage());
         }
     }
-    @PutMapping("/queue/{appointmentTypeId}/next")
-    public ResponseEntity<String> callNextInQueue(@PathVariable Long appointmentTypeId) {
-        try {
-            queueService.callNextInQueue(appointmentTypeId); // Chama o método para movimentar a fila
-            return ResponseEntity.ok("Próximo agendamento chamado com sucesso.");
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro ao chamar o próximo na fila: " + e.getMessage());
-        }
-    }
 
-    @GetMapping("/in-queue")
-    public ResponseEntity<List<Appointment>> getAppointmentsInQueue() {
-    List<Appointment> appointments = queueService.getAppointmentsInQueue();
-    if (appointments.isEmpty()) {
-        return ResponseEntity.noContent().build(); // Retorna 204 se não houver agendamentos
-    }
-    return ResponseEntity.ok(appointments); // Retorna a lista com status 200 OK
-}
-    
 }
