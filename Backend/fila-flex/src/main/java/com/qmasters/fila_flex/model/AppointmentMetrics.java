@@ -1,63 +1,67 @@
 package com.qmasters.fila_flex.model;
 
 import java.time.Duration;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class AppointmentMetrics {
 
-    // Lista para armazenar os agendamentos
     private List<Appointment> appointments;
 
-    public AppointmentMetrics() {
-        this.appointments = new ArrayList<>();
+    public AppointmentMetrics(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 
-    // Método para adicionar um agendamento à lista
-    public void addAppointment(Appointment appointment) {
-        appointments.add(appointment);
-    }
-
-    // Método para calcular o tempo médio de espera da fila
+    // Calcula o tempo médio de espera da fila
     public double calculateAverageWaitTime() {
-        long totalWaitTime = 0;
+        double totalWaitTime = 0;
         int count = 0;
 
         for (Appointment appointment : appointments) {
-            if (appointment.getScheduledDateTime() != null && appointment.getStartTime() != null) {
-                totalWaitTime += Duration.between(appointment.getScheduledDateTime(), appointment.getStartTime()).toMinutes();
+            LocalDateTime scheduledDateTime = appointment.getScheduledDateTime();
+            LocalDateTime startTime = appointment.getStartTime();
+
+            // Calcular o tempo de espera a partir do agendamento até o início do atendimento
+            if (scheduledDateTime != null && startTime != null) {
+                totalWaitTime += Duration.between(scheduledDateTime, startTime).toMinutes();
                 count++;
             }
         }
 
-        return count > 0 ? (double) totalWaitTime / count : 0;
+        // Retorna a média de espera ou 0 se não houver agendamentos
+        return count > 0 ? totalWaitTime / count : 0;
     }
 
-    // Método para calcular o tempo médio de atendimento
+    // Calcula o tempo médio de atendimento
     public double calculateAverageServiceTime() {
-        long totalServiceTime = 0;
+        double totalServiceTime = 0;
         int count = 0;
 
         for (Appointment appointment : appointments) {
-            if (appointment.getStartTime() != null && appointment.getCreatedDateTime() != null) {
-                totalServiceTime += Duration.between(appointment.getStartTime(), appointment.getCreatedDateTime()).toMinutes();
+            LocalDateTime startTime = appointment.getStartTime();
+            LocalDateTime endTime = appointment.getEndTime();
+
+            // Calcular o tempo de atendimento
+            if (startTime != null && endTime != null) {
+                totalServiceTime += Duration.between(startTime, endTime).toMinutes();
                 count++;
             }
         }
 
-        return count > 0 ? (double) totalServiceTime / count : 0;
+        // Retorna a média de tempo de atendimento ou 0 se não houver agendamentos
+        return count > 0 ? totalServiceTime / count : 0;
     }
 
-    // Método para contar o número de atendimentos realizados
+    // Conta a quantidade de atendimentos realizados
     public int countCompletedAppointments() {
-        int count = 0;
+        int completedAppointments = 0;
 
         for (Appointment appointment : appointments) {
-            if (appointment.getStartTime() != null && appointment.getCreatedDateTime() != null) {
-                count++;
+            if (appointment.getEndTime() != null) {
+                completedAppointments++;
             }
         }
 
-        return count;
+        return completedAppointments;
     }
 }
