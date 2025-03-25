@@ -83,6 +83,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao buscar fila.");
     }
 
+    @ExceptionHandler(CannotInsertOnQueueException.class) //erro de não conseguir inserir na fila
+    public ResponseEntity<String> handleCannotInsertOnQueueException(CannotInsertOnQueueException ex) {
+        logger.warn("Erro ao inserir na fila: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao inserir na fila.");
+    }
+
     // =============================== Erros do JPA ==============================
     @ExceptionHandler(ConstraintViolationException.class) //erro de validação que é jogado pelo Model da classe
     public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException ex) {
