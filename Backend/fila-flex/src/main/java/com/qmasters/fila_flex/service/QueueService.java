@@ -157,6 +157,21 @@ public class QueueService {
         return completedAppointment;
     }
 
+    @Transactional
+    public Appointment registerCheckIn(Long appointmentId){
+        Appointment appointment = findAppointmentById(appointmentId);
+        
+        //Verificando se o agendamento está marcado.
+        if (appointment.getStatus() != AppointmentStatus.MARKED) {
+            throw new IllegalStateException("Não é possível registrar check-in para um agendamento que não está marcado.");
+        }
+        
+        //Atualizando o status para WAITING e registra o horário de check-in.
+        appointment.setStatus(AppointmentStatus.WAITING);
+        appointment.setCheckInTime(LocalDateTime.now());
+        return appointmentRepository.save(appointment);
+    }
+
     /*======================== MÉTODOS AUXILIARES ========================*/
 
     //Método auxiliar para buscar o agendamento por ID.
