@@ -34,7 +34,7 @@ public class AppointmentType {
     private String description;
 
     @ElementCollection                          //Atributo Multivalorado, visto que pode está em mais de uma categoria.
-    private List<String> category;;
+    private List<String> category;
 
     @Column(nullable = false)
     private double price;

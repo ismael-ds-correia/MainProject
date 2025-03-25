@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.persistence.Column;

@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.qmasters.fila_flex.model.Appointment;
-import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
