@@ -130,6 +130,33 @@ public class QueueService {
         return appointmentRepository.save(next);
     }
 
+    @Transactional
+    public Appointment completeAppointment(Long appointmentId) {
+        Appointment appointment = findAppointmentById(appointmentId);
+        
+        //Verificando se o agendamento está em atendimento.
+        if (appointment.getStatus() != AppointmentStatus.ATTENDING) {
+            throw new IllegalStateException("Não é possível finalizar um agendamento que não está em atendimento.");
+        }
+        
+        //Salvando a posição atual para reorganização futura.
+        Integer currentPosition = appointment.getQueueOrder();
+        Long appointmentTypeId = appointment.getAppointmentType().getId();
+        
+        //Registrando o término, muda o status e define queueOrder como -1.
+        appointment.setStatus(AppointmentStatus.COMPLETED);
+        appointment.setEndTime(LocalDateTime.now());
+        appointment.setQueueOrder(-1);
+        
+        //Salvando o agendamento atualizado.
+        Appointment completedAppointment = appointmentRepository.save(appointment);
+        
+        //Reorganizando a fila.
+        reorganizeQueueAfterRemoval(appointmentTypeId, currentPosition);
+        
+        return completedAppointment;
+    }
+
     /*======================== MÉTODOS AUXILIARES ========================*/
 
     //Método auxiliar para buscar o agendamento por ID.
