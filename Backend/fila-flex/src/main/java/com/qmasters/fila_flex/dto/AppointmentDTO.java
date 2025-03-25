@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.qmasters.fila_flex.model.AppointmentType;
-import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
@@ -43,12 +43,12 @@ public class AppointmentDTO {
         this.userId = user.getId().toString(); //transient
         this.userEmail = user.getEmail(); //transient
 
-        this.appointmentTypeName = appointmentType.getName(); //transient
-        this.appointmentTypeDescription = appointmentType.getDescription(); //transient
-        this.appointmentTypeCategory = appointmentType.getCategory(); //transient
-        this.appointmentTypePrice = String.valueOf(appointmentType.getPrice()); //transient
+        this.appointmentTypeName = appointmentType.getAppointmentTypeDetails().getName(); //transient
+        this.appointmentTypeDescription = appointmentType.getAppointmentTypeDetails().getDescription(); //transient
+        this.appointmentTypeCategory = appointmentType.getAppointmentTypeDetails().getCategory(); //transient
+        this.appointmentTypePrice = String.valueOf(appointmentType.getAppointmentTypeDetails().getPrice()); //transient
         this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime()); //transient
-        this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation(); //transient
+        this.appointmentTypeRequiredDocumentation = appointmentType.getAppointmentTypeDetails().getRequiredDocumentation(); //transient
         this.appointmentTypeAdress = appointmentType.getAdressAsString(); //transient
         this.status = AppointmentStatus.MARKED; // Status padrão ao criar
     }
@@ -65,12 +65,12 @@ public class AppointmentDTO {
         this.userId = user.getId().toString();
         this.userEmail = user.getEmail();
 
-        this.appointmentTypeName = appointmentType.getName();
-        this.appointmentTypeDescription = appointmentType.getDescription();
-        this.appointmentTypeCategory = appointmentType.getCategory();
-        this.appointmentTypePrice = String.valueOf(appointmentType.getPrice());
+        this.appointmentTypeName = appointmentType.getAppointmentTypeDetails().getName();
+        this.appointmentTypeDescription = appointmentType.getAppointmentTypeDetails().getDescription();
+        this.appointmentTypeCategory = appointmentType.getAppointmentTypeDetails().getCategory();
+        this.appointmentTypePrice = String.valueOf(appointmentType.getAppointmentTypeDetails().getPrice());
         this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime());
-        this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation();
+        this.appointmentTypeRequiredDocumentation = appointmentType.getAppointmentTypeDetails().getRequiredDocumentation();
         this.appointmentTypeAdress = appointmentType.getAdressAsString();
         this.status = AppointmentStatus.MARKED;
     }
@@ -88,12 +88,12 @@ public class AppointmentDTO {
         this.userId = user.getId().toString();
         this.userEmail = user.getEmail();
 
-        this.appointmentTypeName = appointmentType.getName();
-        this.appointmentTypeDescription = appointmentType.getDescription();
-        this.appointmentTypeCategory = appointmentType.getCategory();
-        this.appointmentTypePrice = String.valueOf(appointmentType.getPrice());
+        this.appointmentTypeName = appointmentType.getAppointmentTypeDetails().getName();
+        this.appointmentTypeDescription = appointmentType.getAppointmentTypeDetails().getDescription();
+        this.appointmentTypeCategory = appointmentType.getAppointmentTypeDetails().getCategory();
+        this.appointmentTypePrice = String.valueOf(appointmentType.getAppointmentTypeDetails().getPrice());
         this.appointmentTypeEstimatedTime = String.valueOf(appointmentType.getEstimatedTime());
-        this.appointmentTypeRequiredDocumentation = appointmentType.getRequiredDocumentation();
+        this.appointmentTypeRequiredDocumentation = appointmentType.getAppointmentTypeDetails().getRequiredDocumentation();
         this.appointmentTypeAdress = appointmentType.getAdressAsString();
         this.status = AppointmentStatus.MARKED;
     }

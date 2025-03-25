@@ -29,18 +29,13 @@ public class AppointmentTypeService {
     @Transactional
     public AppointmentType saveAppointmentType(AppointmentTypeDTO dto) {
         AppointmentType appointmentType = new AppointmentType(
-            dto.getName(),
-            dto.getDescription(),
-            dto.getCategory(),
-            dto.getPrice(),
+            dto.getAppointmentTypeDetails(),
             dto.getEstimatedTime(),
-            dto.getAppointmentDate(),
-            dto.getRequiredDocumentation(),
             dto.getAdress()
         );
 
          //Salva as categorias no banco de dados, se necessário.
-        for (String categoryName : dto.getCategory()) {
+        for (String categoryName : dto.getAppointmentTypeDetails().getCategory()) {
             CategoryDTO categoryDTO = new CategoryDTO(categoryName);
             categoryService.saveCategory(categoryDTO);
         }
@@ -56,12 +51,12 @@ public class AppointmentTypeService {
         return appointmentTypeRepository.findById(id);
      }
     
-    public Optional<AppointmentType> findByName(String name) {
+    public Optional<AppointmentType> findByName(String name) {//talvez precise criar função manualmente no repository
         return appointmentTypeRepository.findByName(name);
     }
 
     // buscar AppointmentTypes filtrados por categoria.
-    public List<AppointmentType> findByCategory(String category) {
+    public List<AppointmentType> findByCategory(String category) {//talvez precise criar função manualmente no repository
         return appointmentTypeRepository.findByCategory(category);
     }
 

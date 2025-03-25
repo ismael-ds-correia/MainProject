@@ -83,7 +83,7 @@ public class AppointmentService {
         return appointmentRepository.findByUserId(userId);
     }
     
-    @Transactional
+    @Transactional//consertar isso daqui
     public Appointment updateAppointment(Long id, AppointmentDTO appointmentDto) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
 

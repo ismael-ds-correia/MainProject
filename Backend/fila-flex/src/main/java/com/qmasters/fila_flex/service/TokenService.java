@@ -38,7 +38,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(this.secret);
             return JWT.create()
                 .withIssuer("FilaFlex")
-                .withSubject(user.getEmail()) //aqui tava user.getUsername()
+                .withSubject(user.getEmail())
                 .withClaim("role", user.getRole().name()) // Inclui a função do usuário no token
                 .withClaim("id", user.getId())
                 .withExpiresAt(this.getExpirationAt())

@@ -42,17 +42,17 @@ public class AppointmentTypeController {
     @GetMapping("/{id}")
     public Optional<AppointmentType> findById(@PathVariable Long id) {
         var appointmentType = appointmentTypeService.findById(id);
-        //necessario usar throw, optional retornar vazio não é identificado pelo globalExceptionHandler
+        
         if (appointmentType.isEmpty()) { 
             throw new NoSuchElementException("Tipo de agendamento não encontrado.");
         }
         return appointmentTypeService.findById(id);
     }
 
-    @GetMapping("/category")
+    @GetMapping("/category")//arrumar isso daqui
     public ResponseEntity<List<AppointmentType>> findByCategory(@RequestParam String category) {
         var appointmentType = appointmentTypeService.findByCategory(category);
-        //necessario usar throw, optional retornar vazio não é identificado pelo globalExceptionHandler
+        
         if (appointmentType.isEmpty()) {
             throw new NoSuchElementException("Categoria não encontrada.");
         }
@@ -60,10 +60,10 @@ public class AppointmentTypeController {
     }
 
     //Endpoint para buscar AppointmentTypes por intervalo de preços.
-    @GetMapping("/price-range")
+    @GetMapping("/price-range") //arrumar esse daqui
     public ResponseEntity<List<AppointmentType>> findByPriceBetween(@RequestParam double minPrice, @RequestParam double maxPrice) {
         var appointmentType = appointmentTypeService.findByPriceBetween(minPrice, maxPrice);
-        //necessario usar throw, optional retornar vazio não é identificado pelo globalExceptionHandler
+
         if (appointmentType.isEmpty()) {
             throw new NoSuchElementException("Tipos de agendamentos com este preço não foram encontrados.");
         }
@@ -75,7 +75,17 @@ public class AppointmentTypeController {
         return appointmentTypeService.findAllByOrderByEstimatedTimeAsc();
     }
 
-    @DeleteMapping("/delete/{name}")
+    @GetMapping("/name/{name}")//arrumar isso daqui
+    public ResponseEntity<Optional<AppointmentType>> findByName(@PathVariable String name) {
+        var appointmentType = appointmentTypeService.findByName(name);
+        if (appointmentType.isEmpty()) {
+            throw new NoSuchElementException("Tipo de agendamento não encontrado.");
+        }
+        
+        return ResponseEntity.ok(appointmentType);
+    }
+    
+    @DeleteMapping("/delete/{name}") //arrumar isso
     public ResponseEntity<String> deleteByName(@PathVariable String name) {
         try {
             appointmentTypeService.deleteByName(name);
@@ -96,13 +106,4 @@ public class AppointmentTypeController {
         }
     }
     
-    @GetMapping("/name/{name}")
-    public ResponseEntity<Optional<AppointmentType>> findByName(@PathVariable String name) {
-        var appointmentType = appointmentTypeService.findByName(name);
-        if (appointmentType.isEmpty()) { //é necessario usar throw pois um optional retornar vazio não é identificado como erro pelo globalExceptionHandler
-            throw new NoSuchElementException("Tipo de agendamento não encontrado.");
-        }
-        
-        return ResponseEntity.ok(appointmentType);
-    }
 }

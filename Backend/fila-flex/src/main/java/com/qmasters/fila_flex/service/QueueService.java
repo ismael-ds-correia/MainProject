@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.AppointmentType;
-import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 import com.qmasters.fila_flex.util.PriorityCondition;

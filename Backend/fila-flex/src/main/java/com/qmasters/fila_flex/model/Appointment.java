@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.qmasters.fila_flex.model.ENUM.AppointmentStatus;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
 import jakarta.persistence.Column;
@@ -29,7 +29,7 @@ public class Appointment {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "appointment_type_id", nullable = false)
-    @JsonIgnore //usado para evitar loop infinito na saida do Insomnia
+    @JsonIgnore
     private AppointmentType appointmentType;
 
     @ManyToOne(optional = false)
@@ -40,14 +40,13 @@ public class Appointment {
     @Column(nullable = false) //mudei para "scheduled" para não ter muita repetição de "appointment"
     private LocalDateTime scheduledDateTime; //dia que ocorrera o agendamento
 
-    private LocalDateTime createdDateTime; //talvez seja util no futuro
+    private LocalDateTime createdDateTime; //horario que foi criado o agendamento
 
     @NotNull(message = "É obrigatório informar a condição de prioridade")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING) //Usando para salvar o enum como string no banco de dados, e não como um número.
     private PriorityCondition priorityCondition;
 
-    
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
   
@@ -87,40 +86,67 @@ public class Appointment {
     //se remover estes getters, as variaveis transients não serão exibidas no Insomnia
     //por mais que nem estejam sendo chamados no DTO ou em outro lugar
 
-    public String getAppointmentTypeName() {
-        return appointmentType.getName();
+    public String getAppointmentTypeDetailsName() {
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getName();
+        }
+        return null;
     }
 
     public String getAppointmentTypeDescription() {
-        return appointmentType.getDescription();
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getDescription();
+        }
+        return null;
     }
 
     public List<String> getAppointmentTypeCategory() {
-        return appointmentType.getCategory();
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getCategory();
+        }
+        return null;
     }
 
     public String getAppointmentTypePrice() {
-        return String.valueOf(appointmentType.getPrice());
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return String.valueOf(appointmentType.getAppointmentTypeDetails().getPrice());
+        }
+        return null;
     }
 
-    public String getAppointmentTypeEstimatedTime() {
-        return String.valueOf(appointmentType.getEstimatedTime());
+    public String getAppointmentTypeAppointmentDate() {
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getAppointmentDate().toString();
+        }
+        return null;
     }
 
     public List<String> getAppointmentTypeRequiredDocumentation() {
-        return appointmentType.getRequiredDocumentation();
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getRequiredDocumentation();
+        }
+        return null;
     }
 
     public Adress getAppointmentTypeAdress() {
-        return appointmentType.getAdress();
+        if (appointmentType != null && appointmentType.getAdress() != null) {
+            return appointmentType.getAdress();
+        }
+        return null;
     }
 
     public String getUserEmail() {
-        return user.getEmail();
+        if (user != null && user.getEmail() != null) {
+            return user.getEmail();
+        }
+        return null;
     }
 
     public String getUserId() {
-        return user.getId().toString();
+        if (user != null && user.getId() != null) {
+            return user.getId().toString();
+        }
+        return null;
     }
 
     //==================================Getters e Setters===================================
