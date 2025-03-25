@@ -116,10 +116,10 @@ public class User implements UserDetails {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
-
+    
     @Override
     public String getUsername() {//função sem uso no momento está assim só por obrigação de existir
-        return name;
+        return getName();
     }
 
 }
