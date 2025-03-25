@@ -10,6 +10,8 @@ import com.qmasters.fila_flex.dto.UserDTO;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class AuthService implements UserDetailsService {
     
@@ -24,6 +26,7 @@ public class AuthService implements UserDetailsService {
         return userRepository.findByEmail(username);
     }
 
+    @Transactional
     public User register(UserDTO userDTO) {
         UserDetails existingUser = userRepository.findByEmail(userDTO.getEmail());
         

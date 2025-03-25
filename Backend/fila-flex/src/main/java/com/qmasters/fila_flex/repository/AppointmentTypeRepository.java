@@ -15,14 +15,16 @@ import com.qmasters.fila_flex.model.AppointmentType;
 @Repository
 public interface AppointmentTypeRepository extends JpaRepository<AppointmentType, Long> {
     //Busca AppointmentTypes que contenham a categoria especificada.
-    @Query("SELECT a FROM AppointmentType a WHERE :category MEMBER OF a.category")List<AppointmentType> findByCategory(@Param("category") String category);
+    @Query("SELECT a FROM AppointmentType a JOIN a.appointmentTypeDetails d WHERE :category MEMBER OF d.category")
+    List<AppointmentType> findByCategory(@Param("category") String category);
 
     //Busca AppointmentTypes que tenham o preço entre os valores especificados.
-    @Query("SELECT a FROM AppointmentType a WHERE a.price BETWEEN :minPrice AND :maxPrice")
+    @Query("SELECT a FROM AppointmentType a JOIN a.appointmentTypeDetails d WHERE d.price BETWEEN :minPrice AND :maxPrice")
     List<AppointmentType> findByPriceBetween(@Param("minPrice") Double minPrice, @Param("maxPrice") Double maxPrice);
 
-    Optional<AppointmentType> findByName(String name);
-
+    @Query("SELECT a FROM AppointmentType a JOIN a.appointmentTypeDetails d WHERE d.name = :name")
+    Optional<AppointmentType> findByName(@Param("name") String name);
+   
     List<AppointmentType> findAllByOrderByEstimatedTimeAsc();
 
     //Busca próximo número disponível para um appointmentType.
@@ -44,6 +46,6 @@ public interface AppointmentTypeRepository extends JpaRepository<AppointmentType
             @Param("queueOrder") Integer queueOrder);
 
     //Busca por nome do appointmentType.
-    @Query("SELECT a FROM Appointment a WHERE a.appointmentType.name = :appointmentTypeName ORDER BY a.queueOrder ASC")
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentType.appointmentTypeDetails.name = :appointmentTypeName ORDER BY a.queueOrder ASC")
     List<Appointment> findByAppointmentTypeNameOrderByQueueOrder(@Param("appointmentTypeName") String appointmentTypeName);
 }

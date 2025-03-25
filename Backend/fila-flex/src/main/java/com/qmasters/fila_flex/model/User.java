@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.qmasters.fila_flex.exception.DontKnowException;
 import com.qmasters.fila_flex.util.UserRole;
 
 import jakarta.persistence.CascadeType;
@@ -119,7 +118,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {//função sem uso no momento está assim só por obrigação de existir
-        throw new DontKnowException("Função getUsername() não implementada");
+        return name;
     }
 
 }

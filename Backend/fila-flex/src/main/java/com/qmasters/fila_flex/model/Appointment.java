@@ -29,7 +29,7 @@ public class Appointment {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "appointment_type_id", nullable = false)
-    @JsonIgnore //usado para evitar loop infinito na saida do Insomnia
+    @JsonIgnore
     private AppointmentType appointmentType;
 
     @ManyToOne(optional = false)
@@ -40,14 +40,13 @@ public class Appointment {
     @Column(nullable = false) //mudei para "scheduled" para não ter muita repetição de "appointment"
     private LocalDateTime scheduledDateTime; //dia que ocorrera o agendamento
 
-    private LocalDateTime createdDateTime; //talvez seja util no futuro
+    private LocalDateTime createdDateTime; //horario que foi criado o agendamento
 
     @NotNull(message = "É obrigatório informar a condição de prioridade")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING) //Usando para salvar o enum como string no banco de dados, e não como um número.
     private PriorityCondition priorityCondition;
 
-    
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
   
@@ -87,20 +86,20 @@ public class Appointment {
     //se remover estes getters, as variaveis transients não serão exibidas no Insomnia
     //por mais que nem estejam sendo chamados no DTO ou em outro lugar
 
-    public String getAppointmentTypeName() {
-        return appointmentType.getName();
+    public String getAppointmentTypeDetailsName() {
+        return appointmentType.getAppointmentTypeDetails().getName();
     }
 
     public String getAppointmentTypeDescription() {
-        return appointmentType.getDescription();
+        return appointmentType.getAppointmentTypeDetails().getDescription();
     }
 
     public List<String> getAppointmentTypeCategory() {
-        return appointmentType.getCategory();
+        return appointmentType.getAppointmentTypeDetails().getCategory();
     }
 
     public String getAppointmentTypePrice() {
-        return String.valueOf(appointmentType.getPrice());
+        return String.valueOf(appointmentType.getAppointmentTypeDetails().getPrice());
     }
 
     public String getAppointmentTypeEstimatedTime() {
@@ -108,7 +107,7 @@ public class Appointment {
     }
 
     public List<String> getAppointmentTypeRequiredDocumentation() {
-        return appointmentType.getRequiredDocumentation();
+        return appointmentType.getAppointmentTypeDetails().getRequiredDocumentation();
     }
 
     public Adress getAppointmentTypeAdress() {
