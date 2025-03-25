@@ -1,5 +1,6 @@
 package com.qmasters.fila_flex.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.AppointmentType;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 import com.qmasters.fila_flex.util.PriorityCondition;
@@ -107,6 +109,25 @@ public class QueueService {
         } catch (Exception e) {
             throw new RuntimeException("Erro ao processar prioridade: " + e.getMessage());
         }
+    }
+
+    @Transactional
+    public Appointment callNextInQueue(Long appointmentTypeId){
+        //Buscando o Appointment com queueOrder = 1 para o AppointmentType especificado
+        Appointment next = appointmentRepository.findByAppointmentTypeIdAndQueueOrder(appointmentTypeId, 1);
+        
+        if (next == null) {
+            throw new NoSuchElementException("Não há agendamento na primeira posição da fila para esse tipo de serviço.");
+        }
+        //Verificando se o appointment está em um status adequado para atendimento (MARKED ou WAITING).
+        if (next.getStatus() != AppointmentStatus.MARKED && next.getStatus() != AppointmentStatus.WAITING) {
+            throw new IllegalStateException("O agendamento na primeira posição não está disponível para atendimento.");
+        }
+
+        //Atualizando o status para ATTENDING e registra o horário de início.
+        next.setStatus(AppointmentStatus.ATTENDING);
+        next.setStartTime(LocalDateTime.now());
+        return appointmentRepository.save(next);
     }
 
     /*======================== MÉTODOS AUXILIARES ========================*/
