@@ -87,39 +87,66 @@ public class Appointment {
     //por mais que nem estejam sendo chamados no DTO ou em outro lugar
 
     public String getAppointmentTypeDetailsName() {
-        return appointmentType.getAppointmentTypeDetails().getName();
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getName();
+        }
+        return null;
     }
 
     public String getAppointmentTypeDescription() {
-        return appointmentType.getAppointmentTypeDetails().getDescription();
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getDescription();
+        }
+        return null;
     }
 
     public List<String> getAppointmentTypeCategory() {
-        return appointmentType.getAppointmentTypeDetails().getCategory();
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getCategory();
+        }
+        return null;
     }
 
     public String getAppointmentTypePrice() {
-        return String.valueOf(appointmentType.getAppointmentTypeDetails().getPrice());
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return String.valueOf(appointmentType.getAppointmentTypeDetails().getPrice());
+        }
+        return null;
     }
 
-    public String getAppointmentTypeEstimatedTime() {
-        return String.valueOf(appointmentType.getEstimatedTime());
+    public String getAppointmentTypeAppointmentDate() {
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getAppointmentDate().toString();
+        }
+        return null;
     }
 
     public List<String> getAppointmentTypeRequiredDocumentation() {
-        return appointmentType.getAppointmentTypeDetails().getRequiredDocumentation();
+        if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
+            return appointmentType.getAppointmentTypeDetails().getRequiredDocumentation();
+        }
+        return null;
     }
 
     public Adress getAppointmentTypeAdress() {
-        return appointmentType.getAdress();
+        if (appointmentType != null && appointmentType.getAdress() != null) {
+            return appointmentType.getAdress();
+        }
+        return null;
     }
 
     public String getUserEmail() {
-        return user.getEmail();
+        if (user != null && user.getEmail() != null) {
+            return user.getEmail();
+        }
+        return null;
     }
 
     public String getUserId() {
-        return user.getId().toString();
+        if (user != null && user.getId() != null) {
+            return user.getId().toString();
+        }
+        return null;
     }
 
     //==================================Getters e Setters===================================
