@@ -99,7 +99,7 @@ public class AppointmentService {
                 return appointmentRepository.save(appointment);
 
             } else {
-                throw new TooLateToChangeException("Só é possivel reagendar uma consulta com pelomenos 12 horas de antecedencia.");
+                throw new TooLateToChangeException("Só é possível reagendar uma consulta com pelo menos 12 horas de antecedência.");
             }
         } else {
             throw new NoSuchElementException("Agendamento não encontrado.");
