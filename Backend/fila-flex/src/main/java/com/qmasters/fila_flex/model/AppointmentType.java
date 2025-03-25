@@ -37,7 +37,7 @@ public class AppointmentType {
     @JoinColumn(name = "adress_id")   
     private Adress adress;
 
-    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true) //talvez remover orphanRemoval para n�o apagar os appointments
+    @OneToMany(mappedBy = "appointmentType", cascade = CascadeType.ALL, orphanRemoval = true) //talvez remover orphanRemoval para não apagar os appointments
     private List<Appointment> appointments;
 
     @JsonManagedReference //talvez só usar o JsonIgnore na classe Evaluation
