@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-public class ReportControllerTest {
+class ReportControllerTest {
 
     private MockMvc mockMvc;
 

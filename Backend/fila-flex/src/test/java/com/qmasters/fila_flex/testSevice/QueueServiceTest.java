@@ -1,8 +1,9 @@
-package com.qmasters.fila_flex.testSevice;
+package com.qmasters.fila_flex.tertSevice;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,7 +25,7 @@ import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
 @ExtendWith(MockitoExtension.class)
-public class QueueServiceTest {
+class QueueServiceTest {
 
     @Mock
     private AppointmentTypeRepository appointmentTypeRepository;
