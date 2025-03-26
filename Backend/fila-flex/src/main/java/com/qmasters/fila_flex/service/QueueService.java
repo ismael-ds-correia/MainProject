@@ -127,7 +127,7 @@ public class QueueService {
         //Atualizando o status para ATTENDING e registra o horário de início.
         next.setStatus(AppointmentStatus.ATTENDING);
         next.setStartTime(LocalDateTime.now());
-        next.setQueueOrder(-1);
+        next.setQueueOrder(0);
         return appointmentRepository.save(next);
     }
 

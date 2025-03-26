@@ -38,8 +38,8 @@ public class AppointmentMetrics {
         this.appointmentTypeRepository = appointmentTypeRepository;
     }
 
-    public MetricsDTO generateMetrics(Long appointmentTypeId, LocalDateTime startDate, LocalDateTime endDate) {
-        AppointmentType appointmentType = this.appointmentTypeRepository.findById(appointmentTypeId)
+    public MetricsDTO generateMetrics(String appointmentTypeName, LocalDateTime startDate, LocalDateTime endDate) {
+        AppointmentType appointmentType = this.appointmentTypeRepository.findByName(appointmentTypeName)
                 .orElseThrow(() -> new NoSuchElementException("Tipo de agendamento não encontrado."));
 
         List<Appointment> appointments = appointmentType.getAppointments();
@@ -74,18 +74,34 @@ public class AppointmentMetrics {
     }
 
     private Integer calculateAverageWaitingTime(List<Appointment> appointments) {
+        var validAppointments = appointments.stream()
+            .filter(a -> a.getCheckInTime() != null && a.getStartTime() != null)
+            .collect(Collectors.toList());
+            
+        if (validAppointments.isEmpty()) {
+            return 0;
+        }
+        
         var totalWaitingTime = 0;
-        for (var appointment : appointments) {
+        for (var appointment : validAppointments) {
             totalWaitingTime += Duration.between(appointment.getCheckInTime(), appointment.getStartTime()).toMinutes();
         }
-        return totalWaitingTime / appointments.size();
+        return totalWaitingTime / validAppointments.size();
     }
 
     private Integer calculateAverageServiceTime(List<Appointment> appointments) {
+        var validAppointments = appointments.stream()
+            .filter(a -> a.getStartTime() != null && a.getEndTime() != null)
+            .collect(Collectors.toList());
+            
+        if (validAppointments.isEmpty()) {
+            return 0;
+        }
+        
         var totalServiceTime = 0;
-        for (var appointment : appointments) {
+        for (var appointment : validAppointments) {
             totalServiceTime += Duration.between(appointment.getStartTime(), appointment.getEndTime()).toMinutes();
         }
-        return totalServiceTime / appointments.size();
+        return totalServiceTime / validAppointments.size();
     }
 }
