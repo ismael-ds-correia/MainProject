@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.qmasters.fila_flex.util.UserRole;
 
 import jakarta.persistence.CascadeType;
@@ -39,9 +38,8 @@ public class User implements UserDetails {
     @NotNull(message = "Nome é obrigatório")
     private String name;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointment> appointments; //talvez tirar o orphan removal caso queira manter os dados após remover User
+    private transient List<Appointment> appointments; //talvez tirar o orphan removal caso queira manter os dados após remover User
 
     //construtores
 
