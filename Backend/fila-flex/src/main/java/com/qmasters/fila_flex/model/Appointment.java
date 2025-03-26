@@ -1,6 +1,7 @@
 package com.qmasters.fila_flex.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -104,7 +105,7 @@ public class Appointment {
         if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
             return appointmentType.getAppointmentTypeDetails().getCategory();
         }
-        return null;
+        return new ArrayList<>(); 
     }
 
     public String getAppointmentTypePrice() {
@@ -125,7 +126,7 @@ public class Appointment {
         if (appointmentType != null && appointmentType.getAppointmentTypeDetails() != null) {
             return appointmentType.getAppointmentTypeDetails().getRequiredDocumentation();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public Adress getAppointmentTypeAdress() {
