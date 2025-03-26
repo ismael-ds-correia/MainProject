@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
+import com.qmasters.fila_flex.exception.CannotInsertOnQueueException;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.model.enums.AppointmentStatus;
@@ -107,7 +108,7 @@ public class QueueService {
         } catch (NoSuchElementException | IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Erro ao processar prioridade: " + e.getMessage());
+            throw new CannotInsertOnQueueException("Erro ao processar prioridade: " + e.getMessage());
         }
     }
 
