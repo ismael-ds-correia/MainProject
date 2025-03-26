@@ -1,4 +1,4 @@
-package com.qmasters.fila_flex.tertSevice;
+package com.qmasters.fila_flex.testSevice;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
