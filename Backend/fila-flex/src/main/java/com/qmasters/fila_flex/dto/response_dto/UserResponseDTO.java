@@ -1,4 +1,4 @@
-package com.qmasters.fila_flex.dto.responseDto;
+package com.qmasters.fila_flex.dto.response_dto;
 
 import java.util.List;
 
@@ -15,12 +15,12 @@ public class UserResponseDTO {
     public UserResponseDTO() {
     }
 
-    public UserResponseDTO(User user) {
+    public UserResponseDTO(User user, List<Appointment> appointments) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
         this.role = user.getRole().toString();
-        this.appointments = user.getAppointments();
+        this.appointments = appointments;
 
     }
 

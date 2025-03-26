@@ -48,6 +48,7 @@ public class AppointmentService {
     public Optional<Appointment> findAppointmentById(Long id) {
         return appointmentRepository.findById(id);
     }
+    
 
     public Appointment setPriorityCondition(Long appointmentId, PriorityCondition priorityCondition) {
         Optional<Appointment> optionalAppointment = appointmentRepository.findById(appointmentId);
@@ -76,7 +77,7 @@ public class AppointmentService {
         return appointmentRepository.findByScheduledDateTime(startDate, endDate);
     }
 
-    public List<Appointment> findFullAppointmentsByUserId(Long userId) {
+    public List<Appointment> findFullAppointmentsByUserId(Long userId) { //talvez função desatualizada
         if (userId == null) {
             throw new IllegalArgumentException("ID do usuário não pode ser nulo");
         }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.qmasters.fila_flex.dto.responseDto.UserResponseDTO;
+import com.qmasters.fila_flex.dto.response_dto.UserResponseDTO;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.service.UserService;
 
@@ -37,7 +37,7 @@ public class UserController {
         if (user == null) {
             throw new NoSuchElementException("Usuário não encontrado");
         }
-        return ResponseEntity.ok(new UserResponseDTO(user));
+        return ResponseEntity.ok(userService.getUserWithAppointments(id));
     }
 
     @DeleteMapping("{id}")

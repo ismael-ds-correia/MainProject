@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
 import com.qmasters.fila_flex.controller.UserController;
+import com.qmasters.fila_flex.dto.response_dto.UserResponseDTO;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.service.UserService;
 import com.qmasters.fila_flex.util.UserRole;
@@ -63,7 +64,7 @@ class UserControllerTest {
         when(userService.findById(1L)).thenReturn(user);
 
         // Act
-        ResponseEntity<User> response = userController.getUserById(1L);
+        ResponseEntity<UserResponseDTO> response = userController.getUserById(1L);
 
         // Assert
         assertNotNull(response);
