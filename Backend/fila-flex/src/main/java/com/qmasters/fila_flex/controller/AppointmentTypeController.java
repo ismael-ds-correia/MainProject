@@ -39,7 +39,7 @@ public class AppointmentTypeController {
         return ResponseEntity.ok(appointmentType);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/find-id/{id}")
     public Optional<AppointmentType> findById(@PathVariable Long id) {
         var appointmentType = appointmentTypeService.findById(id);
         
@@ -49,7 +49,7 @@ public class AppointmentTypeController {
         return appointmentTypeService.findById(id);
     }
 
-    @GetMapping("/category")//arrumar isso daqui
+    @GetMapping("/category")//talvez esteja quebrada se não estiver, apagar este comentario
     public ResponseEntity<List<AppointmentType>> findByCategory(@RequestParam String category) {
         var appointmentType = appointmentTypeService.findByCategory(category);
         
@@ -60,7 +60,7 @@ public class AppointmentTypeController {
     }
 
     //Endpoint para buscar AppointmentTypes por intervalo de preços.
-    @GetMapping("/price-range") //arrumar esse daqui
+    @GetMapping("/price-range")
     public ResponseEntity<List<AppointmentType>> findByPriceBetween(@RequestParam double minPrice, @RequestParam double maxPrice) {
         var appointmentType = appointmentTypeService.findByPriceBetween(minPrice, maxPrice);
 
@@ -75,7 +75,7 @@ public class AppointmentTypeController {
         return appointmentTypeService.findAllByOrderByEstimatedTimeAsc();
     }
 
-    @GetMapping("/name/{name}")//arrumar isso daqui
+    @GetMapping("/find-name/{name}")
     public ResponseEntity<Optional<AppointmentType>> findByName(@PathVariable String name) {
         var appointmentType = appointmentTypeService.findByName(name);
         if (appointmentType.isEmpty()) {
@@ -85,7 +85,7 @@ public class AppointmentTypeController {
         return ResponseEntity.ok(appointmentType);
     }
     
-    @DeleteMapping("/delete/{name}") //arrumar isso
+    @DeleteMapping("/delete-name/{name}") //arrumar isso
     public ResponseEntity<String> deleteByName(@PathVariable String name) {
         try {
             appointmentTypeService.deleteByName(name);
@@ -96,7 +96,7 @@ public class AppointmentTypeController {
 
     }    
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete-id/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         try {
             appointmentTypeService.deleteAppointmentType(id);

@@ -44,13 +44,13 @@ public class AppointmentController {
         return ResponseEntity.ok(appointment);
     }
     
-    @PutMapping("/{id}")
+    @PutMapping("/udapte/{id}")
     public ResponseEntity<Appointment> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDTO appointmentDTO) {
         var appointment = appointmentService.updateAppointment(id, appointmentDTO);
         return ResponseEntity.ok(appointment);
     }
     
-    @GetMapping("/{id}")
+    @GetMapping("/find-id/{id}")
     public ResponseEntity<Optional<Appointment>> getAppointmentById(@PathVariable Long id) {
         var appointment = appointmentService.findAppointmentById(id);
         if (appointment.isEmpty()) {
@@ -60,8 +60,8 @@ public class AppointmentController {
     }
 
     //Endpoint para buscar agendamentos por ID do usuário
-    @GetMapping("/user")
-    public List<Appointment> getAppointmentsByUserId(@RequestParam("userId") Long userId) {
+    @GetMapping("/find-user/{userId}")
+    public List<Appointment> getAppointmentsByUserId(@PathVariable Long userId) {
         try {
             List<Appointment> appointments = appointmentService.findFullAppointmentsByUserId(userId);
 
@@ -106,7 +106,7 @@ public class AppointmentController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete-id/{id}")
     public ResponseEntity<String> deleteAppointmentById(@PathVariable Long id) {
         try {
             appointmentService.deleteAppointment(id);

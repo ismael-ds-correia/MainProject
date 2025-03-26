@@ -38,7 +38,7 @@ public class AppointmentTypeDetailsController {
         return ResponseEntity.ok(appointmentTypeDetails);
     }
 
-    @GetMapping("/find-byId/{id}")
+    @GetMapping("/find-id/{id}")
     public Optional<AppointmentTypeDetails> findById(@PathVariable Long id) {
         var appointmentTypeDetails = appointmentTypeDetailsService.findById(id);
 
@@ -48,7 +48,7 @@ public class AppointmentTypeDetailsController {
         return appointmentTypeDetailsService.findById(id);
     }
 
-    @DeleteMapping("/delete-ById/{id}")
+    @DeleteMapping("/delete-id/{id}")
     public ResponseEntity<String> deleteAppointmentTypeDetails(@PathVariable Long id) {
         try {
             appointmentTypeDetailsService.deleteAppointmentTypeDetails(id);
