@@ -24,7 +24,7 @@ public class EvaluationController {
     }
 
     @GetMapping
-    public List<EvaluationDTO> listEvaluations() {
+    public List<EvaluationDTO> listEvaluations() { //mudar para o padrão de codigo do projeto
         return evaluationService.getAllEvaluations().getBody().stream()
                 .map(EvaluationDTO::new)
                 .toList();

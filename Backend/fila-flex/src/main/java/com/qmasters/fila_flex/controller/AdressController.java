@@ -41,7 +41,7 @@ public class AdressController {
         return ResponseEntity.ok(adress);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("find-id/{id}")
     public ResponseEntity<Optional<Adress>> getAdressById(@PathVariable Long id) {
         var adress = adressService.findAdressById(id);
         //é necessario usar throw pois um optional retornar vazio não é identificado como erro pelo globalExceptionHandler
@@ -51,7 +51,7 @@ public class AdressController {
         return ResponseEntity.ok(adress);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("delete-id/{id}")
     public ResponseEntity<String> deleteAdressById(@PathVariable Long id) {
         try {
             adressService.deleteAdress(id);

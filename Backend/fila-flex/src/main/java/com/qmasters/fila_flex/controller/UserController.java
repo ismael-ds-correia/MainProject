@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok(userService.findAll());
     }
         
-    @GetMapping("{id}")
+    @GetMapping("/find-id/{id}")
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long id) {
         var user = userService.findById(id);
         if (user == null) {
@@ -40,7 +40,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserWithAppointments(id));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/delete-id/{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
