@@ -2,9 +2,9 @@ package com.qmasters.fila_flex.service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -27,14 +27,11 @@ import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
  * - Tempo médio de espera entre check-in e início do atendimento (em minutos)
  * - Tempo médio de duração do atendimento (em minutos)
  */
-
 @Service
 public class AppointmentMetrics {
-    private final AppointmentRepository appointmentRepository;
     private final AppointmentTypeRepository appointmentTypeRepository;
 
     public AppointmentMetrics(AppointmentRepository appointmentRepository, AppointmentTypeRepository appointmentTypeRepository) {
-        this.appointmentRepository = appointmentRepository;
         this.appointmentTypeRepository = appointmentTypeRepository;
     }
 
@@ -50,11 +47,11 @@ public class AppointmentMetrics {
         
         //Filtrando por período de data.
         if (startDate != null && endDate != null) {
-            appointments = appointments.stream()
+            appointments = new ArrayList<>(appointments.stream()
                 .filter(a -> a.getScheduledDateTime() != null 
                         && !a.getScheduledDateTime().isBefore(startDate) 
                         && !a.getScheduledDateTime().isAfter(endDate))
-                .collect(Collectors.toList());
+                .toList());
                 
             if (appointments.isEmpty()) {
                 throw new NoSuchElementException("Não foram encontrados agendamentos no período especificado.");
@@ -74,9 +71,9 @@ public class AppointmentMetrics {
     }
 
     private Integer calculateAverageWaitingTime(List<Appointment> appointments) {
-        var validAppointments = appointments.stream()
+        var validAppointments = new ArrayList<>(appointments.stream()
             .filter(a -> a.getCheckInTime() != null && a.getStartTime() != null)
-            .collect(Collectors.toList());
+            .toList());
             
         if (validAppointments.isEmpty()) {
             return 0;
@@ -90,9 +87,9 @@ public class AppointmentMetrics {
     }
 
     private Integer calculateAverageServiceTime(List<Appointment> appointments) {
-        var validAppointments = appointments.stream()
+        var validAppointments = new ArrayList<>(appointments.stream()
             .filter(a -> a.getStartTime() != null && a.getEndTime() != null)
-            .collect(Collectors.toList());
+            .toList());
             
         if (validAppointments.isEmpty()) {
             return 0;
