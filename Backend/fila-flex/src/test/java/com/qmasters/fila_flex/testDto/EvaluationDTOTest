@@ -1,0 +1,58 @@
+package com.qmasters.fila_flex.dto;
+
+import com.qmasters.fila_flex.model.AppointmentType;
+import com.qmasters.fila_flex.model.Evaluation;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class EvaluationDTOTest {
+
+    @Test
+    void testConstructorWithEvaluation() {
+        // Criar um AppointmentType
+        AppointmentType appointmentType = new AppointmentType();
+        appointmentType.setId(1L);
+
+        // Criar um objeto Evaluation
+        Evaluation evaluation = new Evaluation();
+        evaluation.setRating(5);
+        evaluation.setComment("Excellent service");
+        evaluation.setAppointmentType(appointmentType);
+
+        // Criar o DTO usando o construtor
+        EvaluationDTO evaluationDTO = new EvaluationDTO(evaluation);
+
+        // Verificar se os valores foram copiados corretamente
+        assertEquals(5, evaluationDTO.getRating());
+        assertEquals("Excellent service", evaluationDTO.getComment());
+        assertEquals(1L, evaluationDTO.getAppointmentTypeId());
+    }
+
+    @Test
+    void testDefaultConstructor() {
+        // Criar o DTO usando o construtor padrão
+        EvaluationDTO evaluationDTO = new EvaluationDTO();
+
+        // Verificar os valores padrão
+        assertEquals(0, evaluationDTO.getRating());  // valor default para int
+        assertNull(evaluationDTO.getComment());      // valor default para String
+        assertNull(evaluationDTO.getAppointmentTypeId()); // valor default para Long
+    }
+
+    @Test
+    void testSettersAndGetters() {
+        // Criar o DTO
+        EvaluationDTO evaluationDTO = new EvaluationDTO();
+
+        // Definir valores usando setters
+        evaluationDTO.setRating(4);
+        evaluationDTO.setComment("Good service");
+        evaluationDTO.setAppointmentTypeId(2L);
+
+        // Verificar se os valores foram corretamente atribuídos
+        assertEquals(4, evaluationDTO.getRating());
+        assertEquals("Good service", evaluationDTO.getComment());
+        assertEquals(2L, evaluationDTO.getAppointmentTypeId());
+    }
+}
