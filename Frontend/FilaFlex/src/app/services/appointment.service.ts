@@ -26,7 +26,7 @@ export interface AppointmentResponse {
   };
 }
 
-// Interface atualizada para refletir tanto o que é usado pelo componente quanto o que vem da API
+//Interface atualizada para refletir tanto o que é usado pelo componente quanto o que vem da API.
 export interface AppointmentSchedule {
   id?: number;
   appointmentType: { id: number, name?: string };
@@ -84,20 +84,16 @@ export class AppointmentService {
   /** Método para buscar agendamentos por ID de usuário */
   getAppointmentsByUserId(userId: number): Observable<AppointmentSchedule[]> {
     const headers = this.getHeaders();
-    // Criando parâmetros de consulta
-    const params = new HttpParams().set('userId', userId.toString());
     
-    // Fazendo a chamada HTTP com os parâmetros - espera resposta completa
-    return this.http.get<AppointmentSchedule[]>(`${this.apiUrl}/user`, { 
-      headers, 
-      params 
+    return this.http.get<AppointmentSchedule[]>(`${this.apiUrl}/find-user/${userId}`, { 
+      headers
     }).pipe(catchError(this.handleError));
   }
 
   /** Atualizar um agendamento */
   updateAppointment(id: number, updatedData: Partial<AppointmentSchedule>): Observable<any> {
     const headers = this.getHeaders();
-    return this.http.put(`${this.apiUrl}/${id}`, updatedData, { headers })
+    return this.http.put(`${this.apiUrl}/update/${id}`, updatedData, { headers })
       .pipe(catchError(this.handleError));
   }
 
@@ -105,7 +101,7 @@ export class AppointmentService {
   deleteAppointment(id: number): Observable<any> {
     const headers = this.getHeaders();
     
-    return this.http.delete(`${this.apiUrl}/${id}`, { headers })
+    return this.http.delete(`${this.apiUrl}/delete-id/${id}`, { headers })
       .pipe(
         catchError(err => {
           if (err.status === 200) {

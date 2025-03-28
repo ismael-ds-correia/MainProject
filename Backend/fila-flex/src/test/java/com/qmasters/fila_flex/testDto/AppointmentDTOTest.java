@@ -1,4 +1,5 @@
 package com.qmasters.fila_flex.testDto;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.qmasters.fila_flex.dto.AppointmentDTO;
 import com.qmasters.fila_flex.model.Adress;
 import com.qmasters.fila_flex.model.AppointmentType;
+import com.qmasters.fila_flex.model.AppointmentTypeDetails;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.util.PriorityCondition;
@@ -19,6 +21,7 @@ import com.qmasters.fila_flex.util.PriorityCondition;
 class AppointmentDTOTest {
 
     private AppointmentType appointmentType;
+    private AppointmentTypeDetails appointmentTypeDetails;
     private User user;
     private LocalDateTime scheduledDateTime;
     private LocalDateTime createdDateTime;
@@ -27,15 +30,18 @@ class AppointmentDTOTest {
 
     @BeforeEach
     void setup() {
-        // Mock dos objetos necessários
-        appointmentType = new AppointmentType();
-        appointmentType.setName("Consulta Médica");
-        appointmentType.setDescription("Consulta médica geral");
-        appointmentType.setCategory(List.of("Saúde", "Clínica"));
-        appointmentType.setPrice(100.0);
-        appointmentType.setEstimatedTime(30);
-        appointmentType.setRequiredDocumentation(List.of("RG", "Comprovante de Residência"));
-        appointmentType.setAdress(new Adress("Rua ABC", "123", "Cidade", "Estado", "CEP")); // Aqui você define o endereço como um objeto
+        // Criando um objeto AppointmentTypeDetails
+        appointmentTypeDetails = new AppointmentTypeDetails(
+            "Consulta Médica",
+            "Consulta médica geral",
+            List.of("Saúde", "Clínica"),
+            100.0,
+            LocalDate.now(),
+            List.of("RG", "Comprovante de Residência")
+        );
+
+        // Criando um objeto AppointmentType e associando AppointmentTypeDetails
+        appointmentType = new AppointmentType(appointmentTypeDetails, 30, new Adress("Rua ABC", "123", "Cidade", "Estado", "CEP"));
 
         user = new User();
         user.setId(1L);
@@ -49,16 +55,19 @@ class AppointmentDTOTest {
 
     @Test
     void testConstructorWithQueueOrder() {
-        AppointmentDTO dto = new AppointmentDTO(appointmentType, user, scheduledDateTime, createdDateTime, queueOrder);
+        AppointmentDTO dto = new AppointmentDTO(appointmentType, user, scheduledDateTime, createdDateTime);
         assertNotNull(dto);
-        assertEquals(queueOrder, dto.getQueueOrder());
         assertEquals("user@example.com", dto.getUserEmail());
         assertEquals("Consulta Médica", dto.getAppointmentTypeName());
+        assertEquals("100.0", dto.getAppointmentTypePrice());
+        assertEquals(30, Integer.parseInt(dto.getAppointmentTypeEstimatedTime()));
     }
 
     @Test
     void testConstructorWithPriorityCondition() {
-        AppointmentDTO dto = new AppointmentDTO(appointmentType, user, scheduledDateTime, createdDateTime, queueOrder, priorityCondition);
+        AppointmentDTO dto = new AppointmentDTO(appointmentType, user, scheduledDateTime, createdDateTime);
+        dto.setQueueOrder(queueOrder);
+        dto.setPriorityCondition(priorityCondition);
         assertNotNull(dto);
         assertEquals(priorityCondition, dto.getPriorityCondition());
         assertEquals(AppointmentStatus.MARKED, dto.getStatus());
@@ -93,7 +102,7 @@ class AppointmentDTOTest {
     @Test
     void testDefaultConstructor() {
         AppointmentDTO dto = new AppointmentDTO();
-        assertNull(dto.getUser());  // Verificando o comportamento padrão
+        assertNull(dto.getUser());  
         assertNull(dto.getAppointmentType());
         assertNull(dto.getQueueOrder());
         assertNull(dto.getPriorityCondition());
@@ -105,5 +114,4 @@ class AppointmentDTOTest {
         dto.setStatus(AppointmentStatus.ATTENDING);
         assertEquals(AppointmentStatus.ATTENDING, dto.getStatus());
     }
-    
 }

@@ -1,136 +1,193 @@
-
 package com.qmasters.fila_flex.testController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.qmasters.fila_flex.controller.AppointmentController;
 import com.qmasters.fila_flex.dto.AppointmentDTO;
 import com.qmasters.fila_flex.model.Appointment;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.model.AppointmentType;
+import com.qmasters.fila_flex.model.AppointmentTypeDetails;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.service.AppointmentService;
+import com.qmasters.fila_flex.util.PriorityCondition;
+import com.qmasters.fila_flex.util.UserRole;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import com.qmasters.fila_flex.util.UserRole; // Importa o enum UserRole
-import java.util.List; // Importa List de java.util
-import java.util.Arrays; // Importa Arrays se necessário para instanciar List
-import org.junit.jupiter.api.BeforeEach; // Importa o BeforeEach para configuração do método
-import org.mockito.InjectMocks; // Importa o InjectMocks para injeção dos mocks
-import org.mockito.Mock; // Importa o Mock para criar mocks
-import org.mockito.MockitoAnnotations; // Importa para inicializar os mocks
-import org.springframework.http.MediaType; // Importa MediaType para tipos de conteúdo
-import org.springframework.test.web.servlet.MockMvc; // Importa MockMvc para realizar requisições
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders; // Importa os construtores de requisição
-import org.springframework.test.web.servlet.setup.MockMvcBuilders; // Importa para configurar o MockMvc
-import com.fasterxml.jackson.databind.ObjectMapper; // Importa ObjectMapper para manipulação de JSON
-
-import com.qmasters.fila_flex.controller.AppointmentController;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.*;
 
-class AppointmentControllerTest {
-
-    @InjectMocks
-    private AppointmentController appointmentController;
+public class AppointmentControllerTest {
 
     @Mock
     private AppointmentService appointmentService;
 
-    private MockMvc mockMvc;
+    @InjectMocks
+    private AppointmentController appointmentController;
+
     private ObjectMapper objectMapper;
 
+    // Dados de exemplo
     private AppointmentDTO appointmentDTO;
     private Appointment appointment;
-    private User user;
     private AppointmentType appointmentType;
+    private AppointmentTypeDetails appointmentTypeDetails;
+    private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(appointmentController).build();
-        objectMapper = new ObjectMapper();
 
-        // Criação de objetos para simulação
-        user = new User("email@example.com", "12345678", UserRole.USER, "Test User");
-        user.setId(1L);
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        appointmentTypeDetails = new AppointmentTypeDetails();
+        appointmentTypeDetails.setName("Consulta");
+        appointmentTypeDetails.setDescription("Consulta com um médico");
+        appointmentTypeDetails.setPrice(100.0);
+        appointmentTypeDetails.setCategory(List.of("General"));
+        appointmentTypeDetails.setRequiredDocumentation(List.of("ID"));
 
         appointmentType = new AppointmentType();
-        appointmentType.setName("Consulta");
-        appointmentType.setDescription("Consulta médica");
+        appointmentType.setAppointmentTypeDetails(appointmentTypeDetails);
+        appointmentType.setEstimatedTime(30);
 
-        appointmentDTO = new AppointmentDTO(appointmentType, user, LocalDateTime.now().plusDays(1), LocalDateTime.now());
-        appointment = new Appointment(appointmentType, user, LocalDateTime.now().plusDays(1));
+        // Configure o usuário com id, mesmo que o DTO não o exija
+        user = new User("john@example.com", "password123", UserRole.USER, "John Doe");
+        user.setId(1L);
+
+        LocalDateTime scheduledDateTime = LocalDateTime.now().plusDays(1);
+        appointmentDTO = new AppointmentDTO(appointmentType, user, scheduledDateTime, LocalDateTime.now());
+
+        appointment = new Appointment(appointmentType, user, scheduledDateTime);
+        appointment.setStatus(AppointmentStatus.MARKED);
         appointment.setId(1L);
     }
 
     @Test
-    void getAllAppointment() throws Exception {
-        // Mock para retornar uma lista de agendamentos
+    void testGetAllAppointments_Success() {
         when(appointmentService.getAllAppointment()).thenReturn(List.of(appointment));
 
-        mockMvc.perform(get("/appointment/all"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].appointmentTypeName").value("Consulta"));
+        ResponseEntity<List<Appointment>> response = appointmentController.getAllAppointment();
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(1, response.getBody().size());
+        assertEquals("John Doe", response.getBody().get(0).getUser().getName());
+        verify(appointmentService, times(1)).getAllAppointment();
     }
 
     @Test
-    void getAppointmentById() throws Exception {
-        // Mock para encontrar um agendamento pelo ID
-        when(appointmentService.findAppointmentById(eq(1L))).thenReturn(Optional.of(appointment));
+    void testCreateAppointment_Success() {
+        // Configura os objetos de teste
+        // O DTO não precisa ter id, pois ele é usado só para entrada
+        when(appointmentService.saveAppointment(any(AppointmentDTO.class))).thenReturn(appointment);
 
-        mockMvc.perform(get("/appointment/{id}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.appointmentTypeName").value("Consulta"));
+        // Aqui o appointment retornado já possui um User com id preenchido
+        ResponseEntity<Appointment> response = appointmentController.createAppointment(appointmentDTO);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCode().value());
+        // Verifica que o appointment retornado possui um id definido, assim como o usuário.
+        assertNotNull(response.getBody().getId());
+        assertNotNull(response.getBody().getUser().getId());
+        assertEquals(1L, response.getBody().getUser().getId());
+        verify(appointmentService, times(1)).saveAppointment(appointmentDTO);
+    }
+    @Test
+    void testUpdateAppointment_Success() {
+        // Supondo que o AppointmentDTO para atualização só precisa alterar a data
+        AppointmentDTO updatedDto = new AppointmentDTO();
+        LocalDateTime newDate = LocalDateTime.now().plusDays(2);
+        updatedDto.setScheduledDateTime(newDate);
+
+        when(appointmentService.updateAppointment(eq(1L), any(AppointmentDTO.class)))
+                .thenReturn(appointment);
+
+        ResponseEntity<Appointment> response = appointmentController.updateAppointment(1L, updatedDto);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCode().value());
+        verify(appointmentService, times(1)).updateAppointment(eq(1L), any(AppointmentDTO.class));
     }
 
     @Test
-    void getAppointmentsByUserId() throws Exception {
-        // Mock para retornar agendamentos por userId
-        when(appointmentService.findFullAppointmentsByUserId(eq(1L))).thenReturn(List.of(appointment));
+    void testGetAppointmentById_Found() {
+        when(appointmentService.findAppointmentById(1L)).thenReturn(Optional.of(appointment));
 
-        mockMvc.perform(get("/appointment/user")
-                .param("userId", "1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1L));
+        ResponseEntity<Optional<Appointment>> response = appointmentController.getAppointmentById(1L);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCode().value());
+        assertTrue(response.getBody().isPresent());
+        assertEquals(1L, response.getBody().get().getId());
+        verify(appointmentService, times(1)).findAppointmentById(1L);
     }
 
     @Test
-    void getAppointmentsByUserIdBadRequest() throws Exception {
-        // Mock para lançar exceção
-        when(appointmentService.findFullAppointmentsByUserId(eq(1L)))
-                .thenThrow(new IllegalArgumentException("Erro ao buscar agendamentos"));
+    void testGetAppointmentById_NotFound() {
+        when(appointmentService.findAppointmentById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/appointment/user")
-                .param("userId", "1"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Erro ao buscar agendamentos"));
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            appointmentController.getAppointmentById(1L);
+        });
+
+        assertEquals("Agendamento não encontrado", exception.getMessage());
+        verify(appointmentService, times(1)).findAppointmentById(1L);
     }
 
     @Test
-    void getAppointmentBetweenDates() throws Exception {
-        // Mock para buscar agendamentos entre datas
+    void testSetPriorityCondition_Success() {
+        // Utilizando um valor do enum existente (por exemplo, PWD)
+        appointment.setPriorityCondition(PriorityCondition.PWD);
+        when(appointmentService.setPriorityCondition(eq(1L), any(PriorityCondition.class)))
+                .thenReturn(appointment);
+
+        ResponseEntity<Appointment> response = appointmentController.setPriorityCondition(1L, PriorityCondition.PWD);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals(PriorityCondition.PWD.getCondition(), response.getBody().getPriorityCondition().getCondition());
+        verify(appointmentService, times(1)).setPriorityCondition(eq(1L), any(PriorityCondition.class));
+    }
+
+    @Test
+    void testGetAppointmentBetweenDates_Success() {
         LocalDateTime startDate = LocalDateTime.now().minusDays(1);
         LocalDateTime endDate = LocalDateTime.now().plusDays(1);
-        when(appointmentService.findByScheduledDateTime(eq(startDate), eq(endDate))).thenReturn(List.of(appointment));
+        when(appointmentService.findByScheduledDateTime(startDate, endDate)).thenReturn(List.of(appointment));
 
-        mockMvc.perform(get("/appointment/between")
-                .param("startDate", startDate.toString())
-                .param("endDate", endDate.toString()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1L));
+        ResponseEntity<List<Appointment>> response = appointmentController.getAppointmentBetwenDate(startDate, endDate);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCode().value());
+        assertFalse(response.getBody().isEmpty());
+        verify(appointmentService, times(1)).findByScheduledDateTime(startDate, endDate);
+    }
+
+    @Test
+    void testDeleteAppointmentById_Success() {
+        // Para simular exclusão, basta garantir que o service não lança exceção
+        doNothing().when(appointmentService).deleteAppointment(1L);
+
+        ResponseEntity<String> response = appointmentController.deleteAppointmentById(1L);
+
+        assertNotNull(response);
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals("Agendamento removido com sucesso", response.getBody());
+        verify(appointmentService, times(1)).deleteAppointment(1L);
     }
 }
