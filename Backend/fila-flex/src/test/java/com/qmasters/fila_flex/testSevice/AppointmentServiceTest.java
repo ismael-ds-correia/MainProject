@@ -23,6 +23,7 @@ import com.qmasters.fila_flex.dto.AppointmentDTO;
 import com.qmasters.fila_flex.exception.TooLateToChangeException;
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.AppointmentType;
+import com.qmasters.fila_flex.model.AppointmentTypeDetails;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
@@ -49,27 +50,30 @@ public class AppointmentServiceTest {
     private User user;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         MockitoAnnotations.openMocks(this);
 
-        appointmentType = new AppointmentType();
-        appointmentType.setName("Consultation");
-        appointmentType.setDescription("Consultation with a doctor");
-        appointmentType.setPrice(100.0);
-        appointmentType.setEstimatedTime(30);
-        appointmentType.setCategory(List.of("General"));
-        appointmentType.setRequiredDocumentation(List.of("ID"));
+        AppointmentTypeDetails details = new AppointmentTypeDetails();
+        details.setName("Consultation");
+        details.setDescription("Consultation with a doctor");
+        details.setPrice(100.0);
+        details.setCategory(List.of("General"));
+        details.setRequiredDocumentation(List.of("ID"));
 
+        appointmentType = new AppointmentType();
+        appointmentType.setAppointmentTypeDetails(details);
+        appointmentType.setEstimatedTime(30);
+    
         user = new User();
         user.setId(1L);
         user.setEmail("testuser@example.com");
         user.setName("Test User");
-
+    
         appointmentDTO = new AppointmentDTO(appointmentType, user, LocalDateTime.now().plusDays(1), LocalDateTime.now());
     }
 
     @Test
-    public void testSaveAppointment() {
+    void testSaveAppointment() {
         Appointment appointment = new Appointment(appointmentType, user, LocalDateTime.now().plusDays(1));
 
         when(queueService.assignQueuePosition(ArgumentMatchers.any(Appointment.class))).thenReturn(appointment);
@@ -84,7 +88,7 @@ public class AppointmentServiceTest {
     }
 
     @Test
-    public void testUpdateAppointmentSuccess() {
+    void testUpdateAppointmentSuccess() {
         Appointment existingAppointment = new Appointment(appointmentType, user, LocalDateTime.now().plusDays(1));
         existingAppointment.setId(1L);
         existingAppointment.setCreatedDateTime(LocalDateTime.now().minusDays(1));
@@ -106,7 +110,7 @@ public class AppointmentServiceTest {
     }
 
     @Test
-    public void testUpdateAppointmentTooLateToChange() {
+    void testUpdateAppointmentTooLateToChange() {
         Appointment existingAppointment = new Appointment(appointmentType, user, LocalDateTime.now().plusDays(1));
         existingAppointment.setId(1L);
         existingAppointment.setCreatedDateTime(LocalDateTime.now().minusDays(1));
@@ -124,7 +128,7 @@ public class AppointmentServiceTest {
     } 
     
     @Test
-    public void testFindByScheduledDateTime() {
+    void testFindByScheduledDateTime() {
         LocalDateTime start = LocalDateTime.now().minusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(1);
 
