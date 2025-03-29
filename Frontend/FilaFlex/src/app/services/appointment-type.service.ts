@@ -46,13 +46,13 @@ export class AppointmentTypeService {
 
   getAppointmentTypeByName(name: string): Observable<AppointmentType> {
     console.log(`Buscando serviço com nome: ${name}`);
-    console.log(`URL completa: ${this.apiUrl}/name/${name}`);
+    console.log(`URL completa: ${this.apiUrl}/find-name/${name}`);
     
     const headers = { 
       'Authorization': `Bearer ${localStorage.getItem('token')}` 
     };
     
-    return this.http.get<AppointmentType>(`${this.apiUrl}/name/${name}`, { headers })
+    return this.http.get<AppointmentType>(`${this.apiUrl}/find-name/${name}`, { headers })
       .pipe(
         tap(data => {
           console.log('Dados recebidos:', data);
@@ -155,7 +155,7 @@ export class AppointmentTypeService {
       'Authorization': `Bearer ${localStorage.getItem('token')}` 
     };
     
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers }).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/delete-id/${id}`, { headers }).pipe(
       catchError(this.handleError)
     );
   }
@@ -166,7 +166,7 @@ export class AppointmentTypeService {
         'Authorization': `Bearer ${localStorage.getItem('token')}` 
       };
       
-      return this.http.delete<void>(`${this.apiUrl}/${appointmentType.id}`, { headers }).pipe(
+      return this.http.delete<void>(`${this.apiUrl}/delete-id/${appointmentType.id}`, { headers }).pipe(
         catchError(this.handleError)
       );
     } 
@@ -185,7 +185,7 @@ export class AppointmentTypeService {
       'Authorization': `Bearer ${localStorage.getItem('token')}` 
     };
 
-    return this.http.delete<void>(`${this.apiUrl}/delete/${name}`, {headers}).pipe(
+    return this.http.delete<void>(`${this.apiUrl}/delete-name/${name}`, {headers}).pipe(
       tap(data => console.log('Dados recebidos:', data))
     );
   }

@@ -32,7 +32,6 @@ class AppointmentMetricsTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        appointmentMetrics = new AppointmentMetrics(appointmentRepository, appointmentTypeRepository);
     }
 
     @Test
@@ -71,9 +70,7 @@ class AppointmentMetricsTest {
     
         // Adicionando os agendamentos ao tipo de agendamento
         when(appointmentType.getAppointments()).thenReturn(Arrays.asList(appointment1, appointment2));
-    
-        // Calculando as métricas
-        AppointmentMetrics appointmentMetrics = new AppointmentMetrics(mock(AppointmentRepository.class), appointmentTypeRepository);
+
         MetricsDTO metrics = appointmentMetrics.generateMetrics("Consulta", null, null); // Teste sem intervalo de datas (todos os agendamentos)
     
         // Asserting valores esperados
