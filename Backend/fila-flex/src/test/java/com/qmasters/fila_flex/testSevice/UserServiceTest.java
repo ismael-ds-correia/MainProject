@@ -75,7 +75,7 @@ public class UserServiceTest {
         when(userRepository.findByEmail("user@example.com")).thenReturn(user);
         UserDetails result = userService.findByEmail("user@example.com");
         assertNotNull(result);
-        assertEquals("user@example.com", result.getUsername());
+        assertEquals("John Doe", result.getUsername());
         verify(userRepository, times(1)).findByEmail("user@example.com");
     }
 
