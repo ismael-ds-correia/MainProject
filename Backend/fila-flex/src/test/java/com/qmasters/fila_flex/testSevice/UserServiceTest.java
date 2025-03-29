@@ -1,9 +1,10 @@
 package com.qmasters.fila_flex.testSevice;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -11,98 +12,163 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.anyLong;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.qmasters.fila_flex.dto.response_dto.UserResponseDTO;
+import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.User;
+import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.repository.UserRepository;
 import com.qmasters.fila_flex.service.UserService;
 import com.qmasters.fila_flex.util.UserRole;
 
-public class UserServiceTest {
-
-    @InjectMocks
-    private UserService userService;
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
-    private User user;
+    @Mock
+    private AppointmentRepository appointmentRepository;
+
+    private UserService userService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        // Cria um usuário de exemplo
-        user = new User("user@example.com", "password", UserRole.USER, "John Doe");
-        user.setId(1L);
+        userService = new UserService(userRepository, appointmentRepository);
     }
 
     @Test
-    public void testFindAll() {
-        when(userRepository.findAll()).thenReturn(List.of(user));
-        List<User> result = userService.findAll();
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(userRepository, times(1)).findAll();
+    void testFindAll() {
+        List<User> mockUsers = List.of(new User(), new User());
+        when(userRepository.findAll()).thenReturn(mockUsers);
+
+        List<User> users = userService.findAll();
+
+        assertEquals(2, users.size());
+        verify(userRepository).findAll();
     }
 
     @Test
-    public void testFindByIdFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        User result = userService.findById(1L);
-        assertNotNull(result);
-        assertEquals("user@example.com", result.getEmail());
-        verify(userRepository, times(1)).findById(1L);
+    void testFindById_Success() {
+        User mockUser = new User();
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+
+        User user = userService.findById(1L);
+
+        assertNotNull(user);
+        assertEquals(mockUser, user);
+        verify(userRepository).findById(1L);
     }
 
     @Test
-    public void testFindByIdNotFound() {
-        when(userRepository.findById(2L)).thenReturn(Optional.empty());
-        User result = userService.findById(2L);
-        assertNull(result);
-        verify(userRepository, times(1)).findById(2L);
+    void testFindById_NotFound() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        User user = userService.findById(1L);
+
+        assertNull(user);
+        verify(userRepository).findById(1L);
     }
 
     @Test
-    public void testFindByEmail() {
-        when(userRepository.findByEmail("user@example.com")).thenReturn(user);
-        UserDetails result = userService.findByEmail("user@example.com");
-        assertNotNull(result);
-        assertEquals("user@example.com", result.getUsername());
-        verify(userRepository, times(1)).findByEmail("user@example.com");
+    void testFindByEmail() {
+        UserDetails mockUser = mock(UserDetails.class);
+        when(userRepository.findByEmail("test@example.com")).thenReturn(mockUser);
+
+        UserDetails user = userService.findByEmail("test@example.com");
+
+        assertNotNull(user);
+        assertEquals(mockUser, user);
+        verify(userRepository).findByEmail("test@example.com");
     }
 
     @Test
-    public void testDeleteUserSuccess() {
+    public void testGetUserWithAppointments_Success() {
+        Long userId = 1L;
+
+        // Criação de um usuário mockado
+        User user = new User();
+        user.setId(userId);
+        user.setEmail("test@example.com");
+        user.setName("Test User");
+        user.setRole(UserRole.USER);
+
+        // Criação de uma lista de compromissos mockados
+        Appointment appointment1 = new Appointment();
+        appointment1.setId(1L);
+        Appointment appointment2 = new Appointment();
+        appointment2.setId(2L);
+        List<Appointment> appointments = Arrays.asList(appointment1, appointment2);
+
+        // Simula o comportamento dos repositórios
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(appointmentRepository.findByUserId(userId)).thenReturn(appointments);
+
+        // Executa o método
+        UserResponseDTO response = userService.getUserWithAppointments(userId);
+
+        // Verifica os resultados
+        assertNotNull(response);
+        assertEquals(userId, response.getId());
+        assertEquals("test@example.com", response.getEmail());
+        assertEquals("Test User", response.getName());
+        assertEquals("USER", response.getRole());
+        assertEquals(2, response.getAppointments().size());
+    }
+
+    @Test
+    void testGetUserWithAppointments_UserNotFound() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            userService.getUserWithAppointments(1L);
+        });
+
+        assertEquals("Usuário não encontrado", exception.getMessage());
+        verify(userRepository).findById(1L);
+        verify(appointmentRepository, never()).findByUserId(anyLong());
+    }
+
+    @Test
+    void testDeleteUser_Success() {
         when(userRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(userRepository).deleteById(1L);
-        assertDoesNotThrow(() -> userService.deleteUser(1L));
-        verify(userRepository, times(1)).existsById(1L);
-        verify(userRepository, times(1)).deleteById(1L);
+
+        userService.deleteUser(1L);
+
+        verify(userRepository).existsById(1L);
+        verify(userRepository).deleteById(1L);
     }
 
     @Test
-    public void testDeleteUserNotFound() {
-        when(userRepository.existsById(2L)).thenReturn(false);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> userService.deleteUser(2L));
+    void testDeleteUser_UserNotFound() {
+        when(userRepository.existsById(1L)).thenReturn(false);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            userService.deleteUser(1L);
+        });
+
         assertEquals("Usuário não encontrado, remoção não foi realizada", exception.getMessage());
-        verify(userRepository, times(1)).existsById(2L);
+
+        verify(userRepository).existsById(1L);
         verify(userRepository, never()).deleteById(anyLong());
     }
 
     @Test
-    public void testUpdateUser() {
-        when(userRepository.save(user)).thenReturn(user);
-        User result = userService.update(user);
-        assertNotNull(result);
-        assertEquals("John Doe", result.getName());
-        verify(userRepository, times(1)).save(user);
+    void testUpdate() {
+        User mockUser = new User();
+        when(userRepository.save(mockUser)).thenReturn(mockUser);
+
+        User updatedUser = userService.update(mockUser);
+
+        assertNotNull(updatedUser);
+        assertEquals(mockUser, updatedUser);
+        verify(userRepository).save(mockUser);
     }
 }

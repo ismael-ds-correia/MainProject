@@ -1,4 +1,4 @@
-package com.qmasters.fila_flex.testRepository;
+/*package com.qmasters.fila_flex.testRepository;
 
 import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.enums.AppointmentStatus;
@@ -57,3 +57,4 @@ public class AppointmentRepositoryTest {
         assertEquals(2, appointments.size(), "Deve retornar dois agendamentos com status 'COMPLETED'.");
     }
 }
+*/

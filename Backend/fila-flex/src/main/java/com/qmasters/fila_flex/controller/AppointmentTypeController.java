@@ -40,13 +40,13 @@ public class AppointmentTypeController {
     }
 
     @GetMapping("/find-id/{id}")
-    public Optional<AppointmentType> findById(@PathVariable Long id) {
+    public ResponseEntity<Optional<AppointmentType>> findById(@PathVariable Long id) {
         var appointmentType = appointmentTypeService.findById(id);
         
         if (appointmentType.isEmpty()) { 
             throw new NoSuchElementException("Tipo de agendamento não encontrado.");
         }
-        return appointmentTypeService.findById(id);
+        return ResponseEntity.ok(appointmentType);
     }
 
     @GetMapping("/category")//talvez esteja quebrada se não estiver, apagar este comentario

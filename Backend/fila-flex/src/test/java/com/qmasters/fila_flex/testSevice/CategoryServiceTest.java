@@ -1,124 +1,186 @@
 package com.qmasters.fila_flex.testSevice;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import com.qmasters.fila_flex.dto.CategoryDTO;
 import com.qmasters.fila_flex.model.Category;
 import com.qmasters.fila_flex.repository.CategoryRepository;
 import com.qmasters.fila_flex.service.CategoryService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.mockito.Mockito.*;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
 import java.util.List;
+import java.util.Optional;
 
-@ExtendWith(MockitoExtension.class) // Usando a extensão do Mockito com JUnit 5
 class CategoryServiceTest {
 
-    @InjectMocks
-    private CategoryService categoryService;
-
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryRepository categoryRepositoryMock;
 
-    private CategoryDTO categoryDTO;
+    private CategoryService categoryService;
 
     @BeforeEach
     void setUp() {
-        // Preparando dados para o teste
-        categoryDTO = new CategoryDTO("Test Category");
+        MockitoAnnotations.openMocks(this);
+        categoryService = new CategoryService(categoryRepositoryMock);
     }
 
     @Test
-    void testSaveCategory_whenCategoryDoesNotExist() {
-        // Cenário: A categoria não existe e precisa ser salva
-        when(categoryRepository.findByName(categoryDTO.getName())).thenReturn(Optional.empty());
-        when(categoryRepository.save(any(Category.class))).thenReturn(new Category(categoryDTO.getName()));
+    void testSaveCategory_WhenCategoryExists() {
+        // Dado
+        String categoryName = "Technology";
+        CategoryDTO categoryDTO = new CategoryDTO(categoryName);
+        Category existingCategory = new Category(categoryName);
 
-        Category savedCategory = categoryService.saveCategory(categoryDTO);
+        // Simulando o comportamento do repositório (categoria já existe)
+        when(categoryRepositoryMock.findByName(categoryName)).thenReturn(Optional.of(existingCategory));
 
-        assertNotNull(savedCategory);
-        assertEquals(categoryDTO.getName(), savedCategory.getName());
-        verify(categoryRepository, times(1)).save(any(Category.class));
+        // Chamando o método
+        Category result = categoryService.saveCategory(categoryDTO);
+
+        // Verificando o comportamento esperado
+        assertNotNull(result);
+        assertEquals(categoryName, result.getName());
+        verify(categoryRepositoryMock, times(1)).findByName(categoryName);
+        verify(categoryRepositoryMock, times(0)).save(any(Category.class));  // Verificando se o save não foi chamado
     }
 
     @Test
-    void testSaveCategory_whenCategoryAlreadyExists() {
-        // Cenário: A categoria já existe, então não é necessário salvar novamente
-        Category existingCategory = new Category(categoryDTO.getName());
-        when(categoryRepository.findByName(categoryDTO.getName())).thenReturn(Optional.of(existingCategory));
+    void testSaveCategory_WhenCategoryDoesNotExist() {
+        // Dado
+        String categoryName = "Health";
+        CategoryDTO categoryDTO = new CategoryDTO(categoryName);
 
-        Category savedCategory = categoryService.saveCategory(categoryDTO);
+        // Simulando o comportamento do repositório (categoria não existe)
+        when(categoryRepositoryMock.findByName(categoryName)).thenReturn(Optional.empty());
+        when(categoryRepositoryMock.save(any(Category.class))).thenReturn(new Category(categoryName));
 
-        assertNotNull(savedCategory);
-        assertEquals(categoryDTO.getName(), savedCategory.getName());
-        verify(categoryRepository, times(0)).save(any(Category.class));  // Não deve chamar save()
+        // Chamando o método
+        Category result = categoryService.saveCategory(categoryDTO);
+
+        // Verificando o comportamento esperado
+        assertNotNull(result);
+        assertEquals(categoryName, result.getName());
+        verify(categoryRepositoryMock, times(1)).findByName(categoryName);
+        verify(categoryRepositoryMock, times(1)).save(any(Category.class));  // Verificando se o save foi chamado
     }
 
     @Test
     void testGetAllCategories() {
-        // Cenário: Obter todas as categorias
-        when(categoryRepository.findAll()).thenReturn(List.of(new Category("Category 1"), new Category("Category 2")));
+        // Dado
+        Category category1 = new Category("Technology");
+        Category category2 = new Category("Health");
+        List<Category> categories = List.of(category1, category2);
 
-        List<Category> categories = categoryService.getAllCategories();
+        // Simulando o comportamento do repositório
+        when(categoryRepositoryMock.findAll()).thenReturn(categories);
 
-        assertNotNull(categories);
-        assertEquals(2, categories.size());
+        // Chamando o método
+        List<Category> result = categoryService.getAllCategories();
+
+        // Verificando o comportamento esperado
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.contains(category1));
+        assertTrue(result.contains(category2));
+        verify(categoryRepositoryMock, times(1)).findAll();
     }
 
     @Test
-    void testGetCategoryById() {
-        // Cenário: Buscar uma categoria por ID existente
-        Category category = new Category("Category 1");
-        category.setId(1L);
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+void testGetCategoryById_Found() {
+    // Dado
+    Long categoryId = 1L;
+    Category category = new Category("Technology");
+    category.setId(categoryId); // Definindo explicitamente o ID
 
-        Category foundCategory = categoryService.getCategoryById(1L);
+    // Simulando o comportamento do repositório
+    when(categoryRepositoryMock.findById(categoryId)).thenReturn(Optional.of(category));
 
-        assertNotNull(foundCategory);
-        assertEquals("Category 1", foundCategory.getName());
-    }
+    // Chamando o método
+    Category result = categoryService.getCategoryById(categoryId);
+
+    // Verificando o comportamento esperado
+    assertNotNull(result);
+    assertEquals(categoryId, result.getId());
+    assertEquals("Technology", result.getName());
+    verify(categoryRepositoryMock, times(1)).findById(categoryId);
+}
 
     @Test
-    void testGetCategoryById_notFound() {
-        // Cenário: Buscar uma categoria por ID que não existe
-        when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
+    void testGetCategoryById_NotFound() {
+        // Dado
+        Long categoryId = 1L;
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> categoryService.getCategoryById(1L));
+        // Simulando o comportamento do repositório
+        when(categoryRepositoryMock.findById(categoryId)).thenReturn(Optional.empty());
 
-        assertEquals("Categoria não encontrada com o ID: 1", exception.getMessage());
+        // Chamando o método
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            categoryService.getCategoryById(categoryId);
+        });
+
+        // Verificando a mensagem da exceção
+        assertEquals("Categoria não encontrada com o ID: " + categoryId, thrown.getMessage());
+        verify(categoryRepositoryMock, times(1)).findById(categoryId);
     }
 
     @Test
     void testUpdateCategory() {
-        // Cenário: Atualizar uma categoria existente
-        Category existingCategory = new Category("Old Category");
-        existingCategory.setId(1L);
-        CategoryDTO updatedCategoryDTO = new CategoryDTO("Updated Category");
+        // Dado
+        Long categoryId = 1L;
+        CategoryDTO categoryDTO = new CategoryDTO("New Category Name");
+        Category category = new Category("Old Category Name");
+        
+        // Simulando o comportamento do repositório
+        when(categoryRepositoryMock.findById(categoryId)).thenReturn(Optional.of(category));
+        when(categoryRepositoryMock.save(any(Category.class))).thenReturn(category);
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(existingCategory));
-        when(categoryRepository.save(any(Category.class))).thenReturn(new Category(updatedCategoryDTO.getName()));
+        // Chamando o método
+        Category result = categoryService.updateCategory(categoryId, categoryDTO);
 
-        Category updatedCategory = categoryService.updateCategory(1L, updatedCategoryDTO);
-
-        assertNotNull(updatedCategory);
-        assertEquals(updatedCategoryDTO.getName(), updatedCategory.getName());
+        // Verificando o comportamento esperado
+        assertNotNull(result);
+        assertEquals("New Category Name", result.getName());
+        verify(categoryRepositoryMock, times(1)).findById(categoryId);
+        verify(categoryRepositoryMock, times(1)).save(any(Category.class));
     }
 
     @Test
     void testDeleteCategory() {
-        // Cenário: Excluir uma categoria existente
-        Category category = new Category("Category to be deleted");
-        category.setId(1L);
+        // Dado
+        Long categoryId = 1L;
+        Category category = new Category("Technology");
 
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+        // Simulando o comportamento do repositório
+        when(categoryRepositoryMock.findById(categoryId)).thenReturn(Optional.of(category));
 
-        categoryService.deleteCategory(1L);
+        // Chamando o método
+        categoryService.deleteCategory(categoryId);
 
-        verify(categoryRepository, times(1)).delete(category);
+        // Verificando o comportamento esperado
+        verify(categoryRepositoryMock, times(1)).delete(category);
+    }
+
+    @Test
+    void testDeleteCategory_NotFound() {
+        // Dado
+        Long categoryId = 1L;
+
+        // Simulando o comportamento do repositório
+        when(categoryRepositoryMock.findById(categoryId)).thenReturn(Optional.empty());
+
+        // Chamando o método
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            categoryService.deleteCategory(categoryId);
+        });
+
+        // Verificando a mensagem da exceção
+        assertEquals("Categoria não encontrada com o ID: " + categoryId, thrown.getMessage());
+        verify(categoryRepositoryMock, times(1)).findById(categoryId);
     }
 }

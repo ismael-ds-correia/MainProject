@@ -18,8 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -179,6 +181,22 @@ public class AppointmentControllerTest {
     }
 
     @Test
+    void testGetAppointmentBetweenDates_NotFound() {
+        LocalDateTime startDate = LocalDateTime.now().minusDays(1);
+        LocalDateTime endDate = LocalDateTime.now().plusDays(1);
+        
+        // Simula que não há agendamentos entre as datas informadas
+        when(appointmentService.findByScheduledDateTime(startDate, endDate)).thenReturn(Collections.emptyList());
+        
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            appointmentController.getAppointmentBetwenDate(startDate, endDate);
+        });
+        
+        assertEquals("Nenhum agendamento encontrado entre essas datas", exception.getMessage());
+        verify(appointmentService, times(1)).findByScheduledDateTime(startDate, endDate);
+    }
+
+    @Test
     void testDeleteAppointmentById_Success() {
         // Para simular exclusão, basta garantir que o service não lança exceção
         doNothing().when(appointmentService).deleteAppointment(1L);
@@ -189,5 +207,80 @@ public class AppointmentControllerTest {
         assertEquals(200, response.getStatusCode().value());
         assertEquals("Agendamento removido com sucesso", response.getBody());
         verify(appointmentService, times(1)).deleteAppointment(1L);
+    }
+
+    @Test
+    void testDeleteAppointmentById_NotFound() {
+        // Simula que o service lança uma IllegalArgumentException
+        doThrow(new IllegalArgumentException("Agendamento não encontrado"))
+                .when(appointmentService).deleteAppointment(1L);
+
+        ResponseEntity<String> response = appointmentController.deleteAppointmentById(1L);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatusCode().value());
+        assertEquals("Agendamento não encontrado", response.getBody());
+        verify(appointmentService, times(1)).deleteAppointment(1L);
+    }
+
+    @Test
+    void testGetAppointmentsByUserId_Success() {
+        // Simula que existe pelo menos um agendamento para o usuário
+        when(appointmentService.findFullAppointmentsByUserId(1L)).thenReturn(List.of(appointment));
+        
+        List<Appointment> appointments = appointmentController.getAppointmentsByUserId(1L);
+        
+        assertNotNull(appointments);
+        assertFalse(appointments.isEmpty());
+        assertEquals(1, appointments.size());
+        verify(appointmentService, times(1)).findFullAppointmentsByUserId(1L);
+    }
+
+    @Test
+    void testGetAppointmentsByUserId_NotFound() {
+        when(appointmentService.findFullAppointmentsByUserId(1L)).thenReturn(Collections.emptyList());
+
+        Exception exception = assertThrows(NoSuchElementException.class, () -> {
+            appointmentController.getAppointmentsByUserId(1L);
+        });
+
+        assertEquals("Nenhum agendamento encontrado para esse usuário", exception.getMessage());
+        verify(appointmentService, times(1)).findFullAppointmentsByUserId(1L);
+    }
+
+    @Test
+    void testGetAppointmentsByUserId_IllegalArgumentException() {
+        when(appointmentService.findFullAppointmentsByUserId(1L)).thenThrow(IllegalArgumentException.class);
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            appointmentController.getAppointmentsByUserId(1L);
+        });
+
+        assertTrue(exception.getMessage().contains("Erro ao buscar agendamentos"));
+        verify(appointmentService, times(1)).findFullAppointmentsByUserId(1L);
+    }
+
+    @Test
+    void testSetPriorityCondition_NotFound() {
+        when(appointmentService.setPriorityCondition(eq(1L), any(PriorityCondition.class)))
+                .thenThrow(NoSuchElementException.class);
+
+        ResponseEntity<Appointment> response = appointmentController.setPriorityCondition(1L, PriorityCondition.PWD);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        verify(appointmentService, times(1)).setPriorityCondition(eq(1L), any(PriorityCondition.class));
+    }
+
+    @Test
+    void testSetPriorityCondition_InternalServerError() {
+        when(appointmentService.setPriorityCondition(eq(1L), any(PriorityCondition.class)))
+                .thenThrow(new RuntimeException("Erro interno"));
+
+        ResponseEntity<Appointment> response = appointmentController.setPriorityCondition(1L, PriorityCondition.PWD);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        verify(appointmentService, times(1)).setPriorityCondition(eq(1L), any(PriorityCondition.class));
     }
 }
