@@ -145,10 +145,10 @@ public class QueueService {
         Integer currentPosition = appointment.getQueueOrder();
         Long appointmentTypeId = appointment.getAppointmentType().getId();
         
-        //Registrando o término, muda o status e define queueOrder como -1.
+        //Registrando o término, muda o status e define queueOrder como 0.
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointment.setEndTime(LocalDateTime.now());
-        appointment.setQueueOrder(-1);
+        appointment.setQueueOrder(0);
         
         //Salvando o agendamento atualizado.
         Appointment completedAppointment = appointmentRepository.save(appointment);
@@ -178,7 +178,7 @@ public class QueueService {
         // Registrando o término, muda o status para ABSENT em vez de COMPLETED
         appointment.setStatus(AppointmentStatus.ABSENT);
         appointment.setEndTime(LocalDateTime.now());
-        appointment.setQueueOrder(-1); // Mesmo valor usado em completeAppointment
+        appointment.setQueueOrder(0); // Mesmo valor usado em completeAppointment
         
         // Salvando o agendamento atualizado
         Appointment absentAppointment = appointmentRepository.save(appointment);

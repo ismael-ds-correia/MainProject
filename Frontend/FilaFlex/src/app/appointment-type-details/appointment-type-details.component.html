@@ -106,8 +106,14 @@
             </thead>
             <tbody>
               <tr *ngFor="let appointment of queue">
-                <td>{{ (appointment.queueOrder <= 0) ? 'Já atendido' : appointment.queueOrder }}</td>
-                <td>{{ appointment.userEmail }}</td>
+                <td>
+                  <span *ngIf="appointment.status === 'COMPLETED'">Concluído</span>
+                  <span *ngIf="appointment.status === 'ABSENT'">Ausente</span>
+                  <span *ngIf="appointment.status === 'ATTENDING'">Em atendimento</span>
+                  <span *ngIf="appointment.status !== 'COMPLETED' && appointment.status !== 'ABSENT' && appointment.status !== 'ATTENDING'">
+                    {{ appointment.queueOrder }}
+                  </span>
+                </td>                <td>{{ appointment.userEmail }}</td>
                 <td>
                   <span [ngSwitch]="appointment.status">
                     <span *ngSwitchCase="'MARKED'">Agendado</span>

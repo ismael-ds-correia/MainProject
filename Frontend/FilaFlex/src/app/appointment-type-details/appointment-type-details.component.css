@@ -125,6 +125,7 @@
 .action-buttons {
   display: flex;
   justify-content: center;
+  gap: 15px;
   margin-top: 20px;
 }
 
@@ -248,6 +249,33 @@
   -webkit-text-fill-color: #d32f2f !important;
 }
 
+/* Estilo para o botão "Chamar Próximo" */
+.next-button {
+  background-color: #ff9800;
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background-color 0.2s, transform 0.2s;
+  margin-bottom: 15px;
+}
+
+.next-button:hover {
+  background-color: #f57c00;
+  transform: translateY(-2px);
+}
+
+.queue-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
 /* Estilo para o botão de reposicionamento na tabela */
 .reposition-button {
   background-color: #1976d2;
@@ -272,7 +300,7 @@
 }
 
 /* Modal de reposicionamento */
-.reposition-dialog {
+.reposition-dialog, .next-appointment-dialog {
   position: fixed;
   top: 0;
   left: 0;
@@ -333,7 +361,13 @@
   margin-top: 24px;
 }
 
-.confirm-button, .cancel-button {
+/* Estilo para os botões do próximo agendamento */
+.next-buttons {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.confirm-button, .cancel-button, .complete-button, .absent-button {
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -362,6 +396,44 @@
   background-color: #d32f2f;
 }
 
+.complete-button {
+  background-color: #4CAF50;
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.complete-button:hover {
+  background-color: #45a049;
+}
+
+.absent-button {
+  background-color: #FF9800;
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.absent-button:hover {
+  background-color: #F57C00;
+}
+
+/* Estilo específico para o modal de próximo agendamento */
+.next-appointment-dialog .dialog-content {
+  width: 400px;
+}
+
+.next-appointment-dialog .action-message {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-left: 4px solid #1976d2;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.next-appointment-dialog .empty-message {
+  text-align: center;
+  padding: 10px;
+}
+
 /* Garantir que o texto no modal seja sempre legível */
 .dialog-content p {
   margin-bottom: 8px;
@@ -378,5 +450,14 @@
   .dialog-content {
     width: 90%;
     padding: 16px;
+  }
+  
+  .next-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .next-buttons button {
+    width: 100%;
   }
 }
