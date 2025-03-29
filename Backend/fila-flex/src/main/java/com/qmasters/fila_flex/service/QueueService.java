@@ -3,7 +3,6 @@ package com.qmasters.fila_flex.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -161,6 +160,36 @@ public class QueueService {
     }
 
     @Transactional
+    public Appointment markAsAbsent(Long appointmentId) {
+        Appointment appointment = findAppointmentById(appointmentId);
+        
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
+            throw new IllegalStateException("Não é possível marcar como ausente um agendamento já concluído");
+        }
+        
+        if (appointment.getStatus() == AppointmentStatus.ABSENT) {
+            throw new IllegalStateException("Este agendamento já está marcado como ausente");
+        }
+        
+        // Salvando a posição atual para reorganização futura - exatamente como completeAppointment
+        Integer currentPosition = appointment.getQueueOrder();
+        Long appointmentTypeId = appointment.getAppointmentType().getId();
+        
+        // Registrando o término, muda o status para ABSENT em vez de COMPLETED
+        appointment.setStatus(AppointmentStatus.ABSENT);
+        appointment.setEndTime(LocalDateTime.now());
+        appointment.setQueueOrder(-1); // Mesmo valor usado em completeAppointment
+        
+        // Salvando o agendamento atualizado
+        Appointment absentAppointment = appointmentRepository.save(appointment);
+        
+        // Reorganizando a fila, exatamente como em completeAppointment
+        reorganizeQueueAfterRemoval(appointmentTypeId, currentPosition);
+        
+        return absentAppointment;
+    }
+
+    @Transactional
     public Appointment registerCheckIn(Long appointmentId){
         Appointment appointment = findAppointmentById(appointmentId);
         
@@ -175,44 +204,7 @@ public class QueueService {
         return appointmentRepository.save(appointment);
     }
 
-    @Transactional
-    public Appointment markAsAbsent(Long appointmentId) {
-        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
-        
-        if (appointmentOpt.isEmpty()) {
-            throw new NoSuchElementException("Agendamento não encontrado");
-        }
-        
-        Appointment appointment = appointmentOpt.get();
-        
-        //Verificar se o agendamento não está já concluído ou ausente.
-        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
-            throw new IllegalStateException("Não é possível marcar como ausente um agendamento já concluído");
-        }
-        
-        if (appointment.getStatus() == AppointmentStatus.ABSENT) {
-            throw new IllegalStateException("Este agendamento já está marcado como ausente");
-        }
-        
-        //Marcar o agendamento como ausente.
-        appointment.setStatus(AppointmentStatus.ABSENT);
-        appointment.setEndTime(LocalDateTime.now());
-        
-        //Se este agendamento estava em atendimento, não precisamos reorganizar a fila.
-        //Se não, remover da fila e reorganizar os demais.
-        if (appointment.getStatus() != AppointmentStatus.ATTENDING && appointment.getQueueOrder() > 0) {
-            Long appointmentTypeId = appointment.getAppointmentType().getId();
-            Integer queuePosition = appointment.getQueueOrder();
-            
-            //Zerar a posição na fila para indicar que não está mais na fila.
-            appointment.setQueueOrder(0);
-            
-            //Reorganizar a fila após a remoção.
-            reorganizeQueueAfterRemoval(appointmentTypeId, queuePosition);
-        }
-        
-        return appointmentRepository.save(appointment);
-    }
+
 
     /*======================== MÉTODOS AUXILIARES ========================*/
 
