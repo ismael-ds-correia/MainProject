@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
 
 import com.qmasters.fila_flex.dto.AdressDTO;
 import com.qmasters.fila_flex.model.Adress;
@@ -102,7 +101,6 @@ class AdressServiceTest {
     void testDeleteAdress() {
         // Dado que o endereço existe no repositório
         Long adressId = 1L;
-        Adress adress = new Adress("123", "Main Street", "City", "State", "Country");
         when(adressRepositoryMock.existsById(adressId)).thenReturn(true);
         
         // Chamando o método para deletar o endereço
