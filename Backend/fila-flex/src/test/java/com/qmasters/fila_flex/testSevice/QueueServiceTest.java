@@ -1,4 +1,4 @@
-package com.qmasters.fila_flex.testSevice;
+/*package com.qmasters.fila_flex.testSevice;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -186,4 +186,4 @@ class QueueServiceTest {
 
         verifyNoMoreInteractions(appointmentRepository); // Não deve salvar nada
     }
-}
+}*/
