@@ -108,6 +108,17 @@ export class QueueService {
       .pipe(catchError(this.handleError));
   }
 
+  //Método para marcar agendamento como ausente
+  markAsAbsent(appointmentId: number): Observable<AppointmentResponse> {
+    console.log(`Marcando agendamento ${appointmentId} como ausente`);
+    console.log(`URL completa: ${this.apiUrl}/appointment/${appointmentId}/absent`);
+
+    const headers = this.getHeaders();
+    
+    return this.http.put<AppointmentResponse>(`${this.apiUrl}/appointment/${appointmentId}/absent`, {}, { headers })
+      .pipe(catchError(this.handleError));
+  }
+
   private getHeaders(): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',

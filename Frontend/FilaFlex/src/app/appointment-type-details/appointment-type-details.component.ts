@@ -26,6 +26,9 @@ export class AppointmentTypeDetailsComponent implements OnInit {
   showRepositionDialog = false;
   selectedAppointment: AppointmentResponse | null = null;
   newPosition: number = 0;
+  showNextAppointmentDialog = false;
+  loadingNextAppointment = false;
+  nextAppointment: AppointmentResponse | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -77,7 +80,7 @@ export class AppointmentTypeDetailsComponent implements OnInit {
       .subscribe({
         next: (response) => {
           console.log('Agendamento reposicionado com sucesso:', response);
-          // Recarregar a fila para mostrar a nova ordem
+          //Recarrega a fila para mostrar a nova ordem.
           this.loadQueue();
           this.showRepositionDialog = false;
           this.selectedAppointment = null;
@@ -170,5 +173,111 @@ export class AppointmentTypeDetailsComponent implements OnInit {
     this.selectedAppointment = null;
   }
 
-  
+  //Método para chamar próximo da fila.
+  callNextInQueue(): void {
+    if (!this.appointmentType || !this.appointmentType.id) {
+      alert('ID do tipo de agendamento não disponível');
+      return;
+    }
+
+    this.loadingNextAppointment = true;
+    this.showNextAppointmentDialog = true;
+    this.nextAppointment = null;
+    
+    const appointmentTypeId = this.appointmentTypeService.getAppointmentTypeId(this.appointmentType);
+    
+    if (!appointmentTypeId) {
+      this.loadingNextAppointment = false;
+      alert('Não foi possível determinar o ID do serviço');
+      return;
+    }
+    
+    this.queueService.callNextAppointment(appointmentTypeId)
+      .subscribe({
+        next: (response) => {
+          this.nextAppointment = response;
+          this.loadingNextAppointment = false;
+          // Recarregar a fila para mostrar as alterações
+          this.loadQueue();
+        },
+        error: (error) => {
+          console.error('Erro ao chamar próximo agendamento:', error);
+          this.loadingNextAppointment = false;
+          
+          if (error.status === 404) {
+            // Não há mais agendamentos na fila
+            this.nextAppointment = null;
+          } else {
+            alert('Erro ao chamar próximo agendamento. Tente novamente.');
+            this.closeNextAppointmentDialog();
+          }
+        }
+      });
+  }
+
+  closeNextAppointmentDialog(): void {
+    this.showNextAppointmentDialog = false;
+    this.nextAppointment = null;
+  }
+
+  //Método para concluir o agendamento atual.
+  completeCurrentAppointment(): void {
+    if (!this.nextAppointment || !this.nextAppointment.id) {
+      return;
+    }
+    
+    this.loadingNextAppointment = true;
+    
+    this.queueService.completeAppointment(this.nextAppointment.id)
+      .subscribe({
+        next: (response) => {
+          this.loadingNextAppointment = false;
+          this.closeNextAppointmentDialog();
+          // Recarregar a fila para mostrar as alterações
+          this.loadQueue();
+          alert('Agendamento concluído com sucesso!');
+        },
+        error: (error) => {
+          console.error('Erro ao concluir agendamento:', error);
+          this.loadingNextAppointment = false;
+          alert('Erro ao concluir agendamento. Tente novamente.');
+        }
+      });
+  }
+  //Método para marcar como ausente.
+  markAsAbsent(): void {
+    if (!this.nextAppointment || !this.nextAppointment.id) {
+      return;
+    }
+    
+    this.loadingNextAppointment = true;
+    
+    this.queueService.markAsAbsent(this.nextAppointment.id)
+      .subscribe({
+        next: (response) => {
+          this.loadingNextAppointment = false;
+          this.closeNextAppointmentDialog();
+          // Recarregar a fila para mostrar as alterações
+          this.loadQueue();
+          alert('Agendamento marcado como ausente com sucesso!');
+        },
+        error: (error) => {
+          console.error('Erro ao marcar agendamento como ausente:', error);
+          this.loadingNextAppointment = false;
+          alert('Erro ao marcar agendamento como ausente. Tente novamente.');
+        }
+      });
+  }
+
+  //Método auxiliar para obter rótulo de status em português.
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'MARKED': return 'Agendado';
+      case 'ATTENDING': return 'Em atendimento';
+      case 'COMPLETED': return 'Concluído';
+      case 'ABSENT': return 'Ausente';
+      case 'WAITING': return 'Aguardando';
+      default: return status;
+    }
+  }
 }
