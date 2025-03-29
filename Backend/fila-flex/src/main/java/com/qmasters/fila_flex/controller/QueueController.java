@@ -99,4 +99,18 @@ public class QueueController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @PutMapping("/appointment/{appointmentId}/absent")
+    public ResponseEntity<Appointment> markAsAbsent(@PathVariable Long appointmentId) {
+        try {
+            Appointment absentAppointment = queueService.markAsAbsent(appointmentId);
+            return ResponseEntity.ok(absentAppointment);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }
