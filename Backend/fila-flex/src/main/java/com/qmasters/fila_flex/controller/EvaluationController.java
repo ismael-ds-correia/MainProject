@@ -1,7 +1,7 @@
 package com.qmasters.fila_flex.controller;
 
 import com.qmasters.fila_flex.dto.EvaluationDTO;
-
+import com.qmasters.fila_flex.model.Evaluation;
 import com.qmasters.fila_flex.service.EvaluationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,10 +24,12 @@ public class EvaluationController {
     }
 
     @GetMapping
-    public List<EvaluationDTO> listEvaluations() { //mudar para o padrão de codigo do projeto
-        return evaluationService.getAllEvaluations().getBody().stream()
-                .map(EvaluationDTO::new)
-                .toList();
+    public List<EvaluationDTO> listEvaluations() {
+        ResponseEntity<List<Evaluation>> response = evaluationService.getAllEvaluations();
+        // Garante que o retorno sempre seja uma lista, mesmo que `getBody()` seja null
+        List<Evaluation> evaluations = response.getBody() != null ? response.getBody() : List.of();
+
+        return evaluations.stream().map(EvaluationDTO::new).toList();
     }
 
     @GetMapping("/average")

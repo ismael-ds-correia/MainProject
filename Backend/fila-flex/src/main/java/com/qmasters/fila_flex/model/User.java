@@ -118,7 +118,8 @@ public class User implements UserDetails {
     
     @Override
     public String getUsername() {//função sem uso no momento está assim só por obrigação de existir
-        return getName();
+        return getEmail();
     }
+   
 
 }
