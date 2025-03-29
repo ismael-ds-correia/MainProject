@@ -36,7 +36,7 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedOrigins(List.of("http://localhost:4200", "https://fila-flex-frontend.onrender.com")); // Altere conforme necessário
-            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));  
+            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));  
             config.setAllowCredentials(true);
             config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
             return config;
@@ -79,6 +79,7 @@ public class SecurityConfig {
         authorize
             .requestMatchers(HttpMethod.GET, appointmentEndpoint).hasRole(ROLE_USER)
             .requestMatchers(HttpMethod.PUT, appointmentEndpoint).permitAll()
+            .requestMatchers(HttpMethod.PATCH, appointmentEndpoint).permitAll() 
             .requestMatchers(HttpMethod.POST, appointmentEndpoint).hasRole(ROLE_USER)
             .requestMatchers(HttpMethod.DELETE, appointmentEndpoint).permitAll();
     }

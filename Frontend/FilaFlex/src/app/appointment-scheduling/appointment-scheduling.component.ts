@@ -100,7 +100,7 @@ export class AppointmentSchedulingComponent implements OnInit {
     
     console.log('Data formatada para envio:', dateTime);
   
-    // SOLUÇÃO: Remover a tipagem explícita e deixar o TypeScript inferir o tipo
+    // Objeto de agendamento sem a prioridade para a criação inicial
     const appointment = {
       appointmentType: {
         id: this.appointmentTypeId!
@@ -108,22 +108,36 @@ export class AppointmentSchedulingComponent implements OnInit {
       user: {
         id: parseInt(userId)
       },
-      scheduledDateTime: dateTime,
-      priorityCondition: this.selectedPriorityCondition
+      scheduledDateTime: dateTime
     };
   
     console.log('Enviando agendamento com dados:', appointment);
     
-    // Chamada para o serviço
+    // Chamada para criar o agendamento
     this.appointmentService.scheduleAppointment(appointment as any).subscribe({
       next: (response) => {
         console.log('Resposta do agendamento:', response);
+        
+        // Se a prioridade não for a padrão, defina separadamente
+        if (this.selectedPriorityCondition !== 'NO_PRIORITY') {
+          this.appointmentService.setPriorityCondition(response.id, this.selectedPriorityCondition)
+            .subscribe({
+              next: (priorityResponse) => {
+                console.log('Prioridade definida com sucesso:', priorityResponse);
+              },
+              error: (priorityErr) => {
+                console.error('Erro ao definir prioridade:', priorityErr);
+                // Um erro aqui não quebra o fluxo principal, já que o agendamento foi criado
+              }
+            });
+        }
+        
         this.success = true;
         this.loading = false;
       },
       error: (err) => {
         console.error('Erro detalhado:', err);
-
+  
         if (err.status === 400) {
           this.error = 'Erro no formato dos dados. Verifique se a data está correta.';
         } else {
