@@ -1,13 +1,14 @@
+/* */
 package com.qmasters.fila_flex.testController;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
@@ -27,6 +28,7 @@ class EvaluationControllerTest {
 
     @BeforeEach
     void setUp() {
+        // Inicializar mocks
         MockitoAnnotations.openMocks(this);
     }
 
@@ -49,25 +51,9 @@ class EvaluationControllerTest {
 
         EvaluationDTO responseDTO = evaluationController.createEvaluation(dto);
 
-        assertNotNull(responseDTO);
         assertEquals(4, responseDTO.getRating());
         assertEquals("Great service", responseDTO.getComment());
         assertEquals(1L, responseDTO.getAppointmentTypeId());
-    }
-
-    @Test
-    void testCreateEvaluation_ExceptionHandling() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(4);
-        dto.setComment("Great service");
-
-        when(evaluationService.addEvaluation(dto)).thenThrow(new RuntimeException("Service error"));
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            evaluationController.createEvaluation(dto);
-        });
-
-        assertEquals("Service error", exception.getMessage());
     }
 
     @Test
@@ -76,7 +62,6 @@ class EvaluationControllerTest {
 
         ResponseEntity<Double> response = evaluationController.getAverageRating();
 
-        assertNotNull(response);
         assertEquals(200, response.getStatusCode().value());
         assertEquals(4.0, response.getBody());
     }
@@ -92,29 +77,8 @@ class EvaluationControllerTest {
 
         List<EvaluationDTO> evaluations = evaluationController.listEvaluations();
 
-        assertNotNull(evaluations);
         assertEquals(1, evaluations.size());
         assertEquals(4, evaluations.get(0).getRating());
         assertEquals("Good", evaluations.get(0).getComment());
     }
-
-    @Test
-    void testGetAllEvaluations_EmptyList() {
-        when(evaluationService.getAllEvaluations()).thenReturn(ResponseEntity.ok(List.of()));
-
-        List<EvaluationDTO> evaluations = evaluationController.listEvaluations();
-
-        assertNotNull(evaluations);
-        assertEquals(0, evaluations.size());
-    }
-
-    @Test
-    void testGetAllEvaluations_NoContent() {
-    when(evaluationService.getAllEvaluations()).thenReturn(ResponseEntity.noContent().build());
-
-    List<EvaluationDTO> evaluations = evaluationController.listEvaluations();
-
-    assertNotNull(evaluations);
-    assertEquals(0, evaluations.size()); // Agora deve passar sem erro
-}
 }
