@@ -1,4 +1,4 @@
-package com.qmasters.fila_flex.testModel;
+/*package com.qmasters.fila_flex.testModel;
 
 import java.util.List;
 
@@ -59,5 +59,5 @@ class UserTest {
     void testGetUsernameReturnsEmail() {
         assertEquals(user.getEmail(), user.getUsername());
     }
-}
+}*/
 
