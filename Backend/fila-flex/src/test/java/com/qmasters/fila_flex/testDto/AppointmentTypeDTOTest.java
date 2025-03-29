@@ -1,10 +1,12 @@
 package com.qmasters.fila_flex.testDto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -121,17 +123,36 @@ class AppointmentTypeDTOTest {
         assertEquals("RG", appointmentTypeDTO.getRequiredDocumentation().get(0));
     }
 
+
     @Test
-    void testEmptyConstructor() {
-        // Verificando o construtor vazio
-        AppointmentTypeDTO emptyDto = new AppointmentTypeDTO();
-        assertNotNull(emptyDto);
-        assertEquals(null, emptyDto.getName());
-        assertEquals(null, emptyDto.getDescription());
-        assertEquals(0.0, emptyDto.getPrice());
-        assertEquals(null, emptyDto.getEstimatedTime());
-        assertEquals(null, emptyDto.getAppointmentDate());
-        assertEquals(null, emptyDto.getRequiredDocumentation());
-        assertEquals(null, emptyDto.getAdress());
+    void testSetCategory() {
+        AppointmentTypeDetails details = new AppointmentTypeDetails("Consulta", "Descrição", new ArrayList<>(), 100.0, null, new ArrayList<>());
+        AppointmentTypeDTO dto = new AppointmentTypeDTO(details, 30, adress);
+
+        dto.setCategory("Consulta Médica");
+
+        assertNotNull(dto.getCategory());
+        assertEquals(1, dto.getCategory().size());
+        assertEquals("Consulta Médica", dto.getCategory().get(0));
+    }
+
+    @Test
+    void testSetAppointmentTypeDetails() {
+        AppointmentTypeDTO dto = new AppointmentTypeDTO();
+        AppointmentTypeDetails details = new AppointmentTypeDetails("Consulta", "Descrição", new ArrayList<>(), 100.0, null, new ArrayList<>());
+
+        dto.setAppointmentTypeDetails(details);
+        assertEquals(details, dto.getAppointmentTypeDetails());
+    }
+
+    @Test
+    void testGetAppointmentTypeDetails() {
+        AppointmentTypeDetails details = new AppointmentTypeDetails("Consulta", "Descrição", new ArrayList<>(), 100.0, null, new ArrayList<>());
+        AppointmentTypeDTO dto = new AppointmentTypeDTO();
+        dto.setAppointmentTypeDetails(details);
+
+        assertNotNull(dto.getAppointmentTypeDetails());
+        assertEquals("Consulta", dto.getAppointmentTypeDetails().getName());
+        assertEquals("Descrição", dto.getAppointmentTypeDetails().getDescription());
     }
 }

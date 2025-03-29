@@ -114,4 +114,60 @@ class AppointmentDTOTest {
         dto.setStatus(AppointmentStatus.ATTENDING);
         assertEquals(AppointmentStatus.ATTENDING, dto.getStatus());
     }
+
+    @Test
+    void testConstructorWithQueueOrderAndPriorityCondition() {
+        AppointmentDTO dto = new AppointmentDTO(appointmentType, user, scheduledDateTime, createdDateTime, queueOrder, priorityCondition);
+    
+        assertNotNull(dto);
+        assertEquals(appointmentType, dto.getAppointmentType());
+        assertEquals(user, dto.getUser());
+        assertEquals(scheduledDateTime, dto.getScheduledDateTime());
+        assertEquals(createdDateTime, dto.getCreatedDateTime());
+        assertEquals(queueOrder, dto.getQueueOrder());
+        assertEquals(priorityCondition, dto.getPriorityCondition());
+    }
+    
+    @Test
+    void testConstructorWithQueueOrderOnly() {
+        AppointmentDTO dto = new AppointmentDTO(appointmentType, user, scheduledDateTime, createdDateTime, queueOrder);
+    
+        assertNotNull(dto);
+        assertEquals(appointmentType, dto.getAppointmentType());
+        assertEquals(user, dto.getUser());
+        assertEquals(scheduledDateTime, dto.getScheduledDateTime());
+        assertEquals(createdDateTime, dto.getCreatedDateTime());
+        assertEquals(queueOrder, dto.getQueueOrder());
+        assertNull(dto.getPriorityCondition()); // Como não foi passado, deve ser null
+    }
+    
+    @Test
+    void testSettersAndGettersForAppointmentTypeDescriptionAndAddress() {
+        AppointmentDTO dto = new AppointmentDTO();
+        dto.setAppointmentTypeDescription("Consulta especializada");
+        dto.setAppointmentTypeAdress("Rua XYZ, 456");
+    
+        assertEquals("Consulta especializada", dto.getAppointmentTypeDescription());
+        assertEquals("Rua XYZ, 456", dto.getAppointmentTypeAdress());
+    }
+    
+    @Test
+    void testSettersAndGettersForUserAndCreatedDateTime() {
+        AppointmentDTO dto = new AppointmentDTO();
+        dto.setUser(user);
+        dto.setCreatedDateTime(createdDateTime);
+    
+        assertEquals(user, dto.getUser());
+        assertEquals(createdDateTime, dto.getCreatedDateTime());
+    }
+    
+    @Test
+    void testSetAppointmentType() {
+        AppointmentDTO dto = new AppointmentDTO();
+        dto.setAppointmentType(appointmentType);
+    
+        assertEquals(appointmentType, dto.getAppointmentType());
+    }
+
+
 }
