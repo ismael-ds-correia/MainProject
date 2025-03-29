@@ -83,6 +83,15 @@
         <div *ngIf="queueError" class="error-message">
           <p>{{ queueError }}</p>
         </div>
+
+        <!-- Botão "Chamar Próximo" -->
+        <div class="queue-actions">
+          <button *ngIf="!loadingQueue && queue && queue.length > 0" 
+                  class="next-button" 
+                  (click)="callNextInQueue()">
+            Chamar Próximo
+          </button>
+        </div>
         
         <div *ngIf="queue && queue.length > 0" class="queue-list">
           <table class="queue-table">
@@ -132,6 +141,54 @@
           </table>
         </div>
 
+        <!-- Modal de Próximo Agendamento -->
+        <div *ngIf="showNextAppointmentDialog" class="next-appointment-dialog">
+          <div class="dialog-content">
+            <h3>Próximo Agendamento</h3>
+            
+            <div *ngIf="loadingNextAppointment" class="loading-message">
+              <p>Processando...</p>
+            </div>
+            
+            <div *ngIf="!loadingNextAppointment && nextAppointment">
+              <p><strong>Cliente:</strong> {{ nextAppointment.userEmail }}</p>
+              <p><strong>Serviço:</strong> {{ nextAppointment.appointmentTypeName }}</p>
+              <p><strong>Prioridade:</strong> 
+                <span [ngSwitch]="nextAppointment.priorityCondition">
+                  <span *ngSwitchCase="'PWD'">PCD</span>
+                  <span *ngSwitchCase="'ELDERLY'">Idoso</span>
+                  <span *ngSwitchCase="'PREGNANT_OR_LACTANT'">Gestante ou Lactante</span>
+                  <span *ngSwitchCase="'NO_PRIORITY'">Sem prioridade</span>
+                  <span *ngSwitchDefault>{{ nextAppointment.priorityCondition || 'Sem prioridade' }}</span>
+                </span>
+              </p>
+              <p><strong>Status:</strong> {{ getStatusLabel(nextAppointment.status) }}</p>
+              
+              <div class="action-message">
+                <p>O que deseja fazer com este agendamento?</p>
+              </div>
+              
+              <div class="dialog-buttons next-buttons">
+                <button (click)="completeCurrentAppointment()" class="complete-button">
+                  Concluir Atendimento
+                </button>
+                <button (click)="markAsAbsent()" class="absent-button">
+                  Marcar como Ausente
+                </button>
+                <button (click)="closeNextAppointmentDialog()" class="cancel-button">
+                  Fechar
+                </button>
+              </div>
+            </div>
+            
+            <div *ngIf="!loadingNextAppointment && !nextAppointment" class="empty-message">
+              <p>Não há mais agendamentos na fila.</p>
+              <div class="dialog-buttons">
+                <button (click)="closeNextAppointmentDialog()" class="cancel-button">Fechar</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- Adicione um modal/dialog para reposicionamento -->
         <div *ngIf="showRepositionDialog" class="reposition-dialog">
           <div class="dialog-content">
