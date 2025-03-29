@@ -36,7 +36,7 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
             config.setAllowedOrigins(List.of("http://localhost:4200", "https://fila-flex-frontend.onrender.com")); // Altere conforme necessário
-            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));  
+            config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));  
             config.setAllowCredentials(true);
             config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
             return config;
@@ -51,6 +51,7 @@ public class SecurityConfig {
             configureCategoryEndpoints(authorize);
             configureAdressEndpoints(authorize);
             configureEvaluationEndpoints(authorize);
+            configureQueueEndpoints(authorize);
 
             authorize.anyRequest().authenticated();
         })
@@ -78,6 +79,7 @@ public class SecurityConfig {
         authorize
             .requestMatchers(HttpMethod.GET, appointmentEndpoint).hasRole(ROLE_USER)
             .requestMatchers(HttpMethod.PUT, appointmentEndpoint).permitAll()
+            .requestMatchers(HttpMethod.PATCH, appointmentEndpoint).permitAll() 
             .requestMatchers(HttpMethod.POST, appointmentEndpoint).hasRole(ROLE_USER)
             .requestMatchers(HttpMethod.DELETE, appointmentEndpoint).permitAll();
     }
@@ -114,6 +116,17 @@ public class SecurityConfig {
         authorize
             .requestMatchers(HttpMethod.POST, evaluationEndpoint).permitAll()
             .requestMatchers(HttpMethod.GET, evaluationEndpoint).permitAll();
+    }
+
+    private void configureQueueEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] queueEndpoint = {"/queue/**"};
+        
+        authorize
+            .requestMatchers(HttpMethod.GET, queueEndpoint).permitAll()
+            .requestMatchers(HttpMethod.PUT, queueEndpoint).permitAll()
+            .requestMatchers(HttpMethod.POST, queueEndpoint).permitAll()
+            .requestMatchers(HttpMethod.DELETE, queueEndpoint).permitAll();
+        
     }
 
     @Bean //mesmo sem ser chamada, se não for declarada aqui a autenticação não funciona
