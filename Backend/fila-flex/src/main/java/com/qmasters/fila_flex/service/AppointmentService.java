@@ -11,6 +11,7 @@ import com.qmasters.fila_flex.dto.AppointmentDTO;
 import com.qmasters.fila_flex.exception.InvalidDateRangeException;
 import com.qmasters.fila_flex.exception.TooLateToChangeException;
 import com.qmasters.fila_flex.model.Appointment;
+import com.qmasters.fila_flex.model.enums.AppointmentStatus;
 import com.qmasters.fila_flex.repository.AppointmentRepository;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
@@ -123,4 +124,43 @@ public class AppointmentService {
         }
     }
 
+    // Adicionar ao QueueService.java
+    @Transactional
+    public Appointment markAsAbsent(Long appointmentId) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+        
+        if (appointmentOpt.isEmpty()) {
+            throw new NoSuchElementException("Agendamento não encontrado");
+        }
+        
+        Appointment appointment = appointmentOpt.get();
+        
+        //Verificar se o agendamento não está já concluído ou ausente.
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
+            throw new IllegalStateException("Não é possível marcar como ausente um agendamento já concluído");
+        }
+        
+        if (appointment.getStatus() == AppointmentStatus.ABSENT) {
+            throw new IllegalStateException("Este agendamento já está marcado como ausente");
+        }
+        
+        //Marcar o agendamento como ausente.
+        appointment.setStatus(AppointmentStatus.ABSENT);
+        appointment.setEndTime(LocalDateTime.now());
+        
+        //Se este agendamento estava em atendimento, não precisamos reorganizar a fila.
+        //Se não, remover da fila e reorganizar os demais.
+        if (appointment.getStatus() != AppointmentStatus.ATTENDING && appointment.getQueueOrder() > 0) {
+            Long appointmentTypeId = appointment.getAppointmentType().getId();
+            Integer queuePosition = appointment.getQueueOrder();
+            
+            //Zerar a posição na fila para indicar que não está mais na fila.
+            appointment.setQueueOrder(0);
+            
+            //Reorganizar a fila após a remoção.
+            queueService.reorganizeQueueAfterRemoval(appointmentTypeId, queuePosition);
+        }
+        
+        return appointmentRepository.save(appointment);
+    }
 }
