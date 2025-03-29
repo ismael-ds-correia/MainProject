@@ -248,9 +248,135 @@
   -webkit-text-fill-color: #d32f2f !important;
 }
 
+/* Estilo para o botão de reposicionamento na tabela */
+.reposition-button {
+  background-color: #1976d2;
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s, transform 0.1s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.reposition-button:hover {
+  background-color: #1565c0;
+  transform: translateY(-1px);
+}
+
+.reposition-button:active {
+  transform: translateY(0);
+}
+
+/* Modal de reposicionamento */
+.reposition-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+  width: 350px;
+  max-width: 90%;
+}
+
+.dialog-content h3 {
+  color: #1976d2 !important;
+  -webkit-text-fill-color: #1976d2 !important;
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #555 !important;
+  -webkit-text-fill-color: #555 !important;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #333 !important;
+  -webkit-text-fill-color: #333 !important;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.confirm-button, .cancel-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.confirm-button {
+  background-color: #4CAF50;
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.confirm-button:hover {
+  background-color: #45a049;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.cancel-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Garantir que o texto no modal seja sempre legível */
+.dialog-content p {
+  margin-bottom: 8px;
+  color: #333 !important;
+  -webkit-text-fill-color: #333 !important;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .details-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .dialog-content {
+    width: 90%;
+    padding: 16px;
   }
 }
