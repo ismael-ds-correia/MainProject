@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppointmentType, AppointmentTypeService } from '../services/appointment-type.service';
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QueueService, AppointmentResponse } from '../services/queue.service';
 import { AuthService } from '../auth/services/auth.service';
@@ -9,7 +10,7 @@ import { AuthService } from '../auth/services/auth.service';
 @Component({
   selector: 'app-appointment-type-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './appointment-type-details.component.html',
   styleUrl: './appointment-type-details.component.css'
 })
@@ -22,6 +23,9 @@ export class AppointmentTypeDetailsComponent implements OnInit {
   queue: AppointmentResponse[] = [];
   loadingQueue: boolean = false;
   queueError: string | null = null;
+  showRepositionDialog = false;
+  selectedAppointment: AppointmentResponse | null = null;
+  newPosition: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -58,6 +62,31 @@ export class AppointmentTypeDetailsComponent implements OnInit {
           this.error = "Erro ao carregar detalhes do serviço";
           this.loading = false;
           console.error('Erro:', err);
+        }
+      });
+  }
+
+  repositionAppointment(): void {
+    if (!this.selectedAppointment || !this.newPosition) {
+      return;
+    }
+    
+    this.loadingQueue = true;
+    
+    this.queueService.reorderQueue(this.selectedAppointment.id, this.newPosition)
+      .subscribe({
+        next: (response) => {
+          console.log('Agendamento reposicionado com sucesso:', response);
+          // Recarregar a fila para mostrar a nova ordem
+          this.loadQueue();
+          this.showRepositionDialog = false;
+          this.selectedAppointment = null;
+        },
+        error: (error) => {
+          console.error('Erro ao reposicionar agendamento:', error);
+          this.queueError = 'Erro ao reposicionar agendamento. Tente novamente.';
+          this.loadingQueue = false;
+          this.showRepositionDialog = false;
         }
       });
   }
@@ -129,4 +158,17 @@ export class AppointmentTypeDetailsComponent implements OnInit {
         }
       });
   }
+
+  openRepositionDialog(appointment: AppointmentResponse): void {
+    this.selectedAppointment = appointment;
+    this.newPosition = appointment.queueOrder || 1;
+    this.showRepositionDialog = true;
+  }
+  
+  cancelRepositioning(): void {
+    this.showRepositionDialog = false;
+    this.selectedAppointment = null;
+  }
+
+  
 }
