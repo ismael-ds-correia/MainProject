@@ -145,10 +145,10 @@ public class QueueService {
         Integer currentPosition = appointment.getQueueOrder();
         Long appointmentTypeId = appointment.getAppointmentType().getId();
         
-        //Registrando o término, muda o status e define queueOrder como -1.
+        //Registrando o término, muda o status e define queueOrder como 0.
         appointment.setStatus(AppointmentStatus.COMPLETED);
         appointment.setEndTime(LocalDateTime.now());
-        appointment.setQueueOrder(-1);
+        appointment.setQueueOrder(0);
         
         //Salvando o agendamento atualizado.
         Appointment completedAppointment = appointmentRepository.save(appointment);
@@ -157,6 +157,36 @@ public class QueueService {
         reorganizeQueueAfterRemoval(appointmentTypeId, currentPosition);
         
         return completedAppointment;
+    }
+
+    @Transactional
+    public Appointment markAsAbsent(Long appointmentId) {
+        Appointment appointment = findAppointmentById(appointmentId);
+        
+        if (appointment.getStatus() == AppointmentStatus.COMPLETED) {
+            throw new IllegalStateException("Não é possível marcar como ausente um agendamento já concluído");
+        }
+        
+        if (appointment.getStatus() == AppointmentStatus.ABSENT) {
+            throw new IllegalStateException("Este agendamento já está marcado como ausente");
+        }
+        
+        // Salvando a posição atual para reorganização futura - exatamente como completeAppointment
+        Integer currentPosition = appointment.getQueueOrder();
+        Long appointmentTypeId = appointment.getAppointmentType().getId();
+        
+        // Registrando o término, muda o status para ABSENT em vez de COMPLETED
+        appointment.setStatus(AppointmentStatus.ABSENT);
+        appointment.setEndTime(LocalDateTime.now());
+        appointment.setQueueOrder(0); // Mesmo valor usado em completeAppointment
+        
+        // Salvando o agendamento atualizado
+        Appointment absentAppointment = appointmentRepository.save(appointment);
+        
+        // Reorganizando a fila, exatamente como em completeAppointment
+        reorganizeQueueAfterRemoval(appointmentTypeId, currentPosition);
+        
+        return absentAppointment;
     }
 
     @Transactional
@@ -173,6 +203,8 @@ public class QueueService {
         appointment.setCheckInTime(LocalDateTime.now());
         return appointmentRepository.save(appointment);
     }
+
+
 
     /*======================== MÉTODOS AUXILIARES ========================*/
 

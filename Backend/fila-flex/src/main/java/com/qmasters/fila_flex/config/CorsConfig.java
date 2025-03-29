@@ -16,7 +16,7 @@ public class CorsConfig {
                 .allowedOrigins(
                     "http://localhost:4200",
                     "https://fila-flex-frontend.onrender.com")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
                 .allowCredentials(true);
             }
         };
