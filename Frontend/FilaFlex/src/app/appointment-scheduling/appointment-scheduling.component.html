@@ -49,4 +49,38 @@
         Confirmar Agendamento
       </button>
     </form>
+
+    <!-- Modal de seleção de prioridade (inicialmente oculto) -->
+    <div *ngIf="showPriorityModal" class="priority-modal">
+      <div class="priority-modal-content">
+        <h2>Selecione sua condição de prioridade</h2>
+        
+        <div class="priority-options">
+          <div class="priority-option">
+            <input type="radio" id="no-priority" name="priority" value="NO_PRIORITY" [(ngModel)]="selectedPriority" checked>
+            <label for="no-priority">Sem prioridade</label>
+          </div>
+          
+          <div class="priority-option">
+            <input type="radio" id="pwd" name="priority" value="PWD" [(ngModel)]="selectedPriority">
+            <label for="pwd">PCD (Pessoa com Deficiência)</label>
+          </div>
+          
+          <div class="priority-option">
+            <input type="radio" id="elderly" name="priority" value="ELDERLY" [(ngModel)]="selectedPriority">
+            <label for="elderly">Idoso</label>
+          </div>
+          
+          <div class="priority-option">
+            <input type="radio" id="pregnant" name="priority" value="PREGNANT_OR_LACTANT" [(ngModel)]="selectedPriority">
+            <label for="pregnant">Gestante ou Lactante</label>
+          </div>
+        </div>
+        
+        <div class="modal-buttons">
+          <button type="button" class="cancel-button" (click)="cancelPrioritySelection()">Cancelar</button>
+          <button type="button" class="confirm-button" (click)="confirmPrioritySelection()">Confirmar</button>
+        </div>
+      </div>
+    </div>
   </div>
