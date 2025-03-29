@@ -66,6 +66,65 @@
       
       <div class="action-buttons">
         <button class="schedule-button" (click)="scheduleAppointment()">Agendar Serviço</button>
+        <!-- Botão só visível para admin -->
+        <button *ngIf="isAdmin()" class="queue-button" (click)="toggleQueueView()">
+          {{ showQueue ? 'Ocultar Fila' : 'Exibir Fila' }}
+        </button>
+      </div>
+
+      <!-- Área da fila, visível apenas quando showQueue for true -->
+      <div *ngIf="showQueue && isAdmin()" class="queue-section">
+        <h2>Fila de Agendamentos</h2>
+        
+        <div *ngIf="loadingQueue" class="loading-message">
+          <p>Carregando fila...</p>
+        </div>
+        
+        <div *ngIf="queueError" class="error-message">
+          <p>{{ queueError }}</p>
+        </div>
+        
+        <div *ngIf="queue && queue.length > 0" class="queue-list">
+          <table class="queue-table">
+            <thead>
+              <tr>
+                <th>Ordem</th>
+                <th>Usuário</th>
+                <th>Status</th>
+                <th>Prioridade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let appointment of queue">
+                <td>{{ (appointment.queueOrder <= 0) ? 'Já atendido' : appointment.queueOrder }}</td>
+                <td>{{ appointment.userEmail }}</td>
+                <td>
+                  <span [ngSwitch]="appointment.status">
+                    <span *ngSwitchCase="'MARKED'">Agendado</span>
+                    <span *ngSwitchCase="'ATTENDING'">Em atendimento</span>
+                    <span *ngSwitchCase="'COMPLETED'">Concluído</span>
+                    <span *ngSwitchCase="'ABSENT'">Ausente</span>
+                    <span *ngSwitchCase="'WAITING'">Aguardando</span>
+                    <span *ngSwitchDefault>{{ appointment.status }}</span>
+                  </span>
+                </td>
+                <td>
+                  <span [ngSwitch]="appointment.priorityCondition">
+                    <span *ngSwitchCase="'PWD'">PCD</span>
+                    <span *ngSwitchCase="'ELDERLY'">Idoso</span>
+                    <span *ngSwitchCase="'PREGNANT_OR_LACTANT'">Gestante ou Lactante</span>
+                    <span *ngSwitchCase="'NO_PRIORITY'">Sem prioridade</span>
+                    <span *ngSwitchDefault>{{ appointment.priorityCondition || 'Sem prioridade' }}</span>
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div *ngIf="queue && queue.length === 0" class="empty-queue">
+          <p>Não há agendamentos na fila para este serviço.</p>
+        </div>
       </div>
     </div>
   </div>

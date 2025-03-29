@@ -44,13 +44,24 @@ export class QueueService {
     console.log('- API URL:', this.apiUrl);
     console.log('- Ambiente:', environment.production ? 'Produção' : 'Desenvolvimento');
   }
+  
   //Método para obter fila por tipo de agendamento.
-  getQueueByAppointmentType(name: string): Observable<AppointmentResponse[]>{
+  getQueueByAppointmentType(name: string): Observable<AppointmentResponse[]> {
     console.log(`Buscando fila para o serviço: ${name}`);
     console.log(`URL completa: ${this.apiUrl}/appointment-type/${name}`);
-
-    return this.http.get<AppointmentResponse[]>(`${this.apiUrl}/appointment-type/${name}`)
-      .pipe(catchError(this.handleError));
+    
+    const token = localStorage.getItem('token');
+    console.log('Token a ser usado:', token ? `${token.substring(0, 15)}...` : 'nenhum');
+    
+    const headers = { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}` 
+    };
+    
+    return this.http.get<AppointmentResponse[]>(
+      `${this.apiUrl}/appointment-type/${name}`, 
+      { headers }
+    ).pipe(catchError(this.handleError));
   }
 
   //Método para obter fila por ID do usuário.

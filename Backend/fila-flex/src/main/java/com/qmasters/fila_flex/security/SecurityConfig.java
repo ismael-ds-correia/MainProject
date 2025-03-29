@@ -51,6 +51,7 @@ public class SecurityConfig {
             configureCategoryEndpoints(authorize);
             configureAdressEndpoints(authorize);
             configureEvaluationEndpoints(authorize);
+            configureQueueEndpoints(authorize);
 
             authorize.anyRequest().authenticated();
         })
@@ -114,6 +115,17 @@ public class SecurityConfig {
         authorize
             .requestMatchers(HttpMethod.POST, evaluationEndpoint).permitAll()
             .requestMatchers(HttpMethod.GET, evaluationEndpoint).permitAll();
+    }
+
+    private void configureQueueEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] queueEndpoint = {"/queue/**"};
+        
+        authorize
+            .requestMatchers(HttpMethod.GET, queueEndpoint).permitAll()
+            .requestMatchers(HttpMethod.PUT, queueEndpoint).permitAll()
+            .requestMatchers(HttpMethod.POST, queueEndpoint).permitAll()
+            .requestMatchers(HttpMethod.DELETE, queueEndpoint).permitAll();
+        
     }
 
     @Bean //mesmo sem ser chamada, se não for declarada aqui a autenticação não funciona

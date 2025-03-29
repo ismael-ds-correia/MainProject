@@ -3,6 +3,8 @@ import { AppointmentType, AppointmentTypeService } from '../services/appointment
 import { Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { QueueService, AppointmentResponse } from '../services/queue.service';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
   selector: 'app-appointment-type-details',
@@ -16,11 +18,17 @@ export class AppointmentTypeDetailsComponent implements OnInit {
   appointmentType: AppointmentType | null = null;
   loading: boolean = true;
   error: string | null = null;
+  showQueue: boolean = false;
+  queue: AppointmentResponse[] = [];
+  loadingQueue: boolean = false;
+  queueError: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private appointmentTypeService: AppointmentTypeService
+    private appointmentTypeService: AppointmentTypeService,
+    private queueService: QueueService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -80,5 +88,45 @@ export class AppointmentTypeDetailsComponent implements OnInit {
         queryParams: { name: this.appointmentType.name }
       });
     }
+  }
+
+  isAdmin(): boolean {
+    const userRole = localStorage.getItem('userRole');
+    console.log('userRole:', userRole);
+    
+    return userRole === 'ADMIN';
+  }
+
+  //Alternar visibilidade da fila e carregar dados quando necessário.
+  toggleQueueView(): void {
+    this.showQueue = !this.showQueue;
+    
+    if (this.showQueue && (!this.queue || this.queue.length === 0)) {
+      this.loadQueue();
+    }
+  }
+
+  //Carregar a fila usando o serviço.
+  loadQueue(): void {
+    if (!this.appointmentType || !this.appointmentType.name) {
+      this.queueError = "Nome do serviço não disponível";
+      return;
+    }
+    
+    this.loadingQueue = true;
+    this.queueError = null;
+    
+    this.queueService.getQueueByAppointmentType(this.appointmentType.name)
+      .subscribe({
+        next: (response) => {
+          this.queue = response;
+          this.loadingQueue = false;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar fila:', error);
+          this.queueError = "Não foi possível carregar a fila de agendamentos.";
+          this.loadingQueue = false;
+        }
+      });
   }
 }
