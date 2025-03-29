@@ -92,6 +92,7 @@
                 <th>Usuário</th>
                 <th>Status</th>
                 <th>Prioridade</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -117,9 +118,37 @@
                     <span *ngSwitchDefault>{{ appointment.priorityCondition || 'Sem prioridade' }}</span>
                   </span>
                 </td>
+                <td>
+                  <!-- Botões de ação -->
+                  <button 
+                    *ngIf="appointment.status !== 'COMPLETED' && appointment.status !== 'ABSENT'" 
+                    class="reposition-button" 
+                    (click)="openRepositionDialog(appointment)">
+                    Reposicionar
+                  </button>
+                </td>
               </tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Adicione um modal/dialog para reposicionamento -->
+        <div *ngIf="showRepositionDialog" class="reposition-dialog">
+          <div class="dialog-content">
+            <h3>Reposicionar Agendamento</h3>
+            <p>Agendamento de: {{ selectedAppointment?.userEmail }}</p>
+            <p>Posição atual: {{ selectedAppointment?.queueOrder }}</p>
+            
+            <div class="form-group">
+              <label for="newPosition">Nova posição:</label>
+              <input type="number" id="newPosition" [(ngModel)]="newPosition" min="1">
+            </div>
+            
+            <div class="dialog-buttons">
+              <button (click)="repositionAppointment()" class="confirm-button">Confirmar</button>
+              <button (click)="cancelRepositioning()" class="cancel-button">Cancelar</button>
+            </div>
+          </div>
         </div>
         
         <div *ngIf="queue && queue.length === 0" class="empty-queue">
