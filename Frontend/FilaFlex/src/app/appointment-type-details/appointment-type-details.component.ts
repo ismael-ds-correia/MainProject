@@ -153,6 +153,12 @@ export class AppointmentTypeDetailsComponent implements OnInit {
         next: (response) => {
           this.queue = response;
           this.loadingQueue = false;
+          
+          // Se tivermos um agendamento em atendimento na fila
+          const attendingAppointment = this.queueService.findAttendingAppointment(response);
+          if (attendingAppointment && !this.showNextAppointmentDialog) {
+            this.nextAppointment = attendingAppointment;
+          }
         },
         error: (error) => {
           console.error('Erro ao carregar fila:', error);
@@ -175,28 +181,31 @@ export class AppointmentTypeDetailsComponent implements OnInit {
 
   //Método para chamar próximo da fila.
   callNextInQueue(): void {
-    if (!this.appointmentType || !this.appointmentType.id) {
-      alert('ID do tipo de agendamento não disponível');
+    if (!this.appointmentType) {
+      alert('Dados do tipo de agendamento não disponíveis');
       return;
     }
-
+  
     this.loadingNextAppointment = true;
     this.showNextAppointmentDialog = true;
     this.nextAppointment = null;
     
     const appointmentTypeId = this.appointmentTypeService.getAppointmentTypeId(this.appointmentType);
+    const appointmentTypeName = this.appointmentType.name;
     
-    if (!appointmentTypeId) {
+    if (!appointmentTypeId || !appointmentTypeName) {
       this.loadingNextAppointment = false;
-      alert('Não foi possível determinar o ID do serviço');
+      alert('Não foi possível determinar o ID ou nome do serviço');
       return;
     }
     
-    this.queueService.callNextAppointment(appointmentTypeId)
+    this.queueService.callNextAppointment(appointmentTypeId, appointmentTypeName)
       .subscribe({
         next: (response) => {
           this.nextAppointment = response;
           this.loadingNextAppointment = false;
+          // Se for um agendamento em atendimento, abrir o modal
+          this.showNextAppointmentDialog = true;
           // Recarregar a fila para mostrar as alterações
           this.loadQueue();
         },
@@ -217,7 +226,6 @@ export class AppointmentTypeDetailsComponent implements OnInit {
 
   closeNextAppointmentDialog(): void {
     this.showNextAppointmentDialog = false;
-    this.nextAppointment = null;
   }
 
   //Método para concluir o agendamento atual.
@@ -279,5 +287,9 @@ export class AppointmentTypeDetailsComponent implements OnInit {
       case 'WAITING': return 'Aguardando';
       default: return status;
     }
+  }
+
+  get hasAttendingAppointment(): boolean {
+    return this.queue.some(appointment => appointment.status === 'ATTENDING');
   }
 }

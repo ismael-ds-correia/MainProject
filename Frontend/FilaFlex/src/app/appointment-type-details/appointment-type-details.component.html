@@ -89,7 +89,7 @@
           <button *ngIf="!loadingQueue && queue && queue.length > 0" 
                   class="next-button" 
                   (click)="callNextInQueue()">
-            Chamar Próximo
+            {{ hasAttendingAppointment ? 'Retomar Atendimento' : 'Chamar Próximo' }}
           </button>
         </div>
         

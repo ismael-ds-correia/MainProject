@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 
 //Interface para o que é recebido da API.
 export interface AppointmentResponse {
@@ -76,14 +76,41 @@ export class QueueService {
   }
 
   //Método para chamar próximo da fila.
-  callNextAppointment(appointmentTypeId: number): Observable<AppointmentResponse> {
-    console.log(`Chamando próximo agendamento do tipo ${appointmentTypeId}`);
-    console.log(`URL completa: ${this.apiUrl}/appointment-type/${appointmentTypeId}/next`);
-
-    const headers = this.getHeaders();
+  callNextAppointment(appointmentTypeId: number, appointmentTypeName: string): Observable<AppointmentResponse> {
+    console.log(`Verificando se já existe um agendamento em atendimento para: ${appointmentTypeName}`);
     
-    return this.http.put<AppointmentResponse>(`${this.apiUrl}/appointment-type/${appointmentTypeId}/next`, {}, { headers })
-      .pipe(catchError(this.handleError));
+    // Primeiro buscamos a fila usando o NOME para verificar se há um em atendimento
+    return this.http.get<AppointmentResponse[]>(
+      `${this.apiUrl}/appointment-type/${appointmentTypeName}`,
+      { headers: this.getHeaders() }
+    ).pipe(
+      map(queue => {
+        // Verificar se já existe um agendamento em atendimento
+        const attendingAppointment = this.findAttendingAppointment(queue);
+        
+        if (attendingAppointment) {
+          console.log('Já existe um agendamento em atendimento:', attendingAppointment);
+          return attendingAppointment;
+        } else {
+          // Se não, chamamos o próximo normalmente usando o ID
+          console.log('Nenhum agendamento em atendimento. Chamando o próximo.');
+          throw { callNext: true, appointmentTypeId };
+        }
+      }),
+      catchError(error => {
+        // Se for nossa exceção personalizada, chamamos o próximo
+        if (error && error.callNext) {
+          console.log(`Chamando próximo agendamento do tipo ${error.appointmentTypeId}`);
+          return this.http.put<AppointmentResponse>(
+            `${this.apiUrl}/appointment-type/${error.appointmentTypeId}/next`, 
+            {}, 
+            { headers: this.getHeaders() }
+          ).pipe(catchError(this.handleError));
+        }
+        // Caso contrário, propague o erro
+        return throwError(() => error);
+      })
+    );
   }
 
   //Método para completar um agendamento.
@@ -124,6 +151,10 @@ export class QueueService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
+  }
+
+  findAttendingAppointment(queue: AppointmentResponse[]): AppointmentResponse | null {
+    return queue.find(appointment => appointment.status === 'ATTENDING') || null;
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
