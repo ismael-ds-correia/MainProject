@@ -23,8 +23,8 @@ export class ServiceManagementComponent implements OnInit {
   selectedServiceForReport: AppointmentType | null = null;
   metrics: MetricsDTO | null = null;
   loadingMetrics = false;
-  reportStartDate: Date | null = null;
-  reportEndDate: Date | null = null;
+  reportStartDate: string | null = null;
+  reportEndDate: string | null = null;
   metricsError: string | null = null;
 
   constructor(
@@ -189,13 +189,21 @@ export class ServiceManagementComponent implements OnInit {
   }
 
   openReportModal(appointmentType: AppointmentType): void {
+    console.log('Abrindo modal para:', appointmentType);
     this.selectedServiceForReport = appointmentType;
     this.metrics = null;
     this.metricsError = null;
+    
+    // Inicializar datas (último mês)
+    const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    
+    // Formatar para yyyy-MM-dd para compatibilidade com input type="date"
+    this.reportEndDate = this.formatDateForInput(today);
+    this.reportStartDate = this.formatDateForInput(lastMonth);
+    
     this.showReportModal = true;
-    this.reportEndDate = new Date();
-    this.reportStartDate = new Date();
-    this.reportStartDate.setMonth(this.reportStartDate.getMonth() - 1);
   }
 
   closeReportModal(): void {
@@ -208,14 +216,19 @@ export class ServiceManagementComponent implements OnInit {
     if (!this.selectedServiceForReport) {
       return;
     }
-
+  
     this.loadingMetrics = true;
     this.metricsError = null;
     
+    console.log('Datas para relatório:', {
+      startDate: this.reportStartDate,
+      endDate: this.reportEndDate
+    });
+    
     this.metricsService.getMetricsByAppointmentType(
       this.selectedServiceForReport.name,
-      this.reportStartDate || undefined,
-      this.reportEndDate || undefined
+      this.reportStartDate,
+      this.reportEndDate
     ).subscribe({
       next: (data) => {
         this.metrics = data;
@@ -231,6 +244,14 @@ export class ServiceManagementComponent implements OnInit {
         }
       }
     });
+  }
+
+  //Método auxiliar para formatar data para input type="date".
+  private formatDateForInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   resetForm(): void {

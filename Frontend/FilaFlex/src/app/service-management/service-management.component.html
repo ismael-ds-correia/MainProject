@@ -1,192 +1,190 @@
 <div class="service-management-container">
-    <header>
-      <h1>Gerenciamento de Serviços</h1>
-      <button class="add-button" (click)="toggleForm()" *ngIf="!showForm">
-        Adicionar Novo Serviço
-      </button>
-    </header>
-  
-    <!-- Formulário de adição/edição -->
-    <div class="form-container" *ngIf="showForm">
-      <h2>{{ isEditing ? 'Editar' : 'Adicionar' }} Serviço</h2>
-      <form [formGroup]="appointmentTypeForm" (ngSubmit)="saveAppointmentType()">
-        <div class="form-group">
-          <label for="name">Nome do Serviço</label>
-          <input type="text" id="name" formControlName="name" class="form-control">
-          <div *ngIf="appointmentTypeForm.get('name')?.invalid && appointmentTypeForm.get('name')?.touched" class="error-message">
-            Nome é obrigatório
+  <header>
+    <h1>Gerenciamento de Serviços</h1>
+    <button class="add-button" (click)="toggleForm()" *ngIf="!showForm">
+      Adicionar Novo Serviço
+    </button>
+  </header>
+
+  <!-- Formulário de adição/edição -->
+  <div class="form-container" *ngIf="showForm">
+    <h2>{{ isEditing ? 'Editar' : 'Adicionar' }} Serviço</h2>
+    <form [formGroup]="appointmentTypeForm" (ngSubmit)="saveAppointmentType()">
+      <div class="form-group">
+        <label for="name">Nome do Serviço</label>
+        <input type="text" id="name" formControlName="name" class="form-control">
+        <div *ngIf="appointmentTypeForm.get('name')?.invalid && appointmentTypeForm.get('name')?.touched" class="error-message">
+          Nome é obrigatório
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descrição</label>
+        <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
+        <div *ngIf="appointmentTypeForm.get('description')?.invalid && appointmentTypeForm.get('description')?.touched" class="error-message">
+          Descrição é obrigatória
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label for="price">Preço (R$)</label>
+          <input type="number" id="price" formControlName="price" class="form-control">
+          <div *ngIf="appointmentTypeForm.get('price')?.invalid && appointmentTypeForm.get('price')?.touched" class="error-message">
+            Preço é obrigatório e deve ser maior que zero
           </div>
         </div>
-  
-        <div class="form-group">
-          <label for="description">Descrição</label>
-          <textarea id="description" formControlName="description" class="form-control" rows="3"></textarea>
-          <div *ngIf="appointmentTypeForm.get('description')?.invalid && appointmentTypeForm.get('description')?.touched" class="error-message">
-            Descrição é obrigatória
+
+        <div class="form-group half-width">
+          <label for="estimatedTime">Tempo Estimado (minutos)</label>
+          <input type="number" id="estimatedTime" formControlName="estimatedTime" class="form-control">
+          <div *ngIf="appointmentTypeForm.get('estimatedTime')?.invalid && appointmentTypeForm.get('estimatedTime')?.touched" class="error-message">
+            Tempo estimado é obrigatório
           </div>
         </div>
-  
+      </div>
+
+      <div class="form-group">
+        <label for="category">Categorias (separadas por vírgula)</label>
+        <input type="text" id="category" formControlName="category" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="requiredDocumentation">Documentos Necessários (separados por vírgula)</label>
+        <input type="text" id="requiredDocumentation" formControlName="requiredDocumentation" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="appointmentDate">Data do Serviço</label>
+        <input type="date" id="appointmentDate" formControlName="appointmentDate" class="form-control">
+      </div>
+
+      <h3>Endereço</h3>
+      <div formGroupName="address">
         <div class="form-row">
           <div class="form-group half-width">
-            <label for="price">Preço (R$)</label>
-            <input type="number" id="price" formControlName="price" class="form-control">
-            <div *ngIf="appointmentTypeForm.get('price')?.invalid && appointmentTypeForm.get('price')?.touched" class="error-message">
-              Preço é obrigatório e deve ser maior que zero
-            </div>
+            <label for="street">Rua</label>
+            <input type="text" id="street" formControlName="street" class="form-control">
           </div>
-  
-          <div class="form-group half-width">
-            <label for="estimatedTime">Tempo Estimado (minutos)</label>
-            <input type="number" id="estimatedTime" formControlName="estimatedTime" class="form-control">
-            <div *ngIf="appointmentTypeForm.get('estimatedTime')?.invalid && appointmentTypeForm.get('estimatedTime')?.touched" class="error-message">
-              Tempo estimado é obrigatório
-            </div>
-          </div>
-        </div>
-  
-        <div class="form-group">
-          <label for="category">Categorias (separadas por vírgula)</label>
-          <input type="text" id="category" formControlName="category" class="form-control">
-        </div>
-  
-        <div class="form-group">
-          <label for="requiredDocumentation">Documentos Necessários (separados por vírgula)</label>
-          <input type="text" id="requiredDocumentation" formControlName="requiredDocumentation" class="form-control">
-        </div>
-  
-        <div class="form-group">
-          <label for="appointmentDate">Data do Serviço</label>
-          <input type="date" id="appointmentDate" formControlName="appointmentDate" class="form-control">
-        </div>
-  
-        <h3>Endereço</h3>
-        <div formGroupName="address">
-          <div class="form-row">
-            <div class="form-group half-width">
-              <label for="street">Rua</label>
-              <input type="text" id="street" formControlName="street" class="form-control">
-            </div>
-  
-            <div class="form-group half-width">
-              <label for="number">Número</label>
-              <input type="text" id="number" formControlName="number" class="form-control">
-            </div>
-          </div>
-  
-          <div class="form-row">
-            <div class="form-group half-width">
-              <label for="city">Cidade</label>
-              <input type="text" id="city" formControlName="city" class="form-control">
-            </div>
-  
-            <div class="form-group half-width">
-              <label for="state">Estado</label>
-              <input type="text" id="state" formControlName="state" class="form-control">
-            </div>
-          </div>
-  
-          <div class="form-group">
-            <label for="country">País</label>
-            <input type="text" id="country" formControlName="country" class="form-control">
-          </div>
-        </div>
-  
-        <div class="button-group">
-          <button type="submit" class="save-button" [disabled]="appointmentTypeForm.invalid">
-            {{ isEditing ? 'Atualizar' : 'Adicionar' }}
-          </button>
-          <button type="button" class="cancel-button" (click)="cancelForm()">
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  
-    <!-- Lista de serviços -->
-    <div class="appointment-list">
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Preço</th>
-            <th>Tempo Estimado</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let appointmentType of appointmentTypes">
-            <td>{{ appointmentType.name }}</td>
-            <td>{{ appointmentType.description | slice:0:50 }}...</td>
-            <td>{{ appointmentType.price | currency:'BRL' }}</td>
-            <td>{{ appointmentType.estimatedTime }} minutos</td>
-            <td class="actions">
-              <button class="edit-button" (click)="editAppointmentType(appointmentType)">Editar</button>
-              <button class="delete-button" (click)="deleteAppointmentType(appointmentType)">Excluir</button>
-              <button class="report-button" (click)="openReportModal(appointmentType)">Relatório</button>
-            </td>
-          </tr>
-          <tr *ngIf="appointmentTypes.length === 0">
-            <td colspan="5" class="no-data">Nenhum serviço cadastrado</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <!-- Modal de Relatório (novo) -->
-    <div class="modal-overlay" *ngIf="showReportModal">
-      <div class="modal-content report-modal">
-        <div class="modal-header">
-          <h2>Relatório de Métricas - {{ selectedServiceForReport?.name }}</h2>
-          <button class="close-button" (click)="closeReportModal()">×</button>
+          <div class="form-group half-width">
+            <label for="number">Número</label>
+            <input type="text" id="number" formControlName="number" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half-width">
+            <label for="city">Cidade</label>
+            <input type="text" id="city" formControlName="city" class="form-control">
+          </div>
+
+          <div class="form-group half-width">
+            <label for="state">Estado</label>
+            <input type="text" id="state" formControlName="state" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="country">País</label>
+          <input type="text" id="country" formControlName="country" class="form-control">
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button type="submit" class="save-button" [disabled]="appointmentTypeForm.invalid">
+          {{ isEditing ? 'Atualizar' : 'Adicionar' }}
+        </button>
+        <button type="button" class="cancel-button" (click)="cancelForm()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Lista de serviços -->
+  <div class="appointment-list">
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Preço</th>
+          <th>Tempo Estimado</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointmentType of appointmentTypes">
+          <td>{{ appointmentType.name }}</td>
+          <td>{{ appointmentType.description | slice:0:50 }}...</td>
+          <td>{{ appointmentType.price | currency:'BRL' }}</td>
+          <td>{{ appointmentType.estimatedTime }} minutos</td>
+          <td class="actions">
+            <button class="edit-button" (click)="editAppointmentType(appointmentType)">Editar</button>
+            <button class="delete-button" (click)="deleteAppointmentType(appointmentType)">Excluir</button>
+            <button class="report-button" (click)="openReportModal(appointmentType)">Relatório</button>
+          </td>
+        </tr>
+        <tr *ngIf="appointmentTypes.length === 0">
+          <td colspan="5" class="no-data">Nenhum serviço cadastrado</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal de Relatório (novo) -->
+  <div class="modal-overlay" *ngIf="showReportModal">
+    <div class="modal-content report-modal">
+      <div class="modal-header">
+        <h2>Relatório de Métricas - {{ selectedServiceForReport?.name }}</h2>
+        <button class="close-button" (click)="closeReportModal()">×</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="date-filters">
+          <div class="form-group">
+            <label for="startDate">Data Inicial:</label>
+            <input type="date" id="startDate" [(ngModel)]="reportStartDate" class="form-control">
+          </div>
+          
+          <div class="form-group">
+            <label for="endDate">Data Final:</label>
+            <input type="date" id="endDate" [(ngModel)]="reportEndDate" class="form-control">
+          </div>
+          
+          <button class="generate-button" (click)="generateReport()">Gerar Relatório</button>
         </div>
         
-        <div class="modal-body">
-          <div class="date-filters">
-            <div class="form-group">
-              <label for="startDate">Data Inicial:</label>
-              <input type="date" id="startDate" [ngModel]="reportStartDate | date:'yyyy-MM-dd'" 
-                     (ngModelChange)="reportStartDate = $event" class="form-control">
-            </div>
-            
-            <div class="form-group">
-              <label for="endDate">Data Final:</label>
-              <input type="date" id="endDate" [ngModel]="reportEndDate | date:'yyyy-MM-dd'" 
-                     (ngModelChange)="reportEndDate = $event" class="form-control">
-            </div>
-            
-            <button class="generate-button" (click)="generateReport()">Gerar Relatório</button>
-          </div>
-          
-          <div *ngIf="loadingMetrics" class="loading-message">
-            <p>Carregando métricas...</p>
-          </div>
-          
-          <div *ngIf="metricsError" class="error-message">
-            <p>{{ metricsError }}</p>
-          </div>
-          
-          <div *ngIf="metrics && !loadingMetrics" class="metrics-results">
-            <div class="metric-card">
-              <h3>Total de Atendimentos</h3>
-              <p class="metric-value">{{ metrics.totalAppointmentsCompleteds }}</p>
-            </div>
-            
-            <div class="metric-card">
-              <h3>Tempo Médio de Espera</h3>
-              <p class="metric-value">{{ metrics.averageWaitingTime }} minutos</p>
-            </div>
-            
-            <div class="metric-card">
-              <h3>Tempo Médio de Atendimento</h3>
-              <p class="metric-value">{{ metrics.averageServiceTime }} minutos</p>
-            </div>
-          </div>
+        <div *ngIf="loadingMetrics" class="loading-message">
+          <p>Carregando métricas...</p>
         </div>
         
-        <div class="modal-footer">
-          <button class="cancel-button" (click)="closeReportModal()">Fechar</button>
+        <div *ngIf="metricsError" class="error-message">
+          <p>{{ metricsError }}</p>
         </div>
+        
+        <div *ngIf="metrics && !loadingMetrics" class="metrics-results">
+          <div class="metric-card">
+            <h3>Total de Atendimentos</h3>
+            <p class="metric-value">{{ metrics.totalAppointmentsCompleteds }}</p>
+          </div>
+          
+          <div class="metric-card">
+            <h3>Tempo Médio de Espera</h3>
+            <p class="metric-value">{{ metrics.averageWaitingTime }} minutos</p>
+          </div>
+          
+          <div class="metric-card">
+            <h3>Tempo Médio de Atendimento</h3>
+            <p class="metric-value">{{ metrics.averageServiceTime }} minutos</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="cancel-button" (click)="closeReportModal()">Fechar</button>
       </div>
     </div>
   </div>
+</div>

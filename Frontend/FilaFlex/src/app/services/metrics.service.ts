@@ -25,17 +25,21 @@ export class MetricsService {
 
   getMetricsByAppointmentType(
     appointmentTypeName: string,
-    startDate?: Date,
-    endDate?: Date
+    startDate?: string | null,
+    endDate?: string | null
   ): Observable<MetricsDTO> {
     console.log(`Buscando métricas para o serviço: ${appointmentTypeName}`);
     
     let params = new HttpParams();
     if (startDate) {
-      params = params.set('startDate', startDate.toISOString());
+      // Converter string para Date e depois para ISO
+      const startDateObj = new Date(startDate);
+      params = params.set('startDate', startDateObj.toISOString());
     }
     if (endDate) {
-      params = params.set('endDate', endDate.toISOString());
+      // Converter string para Date e depois para ISO
+      const endDateObj = new Date(endDate);
+      params = params.set('endDate', endDateObj.toISOString());
     }
     
     const headers = { 
