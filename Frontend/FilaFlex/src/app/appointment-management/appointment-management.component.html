@@ -159,4 +159,48 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de avaliação -->
+  <div *ngIf="evaluationModal.visible" class="modal">
+    <div class="modal-content evaluation-modal">
+      <h2>Avaliar Serviço</h2>
+      <p>Compartilhe sua experiência com o serviço: <strong>{{ evaluationModal.appointmentTypeName }}</strong></p>
+      
+      <!-- Sistema de classificação por estrelas -->
+      <div class="rating-container">
+        <div class="rating-label">Classificação:</div>
+        <div class="star-rating">
+          <span 
+            *ngFor="let star of [1, 2, 3, 4, 5]" 
+            class="star" 
+            [class.selected]="star <= evaluationModal.rating"
+            (click)="setRating(star)">
+            ★
+          </span>
+        </div>
+        <div class="rating-text">{{ getRatingText() }}</div>
+      </div>
+      
+      <!-- Campo de comentário -->
+      <div class="form-group">
+        <label for="evaluation-comment">Comentário (opcional):</label>
+        <textarea 
+          id="evaluation-comment" 
+          [(ngModel)]="evaluationModal.comment" 
+          rows="4" 
+          placeholder="Compartilhe detalhes da sua experiência...">
+        </textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button 
+          class="save-button" 
+          [disabled]="!isValidRating()" 
+          (click)="submitEvaluation()">
+          Enviar avaliação
+        </button>
+        <button class="cancel-button" (click)="closeEvaluationModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
