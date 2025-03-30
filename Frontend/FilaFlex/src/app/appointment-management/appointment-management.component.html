@@ -95,6 +95,7 @@
           <td>{{ appointment.displayServiceName }}</td>
           <td>{{ appointment.displayAddress }}</td>
           <td class="action-buttons">
+            <button class="checkin-button" (click)="registerCheckIn(appointment.id)">Check-in</button>
             <button class="edit-button" (click)="editAppointment(appointment)">Editar</button>
             <button class="delete-button" (click)="deleteAppointment(appointment.id)">Excluir</button>
           </td>

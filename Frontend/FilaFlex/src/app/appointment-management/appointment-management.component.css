@@ -484,6 +484,22 @@ p:not([class]) {
   }
 }
 
+.checkin-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-right: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.checkin-button:hover {
+  background-color: #218838;
+}
+
 /* Destaque visual para a opção selecionada no dropdown */
 .user-dropdown option:checked {
   background-color: #007bff;
