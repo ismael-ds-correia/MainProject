@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AppointmentType, AppointmentTypeService } from '../services/appointment-type.service';
 import { catchError, Observable } from 'rxjs';
+import { MetricsService, MetricsDTO } from '../services/metrics.service';
 
 @Component({
   selector: 'app-service-management',
@@ -18,10 +19,18 @@ export class ServiceManagementComponent implements OnInit {
   showForm = false;
   isEditing = false;
   currentAppointmentType: AppointmentType | null = null;
+  showReportModal = false;
+  selectedServiceForReport: AppointmentType | null = null;
+  metrics: MetricsDTO | null = null;
+  loadingMetrics = false;
+  reportStartDate: Date | null = null;
+  reportEndDate: Date | null = null;
+  metricsError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private appointmentTypeService: AppointmentTypeService
+    private appointmentTypeService: AppointmentTypeService,
+    private metricsService: MetricsService 
   ) {}
 
   ngOnInit(): void {
@@ -177,6 +186,51 @@ export class ServiceManagementComponent implements OnInit {
 
   cancelForm(): void {
     this.resetForm();
+  }
+
+  openReportModal(appointmentType: AppointmentType): void {
+    this.selectedServiceForReport = appointmentType;
+    this.metrics = null;
+    this.metricsError = null;
+    this.showReportModal = true;
+    this.reportEndDate = new Date();
+    this.reportStartDate = new Date();
+    this.reportStartDate.setMonth(this.reportStartDate.getMonth() - 1);
+  }
+
+  closeReportModal(): void {
+    this.showReportModal = false;
+    this.selectedServiceForReport = null;
+    this.metrics = null;
+  }
+
+  generateReport(): void {
+    if (!this.selectedServiceForReport) {
+      return;
+    }
+
+    this.loadingMetrics = true;
+    this.metricsError = null;
+    
+    this.metricsService.getMetricsByAppointmentType(
+      this.selectedServiceForReport.name,
+      this.reportStartDate || undefined,
+      this.reportEndDate || undefined
+    ).subscribe({
+      next: (data) => {
+        this.metrics = data;
+        this.loadingMetrics = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar métricas:', error);
+        this.loadingMetrics = false;
+        if (error.status === 404) {
+          this.metricsError = 'Nenhum dado de métricas encontrado para este serviço no período selecionado.';
+        } else {
+          this.metricsError = 'Erro ao carregar métricas. Tente novamente mais tarde.';
+        }
+      }
+    });
   }
 
   resetForm(): void {
