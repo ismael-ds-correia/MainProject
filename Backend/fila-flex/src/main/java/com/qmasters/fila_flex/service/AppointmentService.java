@@ -122,5 +122,4 @@ public class AppointmentService {
             throw new NoSuchElementException("Agendamento não encontrado, remoção não foi realizada");
         }
     }
-
 }

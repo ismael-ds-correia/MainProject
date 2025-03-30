@@ -32,6 +32,7 @@ export interface AppointmentSchedule {
   appointmentType: { id: number, name?: string };
   user: { id: number, name?: string, email?: string, username?: string };
   scheduledDateTime: string;
+  priorityCondition?: string;
   
   userId?: number;
   userEmail?: string;
@@ -124,6 +125,19 @@ export class AppointmentService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     });
+  }
+  
+  setPriorityCondition(appointmentId: number, priorityCondition: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
+    });
+    
+    return this.http.patch(
+      `${this.apiUrl}/${appointmentId}/set-priority`, 
+      JSON.stringify(priorityCondition),
+      { headers }
+    ).pipe(catchError(this.handleError));
   }
 
   /** Tratamento de erro */
