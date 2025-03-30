@@ -88,16 +88,20 @@ public class AppointmentMetrics {
     private Integer calculateAverageServiceTime(List<Appointment> appointments) {
         var validAppointments = new ArrayList<>(appointments.stream()
             .filter(a -> a.getStartTime() != null && a.getEndTime() != null)
+            .filter(a -> !a.getEndTime().isBefore(a.getStartTime())) // Garante que endTime é após startTime
             .toList());
             
         if (validAppointments.isEmpty()) {
             return 0;
         }
         
-        var totalServiceTime = 0;
+        var totalServiceSeconds = 0L; // Usando long para evitar overflow
+        
         for (var appointment : validAppointments) {
-            totalServiceTime += Duration.between(appointment.getStartTime(), appointment.getEndTime()).toMinutes();
+            totalServiceSeconds += Duration.between(appointment.getStartTime(), appointment.getEndTime()).getSeconds();
         }
-        return totalServiceTime / validAppointments.size();
+        
+        // Convertendo segundos para minutos e arredondando para manter consistência
+        return (int) Math.round(totalServiceSeconds / (double) validAppointments.size() / 60.0);
     }
 }

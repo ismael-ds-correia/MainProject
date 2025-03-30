@@ -68,8 +68,19 @@ export class AppointmentService {
     console.log('- Ambiente:', environment.production ? 'Produção' : 'Desenvolvimento');
    }
 
-   registerCheckIn(appointmentId: number): Observable<any> {
-    const url = `${this.apiUrl}/queue/appointment/${appointmentId}/check-in`;
+  // Corrigir o método registerCheckIn para usar a URL correta
+  registerCheckIn(appointmentId: number): Observable<any> {
+    // Construir a URL correta baseada no padrão do seu backend
+    // Precisamos remover '/appointment' e usar '/queue' como base
+    
+    // Extrair a URL base (sem "/appointment" no final)
+    const baseApiUrl = this.apiUrl.substring(0, this.apiUrl.lastIndexOf('/appointment'));
+    
+    // Construir a URL correta para o endpoint de check-in
+    const url = `${baseApiUrl}/queue/appointment/${appointmentId}/check-in`;
+    
+    console.log('Enviando requisição de check-in para:', url);
+    
     return this.http.put<any>(url, {}, {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${localStorage.getItem('token')}`
