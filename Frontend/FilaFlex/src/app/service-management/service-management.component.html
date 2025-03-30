@@ -123,6 +123,7 @@
             <td class="actions">
               <button class="edit-button" (click)="editAppointmentType(appointmentType)">Editar</button>
               <button class="delete-button" (click)="deleteAppointmentType(appointmentType)">Excluir</button>
+              <button class="report-button" (click)="openReportModal(appointmentType)">Relatório</button>
             </td>
           </tr>
           <tr *ngIf="appointmentTypes.length === 0">
@@ -130,5 +131,62 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Modal de Relatório (novo) -->
+    <div class="modal-overlay" *ngIf="showReportModal">
+      <div class="modal-content report-modal">
+        <div class="modal-header">
+          <h2>Relatório de Métricas - {{ selectedServiceForReport?.name }}</h2>
+          <button class="close-button" (click)="closeReportModal()">×</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="date-filters">
+            <div class="form-group">
+              <label for="startDate">Data Inicial:</label>
+              <input type="date" id="startDate" [ngModel]="reportStartDate | date:'yyyy-MM-dd'" 
+                     (ngModelChange)="reportStartDate = $event" class="form-control">
+            </div>
+            
+            <div class="form-group">
+              <label for="endDate">Data Final:</label>
+              <input type="date" id="endDate" [ngModel]="reportEndDate | date:'yyyy-MM-dd'" 
+                     (ngModelChange)="reportEndDate = $event" class="form-control">
+            </div>
+            
+            <button class="generate-button" (click)="generateReport()">Gerar Relatório</button>
+          </div>
+          
+          <div *ngIf="loadingMetrics" class="loading-message">
+            <p>Carregando métricas...</p>
+          </div>
+          
+          <div *ngIf="metricsError" class="error-message">
+            <p>{{ metricsError }}</p>
+          </div>
+          
+          <div *ngIf="metrics && !loadingMetrics" class="metrics-results">
+            <div class="metric-card">
+              <h3>Total de Atendimentos</h3>
+              <p class="metric-value">{{ metrics.totalAppointmentsCompleteds }}</p>
+            </div>
+            
+            <div class="metric-card">
+              <h3>Tempo Médio de Espera</h3>
+              <p class="metric-value">{{ metrics.averageWaitingTime }} minutos</p>
+            </div>
+            
+            <div class="metric-card">
+              <h3>Tempo Médio de Atendimento</h3>
+              <p class="metric-value">{{ metrics.averageServiceTime }} minutos</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button class="cancel-button" (click)="closeReportModal()">Fechar</button>
+        </div>
+      </div>
     </div>
   </div>
