@@ -27,7 +27,7 @@ import com.qmasters.fila_flex.util.PriorityCondition;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(MockitoExtension.class)
-public class QueueControllerTest {
+class QueueControllerTest {
 
     @Mock
     private QueueService queueService;

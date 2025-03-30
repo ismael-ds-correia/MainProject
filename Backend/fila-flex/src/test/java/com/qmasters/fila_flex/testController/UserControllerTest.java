@@ -22,7 +22,7 @@ import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.service.UserService;
 import com.qmasters.fila_flex.util.UserRole;
 
-public class UserControllerTest {
+class UserControllerTest {
 
     @Mock
     private UserService userService;
@@ -30,13 +30,13 @@ public class UserControllerTest {
     private UserController userController;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         userController = new UserController(userService);
     }
 
     @Test
-    public void testGetAllUsers_Success() {
+    void testGetAllUsers_Success() {
         // Arrange
         User user1 = new User();
         user1.setId(1L);
@@ -62,7 +62,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetUserById_UserFound() {
+    void testGetUserById_UserFound() {
         // Arrange
         Long userId = 1L;
         User user = new User();
@@ -87,7 +87,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testGetUserById_UserNotFound() {
+    void testGetUserById_UserNotFound() {
         // Arrange
         Long userId = 1L;
         when(userService.findById(userId)).thenReturn(null);
@@ -101,7 +101,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUserById_Success() {
+    void testDeleteUserById_Success() {
         // Arrange
         Long userId = 1L;
         doNothing().when(userService).deleteUser(userId);
@@ -115,7 +115,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testDeleteUserById_UserNotFound() {
+    void testDeleteUserById_UserNotFound() {
         // Arrange
         Long userId = 1L;
         doThrow(new IllegalArgumentException("Usuário não encontrado")).when(userService).deleteUser(userId);

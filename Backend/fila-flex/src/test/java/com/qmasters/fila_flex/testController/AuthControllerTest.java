@@ -30,7 +30,7 @@ import com.qmasters.fila_flex.service.TokenService;
 import com.qmasters.fila_flex.util.UserRole;
 
 @ExtendWith(MockitoExtension.class)
-public class AuthControllerTest {
+class AuthControllerTest {
 
     @Mock
     private AuthenticationManager authenticationManager;

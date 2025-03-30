@@ -42,7 +42,7 @@ class SecurityFilterTest {
     private SecurityFilter securityFilter;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         securityFilter = new SecurityFilter(tokenService, userRepository);
         SecurityContextHolder.clearContext();

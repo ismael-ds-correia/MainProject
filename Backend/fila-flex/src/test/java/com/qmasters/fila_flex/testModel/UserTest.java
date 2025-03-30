@@ -1,4 +1,5 @@
 package com.qmasters.fila_flex.testModel;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,10 +13,10 @@ import com.qmasters.fila_flex.model.Appointment;
 import com.qmasters.fila_flex.model.User;
 import com.qmasters.fila_flex.util.UserRole;
 
-public class UserTest {
+class UserTest {
 
     @Test
-    public void testUserCreation() {
+    void testUserCreation() {
         // Arrange
         User user = new User("testuser@example.com", "password123", UserRole.USER, "Test User");
 
@@ -28,12 +29,12 @@ public class UserTest {
     }
 
     @Test
-    public void testGetAuthorities_UserRole() {
+    void testGetAuthorities_UserRole() {
         // Arrange
         User user = new User("user@example.com", "password", UserRole.USER, "Normal User");
 
         // Act
-        List<GrantedAuthority> authorities = (List<GrantedAuthority>) user.getAuthorities();
+        List<GrantedAuthority> authorities = new ArrayList<>(user.getAuthorities());
 
         // Assert
         assertEquals(1, authorities.size());
@@ -41,12 +42,12 @@ public class UserTest {
     }
 
     @Test
-    public void testGetAuthorities_AdminRole() {
+    void testGetAuthorities_AdminRole() {
         // Arrange
         User user = new User("admin@example.com", "password", UserRole.ADMIN, "Admin User");
 
         // Act
-        List<GrantedAuthority> authorities = (List<GrantedAuthority>) user.getAuthorities();
+        List<GrantedAuthority> authorities = new ArrayList<>(user.getAuthorities());
 
         // Assert
         assertEquals(2, authorities.size());
@@ -55,7 +56,7 @@ public class UserTest {
     }
 
     @Test
-    public void testGetUsername() {
+    void testGetUsername() {
         // Arrange
         User user = new User("testuser@example.com", "password", UserRole.USER, "Test User");
 
@@ -67,7 +68,7 @@ public class UserTest {
     }
 
     @Test
-    public void testAppointments() {
+    void testAppointments() {
         // Arrange
         User user = new User("testuser@example.com", "password", UserRole.USER, "Test User");
 
@@ -81,7 +82,7 @@ public class UserTest {
     }
 
     @Test
-    public void testSetAndGetRole() {
+    void testSetAndGetRole() {
         // Arrange
         User user = new User();
         user.setRole(UserRole.ADMIN);
@@ -91,7 +92,7 @@ public class UserTest {
     }
 
     @Test
-    public void testSetAndGetId() {
+    void testSetAndGetId() {
         // Arrange
         User user = new User();
         user.setId(1L);
@@ -101,7 +102,7 @@ public class UserTest {
     }
 
     @Test
-    public void testSetAndGetName() {
+    void testSetAndGetName() {
         // Arrange
         User user = new User();
         user.setName("Updated User");
@@ -111,7 +112,7 @@ public class UserTest {
     }
 
     @Test
-    public void testSetAndGetEmail() {
+    void testSetAndGetEmail() {
         // Arrange
         User user = new User();
         user.setEmail("updateduser@example.com");
@@ -121,7 +122,7 @@ public class UserTest {
     }
 
     @Test
-    public void testSetAndGetPassword() {
+    void testSetAndGetPassword() {
         // Arrange
         User user = new User();
         user.setPassword("newpassword");

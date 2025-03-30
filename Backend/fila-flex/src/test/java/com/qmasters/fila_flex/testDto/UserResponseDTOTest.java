@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-public class UserResponseDTOTest {
+class UserResponseDTOTest {
 
     private User user;
     private Appointment appointment1;

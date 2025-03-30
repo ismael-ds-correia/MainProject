@@ -29,7 +29,7 @@ import com.qmasters.fila_flex.model.Adress;
 import com.qmasters.fila_flex.service.AdressService;
 
 @ExtendWith(MockitoExtension.class)
-public class AdressControllerTest {
+class AdressControllerTest {
 
     @Mock
     private AdressService adressService;
