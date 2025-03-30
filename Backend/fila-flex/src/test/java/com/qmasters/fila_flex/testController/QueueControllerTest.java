@@ -1,4 +1,4 @@
-/*package com.qmasters.fila_flex.testController;
+package com.qmasters.fila_flex.testController;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -176,4 +176,4 @@ public class QueueControllerTest {
         assertNull(response.getBody());
         verify(queueService).registerCheckIn(1L);
     }
-}*/
+}

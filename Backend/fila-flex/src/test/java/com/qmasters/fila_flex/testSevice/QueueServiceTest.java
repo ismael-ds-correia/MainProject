@@ -261,7 +261,7 @@ public class QueueServiceTest {
 
         Appointment completed = queueService.completeAppointment(7000L);
         assertEquals(AppointmentStatus.COMPLETED, completed.getStatus());
-        assertEquals(-1, completed.getQueueOrder());
+        assertEquals(0, completed.getQueueOrder());
         assertNotNull(completed.getEndTime());
         verify(appointmentRepository, atLeast(1)).save(appointment);
     }
@@ -661,5 +661,70 @@ void testShouldRepositionAppointment_alreadyPrivileged() throws Exception {
         // é falsa e sua negação retorna true (deve reposicionar).
         boolean result = (Boolean) method.invoke(queueService, appointment, appointmentType);
         assertTrue(result);
+    }
+
+    @Test
+    void testMarkAsAbsent_Success() {
+        Appointment appointment = new Appointment();
+        appointment.setStatus(AppointmentStatus.MARKED); // Status inicial é MARKED
+        appointment.setQueueOrder(3);
+        AppointmentType appointmentType = new AppointmentType();
+        appointmentType.setId(1L);
+        appointment.setAppointmentType(appointmentType);
+    
+        // Mock do comportamento do repositório
+        when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+        when(appointmentRepository.save(any(Appointment.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+        when(appointmentTypeRepository.findAllWithQueueOrderGreaterThan(1L, 3))
+            .thenReturn(Collections.emptyList());
+    
+        // Chama o método para marcar como ausente
+        Appointment result = queueService.markAsAbsent(10L);
+    
+        // Verifica as mudanças no estado do agendamento
+        assertEquals(AppointmentStatus.ABSENT, result.getStatus());
+        assertNotNull(result.getEndTime());
+        assertEquals(0, result.getQueueOrder());
+    
+        // Verifica se o agendamento foi salvo
+        verify(appointmentRepository, times(1)).save(result);
+    }
+    @Test
+    void testMarkAsAbsent_AlreadyCompleted() {
+        Appointment appointment = new Appointment();
+        appointment.setStatus(AppointmentStatus.COMPLETED); // Status inicial é COMPLETED
+        AppointmentType appointmentType = new AppointmentType();
+        appointmentType.setId(1L);
+        appointment.setAppointmentType(appointmentType);
+    
+        // Mock do comportamento do repositório
+        when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+        
+        // Executa a chamada e verifica se a exceção é lançada
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+            queueService.markAsAbsent(10L);
+        });
+        
+        assertEquals("Não é possível marcar como ausente um agendamento já concluído", exception.getMessage());
+    }
+
+    @Test
+    void testMarkAsAbsent_AlreadyAbsent() {
+        Appointment appointment = new Appointment();
+        appointment.setStatus(AppointmentStatus.ABSENT); // Status inicial é ABSENT
+        AppointmentType appointmentType = new AppointmentType();
+        appointmentType.setId(1L);
+        appointment.setAppointmentType(appointmentType);
+    
+        // Mock do comportamento do repositório
+        when(appointmentRepository.findById(10L)).thenReturn(Optional.of(appointment));
+        
+        // Executa a chamada e verifica se a exceção é lançada
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> {
+            queueService.markAsAbsent(10L);
+        });
+        
+        assertEquals("Este agendamento já está marcado como ausente", exception.getMessage());
     }
 }
