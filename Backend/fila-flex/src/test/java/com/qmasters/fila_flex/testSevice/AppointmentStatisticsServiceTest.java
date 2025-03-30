@@ -17,7 +17,7 @@ import com.qmasters.fila_flex.service.AppointmentStatisticsService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class AppointmentStatisticsServiceTest {
+class AppointmentStatisticsServiceTest {
 
     @Mock
     private AppointmentRepository appointmentRepository;
@@ -26,13 +26,13 @@ public class AppointmentStatisticsServiceTest {
     private AppointmentStatisticsService appointmentStatisticsService;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     // Testes para getAverageWaitTime
     @Test
-    public void emptyList() {
+    void emptyList() {
         when(appointmentRepository.findAll()).thenReturn(Collections.emptyList());
         
         double result = appointmentStatisticsService.getAverageWaitTime();
@@ -41,7 +41,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void singleValidAppointment() {
+    void singleValidAppointment() {
         LocalDateTime checkIn = LocalDateTime.of(2025, 3, 27, 10, 0);
         LocalDateTime start = LocalDateTime.of(2025, 3, 27, 10, 30);
 
@@ -58,7 +58,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void multipleValidAppointments() {
+    void multipleValidAppointments() {
         LocalDateTime checkIn1 = LocalDateTime.of(2025, 3, 27, 10, 0);
         LocalDateTime start1 = LocalDateTime.of(2025, 3, 27, 10, 30);
         LocalDateTime checkIn2 = LocalDateTime.of(2025, 3, 27, 11, 0);
@@ -81,7 +81,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void withNullCheckInTime() {
+    void withNullCheckInTime() {
         Appointment validAppointment = new Appointment();
         validAppointment.setCheckInTime(LocalDateTime.of(2025, 3, 27, 10, 0));
         validAppointment.setStartTime(LocalDateTime.of(2025, 3, 27, 10, 30));
@@ -99,7 +99,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void withNullStartTime() {
+    void withNullStartTime() {
         Appointment validAppointment = new Appointment();
         validAppointment.setCheckInTime(LocalDateTime.of(2025, 3, 27, 10, 0));
         validAppointment.setStartTime(LocalDateTime.of(2025, 3, 27, 10, 30));
@@ -118,7 +118,7 @@ public class AppointmentStatisticsServiceTest {
 
     // Testes para getAverageServiceTime
     @Test
-    public void testGetAverageServiceTime_EmptyList() {
+    void testGetAverageServiceTime_EmptyList() {
         when(appointmentRepository.findAll()).thenReturn(Collections.emptyList());
         
         double result = appointmentStatisticsService.getAverageServiceTime();
@@ -127,7 +127,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void singleValidAppointment_ReturnsCorrectAverage() {
+    void singleValidAppointment_ReturnsCorrectAverage() {
         LocalDateTime start = LocalDateTime.of(2025, 3, 27, 10, 30);
         LocalDateTime end = LocalDateTime.of(2025, 3, 27, 11, 0);
 
@@ -144,7 +144,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void multipleValidAppointments_ReturnsCorrectAverage() {
+    void multipleValidAppointments_ReturnsCorrectAverage() {
         LocalDateTime start1 = LocalDateTime.of(2025, 3, 27, 10, 30);
         LocalDateTime end1 = LocalDateTime.of(2025, 3, 27, 11, 0);
         LocalDateTime start2 = LocalDateTime.of(2025, 3, 27, 11, 15);
@@ -167,7 +167,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void testGetAverageServiceTime_WithNullStartTime() {
+    void testGetAverageServiceTime_WithNullStartTime() {
         Appointment validAppointment = new Appointment();
         validAppointment.setStartTime(LocalDateTime.of(2025, 3, 27, 10, 30));
         validAppointment.setEndTime(LocalDateTime.of(2025, 3, 27, 11, 0));
@@ -185,7 +185,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void testGetAverageServiceTime_WithNullEndTime() {
+    void testGetAverageServiceTime_WithNullEndTime() {
         Appointment validAppointment = new Appointment();
         validAppointment.setStartTime(LocalDateTime.of(2025, 3, 27, 10, 30));
         validAppointment.setEndTime(LocalDateTime.of(2025, 3, 27, 11, 0));
@@ -204,7 +204,7 @@ public class AppointmentStatisticsServiceTest {
 
     // Testes para getTotalAppointments
     @Test
-    public void testGetTotalAppointments_ZeroAppointments() {
+    void testGetTotalAppointments_ZeroAppointments() {
         when(appointmentRepository.count()).thenReturn(0L);
         
         long result = appointmentStatisticsService.getTotalAppointments();
@@ -213,7 +213,7 @@ public class AppointmentStatisticsServiceTest {
     }
 
     @Test
-    public void testGetTotalAppointments_MultipleAppointments() {
+    void testGetTotalAppointments_MultipleAppointments() {
         when(appointmentRepository.count()).thenReturn(42L);
         
         long result = appointmentStatisticsService.getTotalAppointments();

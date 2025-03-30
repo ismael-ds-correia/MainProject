@@ -290,8 +290,6 @@ class AppointmentMetricsTest {
         when(validAppointment.getEndTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 10, 40));
         when(validAppointment.getScheduledDateTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 10, 0));
 
-        // invalidServiceAppointment: faltando endTime, logo, não deve contribuir para service time,
-        // mas possui check-in e start para contribuir no cálculo do waiting time.
         when(invalidServiceAppointment.getCheckInTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 11, 0));
         when(invalidServiceAppointment.getStartTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 11, 10));
         when(invalidServiceAppointment.getEndTime()).thenReturn(null);
@@ -299,10 +297,6 @@ class AppointmentMetricsTest {
 
         MetricsDTO metrics = appointmentMetrics.generateMetrics("Consulta", null, null);
         
-        // Para waiting time: ambos agendamentos contribuem: 
-        // validAppointment: (10:10 - 10:00) = 10 minutos; invalidServiceAppointment: (11:10 - 11:00) = 10 minutos;
-        // Média waiting = (10+10)/2 = 10.
-        // Para service time: somente validAppointment é considerado (30 minutos).
         assertEquals(2, metrics.getTotalAppointmentsCompleteds());
         assertEquals(10, metrics.getAverageWaitingTime());
         assertEquals(30, metrics.getAverageServiceTime());
@@ -363,9 +357,7 @@ class AppointmentMetricsTest {
     
         // Total de agendamentos: 2
         assertEquals(2, metrics.getTotalAppointmentsCompleteds());
-        // Tempo de espera: (10 minutos + 5 minutos) / 2 = 7 (divisão inteira)
         assertEquals(7, metrics.getAverageWaitingTime());
-        // Tempo de serviço: (30 minutos + 30 minutos) / 2 = 30
         assertEquals(30, metrics.getAverageServiceTime());
     }
 
@@ -397,8 +389,6 @@ class AppointmentMetricsTest {
 
     @Test
     void testGenerateMetrics_withNullStartTimeForWaitingTime() {
-        // Cenário: lista de agendamentos em que um tem check-in válido mas startTime nulo,
-        // logo, não contribui para o cálculo do tempo de espera.
         AppointmentType appointmentType = mock(AppointmentType.class);
         Appointment validAppointment = mock(Appointment.class);
         Appointment invalidAppointment = mock(Appointment.class);
@@ -416,8 +406,6 @@ class AppointmentMetricsTest {
         // invalidAppointment possui check-in válido, mas startTime nulo (não contribui para waiting time)
         when(invalidAppointment.getCheckInTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 11, 0));
         when(invalidAppointment.getStartTime()).thenReturn(null);
-        // Para o cálculo de service time, invalidAppointment pode ter start/end válidos ou não;
-        // aqui definimos ambos nulos para focar no waiting time.
         when(invalidAppointment.getEndTime()).thenReturn(null);
     
         when(appointmentType.getAppointments()).thenReturn(Arrays.asList(validAppointment, invalidAppointment));
@@ -425,12 +413,8 @@ class AppointmentMetricsTest {
         // Sem filtro de datas, o método usa todos os agendamentos para o cálculo.
         MetricsDTO metrics = appointmentMetrics.generateMetrics("Consulta", null, null);
         
-        // totalAppointmentsCompleteds conta os dois agendamentos.
         assertEquals(2, metrics.getTotalAppointmentsCompleteds());
-        // Apenas validAppointment contribui para o waiting time: (10:10 - 10:00) = 10 minutos.
-        // A média é calculada sobre 1 agendamento, resultando em 10 minutos.
         assertEquals(10, metrics.getAverageWaitingTime());
-        // Para service time, somente validAppointment tem dados completos: 30 minutos.
         assertEquals(30, metrics.getAverageServiceTime());
     }
 

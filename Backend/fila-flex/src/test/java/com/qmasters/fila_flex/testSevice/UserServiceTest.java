@@ -90,7 +90,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void testGetUserWithAppointments_Success() {
+    void testGetUserWithAppointments_Success() {
         Long userId = 1L;
 
         // Criação de um usuário mockado
