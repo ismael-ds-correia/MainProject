@@ -36,7 +36,7 @@ import com.qmasters.fila_flex.model.AppointmentTypeDetails;
 import com.qmasters.fila_flex.service.AppointmentTypeService;
 
 @ExtendWith(MockitoExtension.class)
-public class AppointmentTypeControllerTest {
+class AppointmentTypeControllerTest {
 
     @Mock
     private AppointmentTypeService appointmentTypeService;

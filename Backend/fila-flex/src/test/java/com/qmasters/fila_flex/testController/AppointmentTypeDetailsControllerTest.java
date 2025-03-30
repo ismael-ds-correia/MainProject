@@ -30,7 +30,7 @@ import com.qmasters.fila_flex.dto.AppointmentTypeDetailsDTO;
 import com.qmasters.fila_flex.model.AppointmentTypeDetails;
 import com.qmasters.fila_flex.service.AppointmentTypeDetailsService;
 
-public class AppointmentTypeDetailsControllerTest {
+class AppointmentTypeDetailsControllerTest {
 
     @Mock
     private AppointmentTypeDetailsService appointmentTypeDetailsService;

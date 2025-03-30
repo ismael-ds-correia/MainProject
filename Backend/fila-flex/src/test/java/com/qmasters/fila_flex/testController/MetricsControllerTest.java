@@ -37,7 +37,7 @@ class MetricsControllerTest {
         ResponseEntity<MetricsDTO> response = metricsController.getMetricsByAppointmentType("Consulta", null, null);
 
         // Verificações
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertEquals(mockMetrics, response.getBody());
 
         verify(appointmentMetrics).generateMetrics("Consulta", null, null);
@@ -53,7 +53,7 @@ class MetricsControllerTest {
         ResponseEntity<MetricsDTO> response = metricsController.getMetricsByAppointmentType("Consulta", null, null);
 
         // Verificações
-        assertEquals(404, response.getStatusCodeValue());
+        assertEquals(404, response.getStatusCode().value());
         assertEquals(null, response.getBody());
 
         verify(appointmentMetrics).generateMetrics("Consulta", null, null);
@@ -69,7 +69,7 @@ class MetricsControllerTest {
         ResponseEntity<MetricsDTO> response = metricsController.getMetricsByAppointmentType("Consulta", null, null);
 
         // Verificações
-        assertEquals(500, response.getStatusCodeValue());
+        assertEquals(500, response.getStatusCode().value());
         assertEquals(null, response.getBody());
 
         verify(appointmentMetrics).generateMetrics("Consulta", null, null);
