@@ -418,4 +418,39 @@ class AppointmentMetricsTest {
         assertEquals(30, metrics.getAverageServiceTime());
     }
 
+
+    @Test
+    void testGenerateMetrics_withInvalidServiceTimeOrder() {
+        AppointmentType appointmentType = mock(AppointmentType.class);
+        Appointment validAppointment = mock(Appointment.class);
+        Appointment invalidOrderAppointment = mock(Appointment.class);
+        
+        when(appointmentTypeRepository.findByName("Consulta")).thenReturn(Optional.of(appointmentType));
+        when(appointmentType.getAppointments()).thenReturn(Arrays.asList(validAppointment, invalidOrderAppointment));
+        
+        // Agendamento válido
+        when(validAppointment.getScheduledDateTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 10, 0));
+        when(validAppointment.getCheckInTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 10, 0));
+        when(validAppointment.getStartTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 10, 10));
+        when(validAppointment.getEndTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 10, 40));
+        
+        // Agendamento com ordem de tempo inválida: endTime antes de startTime
+        when(invalidOrderAppointment.getScheduledDateTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 11, 0));
+        when(invalidOrderAppointment.getCheckInTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 11, 0));
+        when(invalidOrderAppointment.getStartTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 11, 5));
+        when(invalidOrderAppointment.getEndTime()).thenReturn(LocalDateTime.of(2025, 3, 28, 11, 0));
+        
+        MetricsDTO metrics = appointmentMetrics.generateMetrics("Consulta", null, null);
+        
+        // totalAppointmentsCompleteds: 2 (conta todos os agendamentos)
+        // Tempo de espera: 
+        //   - validAppointment: 10 minutos (10:10 - 10:00)
+        //   - invalidOrderAppointment: 5 minutos (11:05 - 11:00)
+        // Média: (10 + 5) / 2 = 7 (divisão inteira)
+        // Tempo de serviço:
+        //   - Apenas validAppointment é considerado (30 minutos, pois invalidOrderAppointment é ignorado)
+        assertEquals(2, metrics.getTotalAppointmentsCompleteds());
+        assertEquals(7, metrics.getAverageWaitingTime());
+        assertEquals(30, metrics.getAverageServiceTime());
+    }
 }

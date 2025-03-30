@@ -8,8 +8,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "evaluations")
 public class Evaluation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +26,9 @@ public class Evaluation {
     @JoinColumn(name = "appointment_type_id")
     private AppointmentType appointmentType;
 
-    // Construtor padrão
     public Evaluation() {
     }
 
-    // Construtor com parâmetros
     public Evaluation(int rating, String comment, AppointmentType appointmentType) {
         this.rating = rating;
         this.comment = comment;

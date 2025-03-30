@@ -1,14 +1,20 @@
 package com.qmasters.fila_flex.testController;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
@@ -29,32 +35,84 @@ class EvaluationControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Inicializar mocks
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testAddEvaluation() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(4);
-        dto.setComment("Great service");
-        dto.setAppointmentTypeId(1L);
-
+    void testCreateEvaluation() {
+        // Preparar dados: criar AppointmentType e EvaluationDTO via construtor atualizado
         AppointmentType appointmentType = new AppointmentType();
         appointmentType.setId(1L);
+        EvaluationDTO dto = new EvaluationDTO(4, "Great service", appointmentType);
 
+        // Cria uma Evaluation para simular o retorno do service
         Evaluation evaluation = new Evaluation();
         evaluation.setRating(4);
         evaluation.setComment("Great service");
         evaluation.setAppointmentType(appointmentType);
 
-        when(evaluationService.addEvaluation(dto)).thenReturn(evaluation);
+        when(evaluationService.saveEvaluation(dto)).thenReturn(evaluation);
 
-        EvaluationDTO responseDTO = evaluationController.createEvaluation(dto);
+        ResponseEntity<Evaluation> response = evaluationController.createEvaluation(dto);
 
-        assertEquals(4, responseDTO.getRating());
-        assertEquals("Great service", responseDTO.getComment());
-        assertEquals(1L, responseDTO.getAppointmentTypeId());
+        assertEquals(200, response.getStatusCode().value());
+        Evaluation body = response.getBody();
+        assertNotNull(body);
+        assertEquals(4, body.getRating());
+        assertEquals("Great service", body.getComment());
+        assertEquals(appointmentType, body.getAppointmentType());
+    }
+
+    @Test
+    void testGetAllEvaluations() {
+        Evaluation eval1 = new Evaluation();
+        eval1.setRating(4);
+        eval1.setComment("Good");
+        
+        Evaluation eval2 = new Evaluation();
+        eval2.setRating(5);
+        eval2.setComment("Excellent");
+
+        List<Evaluation> evaluations = List.of(eval1, eval2);
+        when(evaluationService.getAllEvaluations()).thenReturn(evaluations);
+
+        ResponseEntity<List<Evaluation>> response = evaluationController.getAllEvaluations();
+
+        assertEquals(200, response.getStatusCode().value());
+        List<Evaluation> responseList = response.getBody();
+        assertNotNull(responseList);
+        assertEquals(2, responseList.size());
+    }
+
+    @Test
+    void testGetEvaluationById_Found() {
+        AppointmentType appointmentType = new AppointmentType();
+        appointmentType.setId(1L);
+        
+        Evaluation evaluation = new Evaluation();
+        evaluation.setRating(4);
+        evaluation.setComment("Good service");
+        evaluation.setAppointmentType(appointmentType);
+        Long id = 1L;
+        
+        when(evaluationService.findEvaluationById(id)).thenReturn(Optional.of(evaluation));
+
+        ResponseEntity<Evaluation> response = evaluationController.getEvaluationById(id);
+
+        assertEquals(200, response.getStatusCode().value());
+        Evaluation body = response.getBody();
+        assertNotNull(body);
+        assertEquals(4, body.getRating());
+        assertEquals("Good service", body.getComment());
+        assertEquals(appointmentType, body.getAppointmentType());
+    }
+
+    @Test
+    void testGetEvaluationById_NotFound() {
+        Long id = 1L;
+        when(evaluationService.findEvaluationById(id)).thenReturn(Optional.empty());
+        
+        assertThrows(NoSuchElementException.class, () -> evaluationController.getEvaluationById(id));
     }
 
     @Test
@@ -68,28 +126,24 @@ class EvaluationControllerTest {
     }
 
     @Test
-    void testGetAllEvaluations() {
-        Evaluation evaluation = new Evaluation();
-        evaluation.setRating(4);
-        evaluation.setComment("Good");
-        evaluation.setAppointmentType(new AppointmentType());
+    void testDeleteEvaluation_Success() {
+        Long id = 1L;
+        doNothing().when(evaluationService).deleteEvaluation(id);
 
-        when(evaluationService.getAllEvaluations()).thenReturn(ResponseEntity.ok(List.of(evaluation)));
+        ResponseEntity<String> response = evaluationController.deleteEvaluation(id);
 
-        List<EvaluationDTO> evaluations = evaluationController.listEvaluations();
-
-        assertEquals(1, evaluations.size());
-        assertEquals(4, evaluations.get(0).getRating());
-        assertEquals("Good", evaluations.get(0).getComment());
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals("Avaliação removida com sucesso", response.getBody());
     }
 
     @Test
-    void testGetAllEvaluationsWhenResponseBodyIsNull() {
-        when(evaluationService.getAllEvaluations()).thenReturn(ResponseEntity.ok(null));
+    void testDeleteEvaluation_Failure() {
+        Long id = 1L;
+        doThrow(new IllegalArgumentException("Avaliação não encontrada")).when(evaluationService).deleteEvaluation(id);
 
-        List<EvaluationDTO> evaluations = evaluationController.listEvaluations();
+        ResponseEntity<String> response = evaluationController.deleteEvaluation(id);
 
-        assertNotNull(evaluations); // Certifica que a lista não é null
-        assertEquals(0, evaluations.size()); // Deve ser uma lista vazia
+        assertEquals(404, response.getStatusCode().value());
+        assertEquals("Avaliação não encontrada", response.getBody());
     }
 }

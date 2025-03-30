@@ -1,60 +1,43 @@
 package com.qmasters.fila_flex.testDto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.Test;
 
 import com.qmasters.fila_flex.dto.EvaluationDTO;
 import com.qmasters.fila_flex.model.AppointmentType;
-import com.qmasters.fila_flex.model.Evaluation;
 
 class EvaluationDTOTest {
 
     @Test
-    void testConstructorWithEvaluation() {
+    void testConstructorWithParameters() {
         // Criar um AppointmentType
         AppointmentType appointmentType = new AppointmentType();
-        appointmentType.setId(1L);
 
-        // Criar um objeto Evaluation
-        Evaluation evaluation = new Evaluation();
-        evaluation.setRating(5);
-        evaluation.setComment("Excellent service");
-        evaluation.setAppointmentType(appointmentType);
+        // Criar o DTO usando o novo construtor
+        EvaluationDTO evaluationDTO = new EvaluationDTO(5, "Excellent service", appointmentType);
 
-        // Criar o DTO usando o construtor
-        EvaluationDTO evaluationDTO = new EvaluationDTO(evaluation);
-
-        // Verificar se os valores foram copiados corretamente
+        // Verificar se os valores foram corretamente atribuídos
         assertEquals(5, evaluationDTO.getRating());
         assertEquals("Excellent service", evaluationDTO.getComment());
-        assertEquals(1L, evaluationDTO.getAppointmentTypeId());
-    }
-
-    @Test
-    void testDefaultConstructor() {
-        // Criar o DTO usando o construtor padrão
-        EvaluationDTO evaluationDTO = new EvaluationDTO();
-
-        // Verificar os valores padrão
-        assertEquals(0, evaluationDTO.getRating());  // valor default para int
-        assertNull(evaluationDTO.getComment());      // valor default para String
-        assertNull(evaluationDTO.getAppointmentTypeId()); // valor default para Long
+        assertEquals(appointmentType, evaluationDTO.getAppointmentType());
     }
 
     @Test
     void testSettersAndGetters() {
         // Criar o DTO
-        EvaluationDTO evaluationDTO = new EvaluationDTO();
+        EvaluationDTO evaluationDTO = new EvaluationDTO(0, null, null);
 
-        // Definir valores usando setters
+        // Criar um AppointmentType
+        AppointmentType appointmentType = new AppointmentType();
+
+        // Definir valores usando setters (se existirem)
         evaluationDTO.setRating(4);
         evaluationDTO.setComment("Good service");
-        evaluationDTO.setAppointmentTypeId(2L);
+        evaluationDTO.setAppointmentType(appointmentType);
 
         // Verificar se os valores foram corretamente atribuídos
         assertEquals(4, evaluationDTO.getRating());
         assertEquals("Good service", evaluationDTO.getComment());
-        assertEquals(2L, evaluationDTO.getAppointmentTypeId());
+        assertEquals(appointmentType, evaluationDTO.getAppointmentType());
     }
 }
