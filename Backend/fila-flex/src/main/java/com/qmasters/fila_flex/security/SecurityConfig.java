@@ -110,14 +110,6 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.DELETE, adressEndpoint).permitAll();
     }
 
-    private void configureEvaluationEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
-        String[] evaluationEndpoint = {"/evaluations/**"};
-
-        authorize
-            .requestMatchers(HttpMethod.POST, evaluationEndpoint).permitAll()
-            .requestMatchers(HttpMethod.GET, evaluationEndpoint).permitAll();
-    }
-
     private void configureQueueEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
         String[] queueEndpoint = {"/queue/**"};
         
@@ -127,6 +119,15 @@ public class SecurityConfig {
             .requestMatchers(HttpMethod.POST, queueEndpoint).permitAll()
             .requestMatchers(HttpMethod.DELETE, queueEndpoint).permitAll();
         
+    }
+
+    private void configureEvaluationEndpoints(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorize) {
+        String[] evaluationEndpoint = {"/evaluations/**"};
+
+        authorize
+            .requestMatchers(HttpMethod.POST, evaluationEndpoint).permitAll()
+            .requestMatchers(HttpMethod.GET, evaluationEndpoint).permitAll()
+            .requestMatchers(HttpMethod.DELETE, evaluationEndpoint).permitAll();
     }
 
     @Bean //mesmo sem ser chamada, se não for declarada aqui a autenticação não funciona
