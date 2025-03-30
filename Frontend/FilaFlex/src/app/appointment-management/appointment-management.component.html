@@ -160,11 +160,11 @@
     </div>
   </div>
 
-  <!-- Modal de avaliação -->
-  <div *ngIf="evaluationModal.visible" class="modal">
+  <!-- Modal de avaliação com correções -->
+  <div *ngIf="evaluationModal().visible" class="modal">
     <div class="modal-content evaluation-modal">
       <h2>Avaliar Serviço</h2>
-      <p>Compartilhe sua experiência com o serviço: <strong>{{ evaluationModal.appointmentTypeName }}</strong></p>
+      <p>Compartilhe sua experiência com o serviço: <strong>{{ evaluationModal().appointmentTypeName }}</strong></p>
       
       <!-- Sistema de classificação por estrelas -->
       <div class="rating-container">
@@ -173,7 +173,7 @@
           <span 
             *ngFor="let star of [1, 2, 3, 4, 5]" 
             class="star" 
-            [class.selected]="star <= evaluationModal.rating"
+            [class.selected]="star <= evaluationModal().rating"
             (click)="setRating(star)">
             ★
           </span>
@@ -186,7 +186,8 @@
         <label for="evaluation-comment">Comentário (opcional):</label>
         <textarea 
           id="evaluation-comment" 
-          [(ngModel)]="evaluationModal.comment" 
+          [value]="evaluationModal().comment"
+          (input)="updateComment($event)"
           rows="4" 
           placeholder="Compartilhe detalhes da sua experiência...">
         </textarea>
