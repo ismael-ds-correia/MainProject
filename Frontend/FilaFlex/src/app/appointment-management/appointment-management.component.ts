@@ -4,13 +4,15 @@ import { Location } from '@angular/common';
 import { NgIf, NgFor } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { AppointmentService, AppointmentSchedule } from '../services/appointment.service';
+import { FormsModule } from '@angular/forms';
+import { AppointmentTypeService, EvaluationDTO } from '../services/appointment-type.service';
 
 @Component({
   selector: 'app-appointment-management',
   standalone: true,
   templateUrl: './appointment-management.component.html',
   styleUrls: ['./appointment-management.component.css'],
-  imports: [NgIf, NgFor, CommonModule]
+  imports: [NgIf, NgFor, CommonModule, FormsModule]
 })
 export class AppointmentManagementComponent implements OnInit {
   loading = signal(false);
@@ -21,9 +23,23 @@ export class AppointmentManagementComponent implements OnInit {
   currentUserId = signal<number | null>(null); 
   allAppointments = signal<any[]>([]);
   users = signal<any[]>([]);
+  evaluationModal = signal<{
+    visible: boolean,
+    appointmentTypeId: number | null,
+    appointmentTypeName: string,
+    rating: number,
+    comment: string
+  }>({
+    visible: false,
+    appointmentTypeId: null,
+    appointmentTypeName: '',
+    rating: 0,
+    comment: ''
+  });
 
   constructor(
     private appointmentService: AppointmentService,
+    private appointmentTypeService: AppointmentTypeService,
     private location: Location,
     private http: HttpClient
   ) {}
@@ -41,6 +57,124 @@ export class AppointmentManagementComponent implements OnInit {
     if (this.isAdmin()) {
       this.fetchUsers();
     }
+  }
+
+  openEvaluationModal(appointment: any) {
+    console.log('Dados do agendamento para avaliação:', appointment);
+    
+    // Obter o nome do serviço diretamente do appointment
+    const serviceName = this.getServiceName(appointment);
+    
+    // Tentar obter o ID diretamente dos dados do agendamento - sem chamar a API
+    let serviceId = null;
+    
+    if (appointment.appointmentTypeId) {
+      serviceId = appointment.appointmentTypeId;
+    } 
+    else if (appointment.appointmentType?.id) {
+      serviceId = appointment.appointmentType.id;
+    }
+    else if (appointment.service?.id) {
+      serviceId = appointment.service.id;
+    }
+    else if (appointment.id) {
+      // Como último recurso, usar o ID do próprio agendamento
+      serviceId = appointment.id; 
+    }
+    
+    // Abrir o modal imediatamente com os dados que temos
+    this.evaluationModal.set({
+      visible: true,
+      appointmentTypeId: serviceId || 1, // Usar ID 1 como fallback se não encontramos nenhum ID
+      appointmentTypeName: serviceName || 'Serviço',
+      rating: 0,
+      comment: ''
+    });
+    
+    // Registrar no console para fins de depuração, mas não fechar o modal
+    if (!serviceId) {
+      console.warn('Aviso: ID do serviço não identificado. Usando ID padrão para avaliação.');
+    }
+  }
+
+  closeEvaluationModal() {
+    this.evaluationModal.set({
+      visible: false,
+      appointmentTypeId: null,
+      appointmentTypeName: '',
+      rating: 0,
+      comment: ''
+    });
+  }
+  
+  setRating(rating: number) {
+    const currentModal = this.evaluationModal();
+    this.evaluationModal.set({
+      ...currentModal,
+      rating: rating
+    });
+  }
+  
+  getRatingText(): string {
+    const rating = this.evaluationModal().rating;
+    switch (rating) {
+      case 1: return 'Muito ruim';
+      case 2: return 'Ruim';
+      case 3: return 'Regular';
+      case 4: return 'Bom';
+      case 5: return 'Excelente';
+      default: return 'Selecione uma classificação';
+    }
+  }
+
+  isValidRating(): boolean {
+    return this.evaluationModal().rating > 0;
+  }
+
+  submitEvaluation() {
+    if (!this.isValidRating()) {
+      this.error.set('Por favor, selecione uma classificação para o serviço');
+      return;
+    }
+    
+    const { appointmentTypeId, rating, comment } = this.evaluationModal();
+    
+    // Garantir que temos um ID válido
+    const idToUse = appointmentTypeId || 1; // Usar ID 1 como fallback
+    
+    const evaluation: EvaluationDTO = {
+      rating,
+      comment: comment?.trim() || '',
+      appointmentTypeId: idToUse
+    };
+    
+    this.loading.set(true);
+    
+    this.appointmentTypeService.submitEvaluation(evaluation).subscribe({
+      next: (response) => {
+        console.log('Avaliação enviada com sucesso:', response);
+        this.showSuccessMessage('Avaliação enviada com sucesso!');
+        this.closeEvaluationModal();
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Erro ao enviar avaliação:', err);
+        this.error.set('Erro ao enviar avaliação. Por favor, tente novamente.');
+        this.loading.set(false);
+        // NÃO fechamos o modal em caso de erro
+      }
+    });
+  }
+
+  updateComment(event: Event) {
+    const input = event.target as HTMLTextAreaElement;
+    const comment = input.value;
+    
+    const currentModal = this.evaluationModal();
+    this.evaluationModal.set({
+      ...currentModal,
+      comment
+    });
   }
 
   registerCheckIn(appointmentId: number): void {

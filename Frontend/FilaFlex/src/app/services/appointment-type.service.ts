@@ -21,21 +21,70 @@ export interface AppointmentType {
   };
 }
 
+export interface EvaluationDTO {
+  rating: number;
+  comment: string;
+  appointmentTypeId: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AppointmentTypeService {
   private apiUrl: string; 
   private categoryUrl: string;
+  private evaluationUrl: string;
 
   constructor(private http: HttpClient) {
     this.apiUrl = `${environment.apiUrl}/appointment-types`;
     this.categoryUrl = `${environment.apiUrl}/category`;
+    this.evaluationUrl = `${environment.apiUrl}/evaluations`;
 
     //logs para debug
     console.log('AppointmentType usando environment:');
     console.log('- API URL:', this.apiUrl);
     console.log('- Ambiente:', environment.production ? 'Produção' : 'Desenvolvimento');
+  }
+
+  submitEvaluation(evaluation: EvaluationDTO): Observable<EvaluationDTO> {
+    const headers = { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${localStorage.getItem('token')}` 
+    };
+    
+    return this.http.post<EvaluationDTO>(this.evaluationUrl, evaluation, { headers })
+      .pipe(
+        tap(response => console.log('Avaliação enviada com sucesso:', response)),
+        catchError(error => {
+          console.error('Erro ao enviar avaliação:', error);
+          return throwError(() => error);
+        })
+      );
+  }
+
+  getAllEvaluations(): Observable<EvaluationDTO[]> {
+    const headers = { 
+      'Authorization': `Bearer ${localStorage.getItem('token')}` 
+    };
+    
+    return this.http.get<EvaluationDTO[]>(this.evaluationUrl, { headers })
+      .pipe(
+        tap(evaluations => console.log(`${evaluations.length} avaliações carregadas`)),
+        catchError(this.handleError)
+      );
+  }
+
+  getEvaluationsForAppointmentType(appointmentTypeId: number): Observable<EvaluationDTO[]> {
+    const headers = { 
+      'Authorization': `Bearer ${localStorage.getItem('token')}` 
+    };
+    
+    // Este endpoint precisará ser implementado no backend
+    return this.http.get<EvaluationDTO[]>(`${this.evaluationUrl}/appointment-type/${appointmentTypeId}`, { headers })
+      .pipe(
+        tap(evaluations => console.log(`${evaluations.length} avaliações carregadas para o tipo ${appointmentTypeId}`)),
+        catchError(this.handleError)
+      );
   }
 
   getAppointmentTypes(): Observable<AppointmentType[]> {
