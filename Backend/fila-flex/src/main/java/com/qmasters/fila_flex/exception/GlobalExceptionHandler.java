@@ -89,6 +89,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao inserir na fila.");
     }
 
+    @ExceptionHandler(NotImplementedException.class) //erro de não implementado
+    public ResponseEntity<String> handleNotImplementedException(NotImplementedException ex) {
+        logger.warn("Funcao nao implementada: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Funcao nao implementada.");
+    }
+
     // =============================== Erros do JPA ==============================
     @ExceptionHandler(ConstraintViolationException.class) //erro de validação que é jogado pelo Model da classe
     public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException ex) {
