@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AppointmentType, AppointmentTypeService } from '../services/appointment-type.service';
 import { catchError, Observable } from 'rxjs';
 import { MetricsService, MetricsDTO } from '../services/metrics.service';
@@ -9,7 +9,7 @@ import { MetricsService, MetricsDTO } from '../services/metrics.service';
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './service-management.component.html',
   styleUrls: ['./service-management.component.css']
 })
