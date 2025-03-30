@@ -1,8 +1,10 @@
-/*package com.qmasters.fila_flex.testController;
+package com.qmasters.fila_flex.testController;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -80,5 +82,14 @@ class EvaluationControllerTest {
         assertEquals(4, evaluations.get(0).getRating());
         assertEquals("Good", evaluations.get(0).getComment());
     }
+
+    @Test
+    void testGetAllEvaluationsWhenResponseBodyIsNull() {
+        when(evaluationService.getAllEvaluations()).thenReturn(ResponseEntity.ok(null));
+
+        List<EvaluationDTO> evaluations = evaluationController.listEvaluations();
+
+        assertNotNull(evaluations); // Certifica que a lista não é null
+        assertEquals(0, evaluations.size()); // Deve ser uma lista vazia
+    }
 }
-*/
