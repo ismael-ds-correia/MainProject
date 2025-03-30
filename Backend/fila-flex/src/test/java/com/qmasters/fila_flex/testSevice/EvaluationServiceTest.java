@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import com.qmasters.fila_flex.dto.EvaluationDTO;
 import com.qmasters.fila_flex.exception.InvalidRatingException;
 import com.qmasters.fila_flex.model.AppointmentType;
 import com.qmasters.fila_flex.model.Evaluation;
-import com.qmasters.fila_flex.repository.AppointmentTypeRepository;
 import com.qmasters.fila_flex.repository.EvaluationRepository;
 import com.qmasters.fila_flex.service.EvaluationService;
 
@@ -25,9 +23,6 @@ class EvaluationServiceTest {
 
     @Mock
     private EvaluationRepository evaluationRepository;
-
-    @Mock
-    private AppointmentTypeRepository appointmentTypeRepository;
 
     @InjectMocks
     private EvaluationService evaluationService;
@@ -38,111 +33,39 @@ class EvaluationServiceTest {
     }
 
     @Test
-    void testAddEvaluation_Valid() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(4);
-        dto.setComment("Great service");
-        dto.setAppointmentTypeId(1L);
-
-        AppointmentType appointmentType = new AppointmentType();
-        appointmentType.setId(1L);
-
-        when(appointmentTypeRepository.findById(1L)).thenReturn(Optional.of(appointmentType));
-        when(evaluationRepository.save(any(Evaluation.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Evaluation savedEvaluation = evaluationService.addEvaluation(dto);
-
-        assertNotNull(savedEvaluation);
-        assertEquals(4, savedEvaluation.getRating());
-        assertEquals("Great service", savedEvaluation.getComment());
-    }
-
-    @Test
-    void testAddEvaluation_InvalidRatingAboveFive() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(6);
-        assertThrows(InvalidRatingException.class, () -> evaluationService.addEvaluation(dto));
-    }
-
-    @Test
-    void testAddEvaluation_InvalidRatingBelowOne() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(0);
-        assertThrows(InvalidRatingException.class, () -> evaluationService.addEvaluation(dto));
-    }
-
-    @Test
-    void testAddEvaluation_AppointmentTypeNotFound() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(3);
-        dto.setAppointmentTypeId(99L);
-
-        when(appointmentTypeRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(NoSuchElementException.class, () -> evaluationService.addEvaluation(dto));
-    }
-
-    @Test
     void testSaveEvaluation_Valid() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(5);
-        dto.setComment("Excellent service");
-        dto.setAppointmentTypeId(1L);
-
+        // Cria um AppointmentType e um DTO contendo-o
         AppointmentType appointmentType = new AppointmentType();
         appointmentType.setId(1L);
+        EvaluationDTO dto = new EvaluationDTO(5, "Excellent service", appointmentType);
 
-        when(appointmentTypeRepository.findById(1L)).thenReturn(Optional.of(appointmentType));
-        when(evaluationRepository.save(any(Evaluation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(evaluationRepository.save(any(Evaluation.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
 
-        Evaluation savedEvaluation = evaluationService.save(dto);
+        Evaluation savedEvaluation = evaluationService.saveEvaluation(dto);
 
         assertNotNull(savedEvaluation);
         assertEquals(5, savedEvaluation.getRating());
-    }
-
-    @Test
-    void testSaveEvaluation_InvalidRatingBelowZero() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(-1);
-        assertThrows(InvalidRatingException.class, () -> evaluationService.save(dto));
+        assertEquals("Excellent service", savedEvaluation.getComment());
+        assertEquals(appointmentType, savedEvaluation.getAppointmentType());
     }
 
     @Test
     void testSaveEvaluation_InvalidRatingAboveFive() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(6);
-        assertThrows(InvalidRatingException.class, () -> evaluationService.save(dto));
-    }
-
-    @Test
-    void testSaveEvaluation_AppointmentTypeNotFound() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(3);
-        dto.setAppointmentTypeId(99L);
-
-        when(appointmentTypeRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(NoSuchElementException.class, () -> evaluationService.save(dto));
-    }
-
-    @Test
-    void testSaveEvaluation_RatingZero() {
-        EvaluationDTO dto = new EvaluationDTO();
-        dto.setRating(0);
-        dto.setComment("Neutral service");
-        dto.setAppointmentTypeId(1L);
-
         AppointmentType appointmentType = new AppointmentType();
         appointmentType.setId(1L);
+        EvaluationDTO dto = new EvaluationDTO(6, "Invalid rating", appointmentType);
 
-        when(appointmentTypeRepository.findById(1L)).thenReturn(Optional.of(appointmentType));
-        when(evaluationRepository.save(any(Evaluation.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        assertThrows(InvalidRatingException.class, () -> evaluationService.saveEvaluation(dto));
+    }
 
-        Evaluation savedEvaluation = evaluationService.save(dto);
+    @Test
+    void testSaveEvaluation_InvalidRatingBelowZero() {
+        AppointmentType appointmentType = new AppointmentType();
+        appointmentType.setId(1L);
+        EvaluationDTO dto = new EvaluationDTO(-1, "Invalid rating", appointmentType);
 
-        assertNotNull(savedEvaluation);
-        assertEquals(0, savedEvaluation.getRating());
+        assertThrows(InvalidRatingException.class, () -> evaluationService.saveEvaluation(dto));
     }
 
     @Test
@@ -157,8 +80,7 @@ class EvaluationServiceTest {
 
         when(evaluationRepository.findAll()).thenReturn(List.of(eval1, eval2));
 
-        List<Evaluation> evaluations = evaluationService.getAllEvaluations().getBody();
-
+        List<Evaluation> evaluations = evaluationService.getAllEvaluations();
         assertNotNull(evaluations);
         assertEquals(2, evaluations.size());
     }
@@ -174,7 +96,6 @@ class EvaluationServiceTest {
         when(evaluationRepository.findAll()).thenReturn(List.of(eval1, eval2));
 
         double average = evaluationService.calculateAverageRating();
-
         assertEquals(3.0, average);
     }
 
@@ -183,5 +104,23 @@ class EvaluationServiceTest {
         when(evaluationRepository.findAll()).thenReturn(List.of());
         double average = evaluationService.calculateAverageRating();
         assertEquals(0.0, average);
+    }
+
+    @Test
+    void testDeleteEvaluation_Success() {
+        Long id = 1L;
+        when(evaluationRepository.existsById(id)).thenReturn(true);
+
+        evaluationService.deleteEvaluation(id);
+
+        verify(evaluationRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void testDeleteEvaluation_NotFound() {
+        Long id = 1L;
+        when(evaluationRepository.existsById(id)).thenReturn(false);
+
+        assertThrows(NoSuchElementException.class, () -> evaluationService.deleteEvaluation(id));
     }
 }
