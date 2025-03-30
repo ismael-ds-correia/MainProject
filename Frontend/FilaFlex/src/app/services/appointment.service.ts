@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 //Interface para o que é recebido da API
@@ -67,6 +67,21 @@ export class AppointmentService {
     console.log('- API URL:', this.apiUrl);
     console.log('- Ambiente:', environment.production ? 'Produção' : 'Desenvolvimento');
    }
+
+   registerCheckIn(appointmentId: number): Observable<any> {
+    const url = `${this.apiUrl}/queue/appointment/${appointmentId}/check-in`;
+    return this.http.put<any>(url, {}, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      })
+    }).pipe(
+      tap(response => console.log('Check-in registrado com sucesso:', response)),
+      catchError(error => {
+        console.error('Erro ao registrar check-in:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 
   /** Agendar novo compromisso */
   scheduleAppointment(appointment: AppointmentSchedule): Observable<any> {
