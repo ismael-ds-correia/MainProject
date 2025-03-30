@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AppointmentType, AppointmentTypeService } from '../services/appointment-type.service';
 import { catchError, Observable } from 'rxjs';
+import { MetricsService, MetricsDTO } from '../services/metrics.service';
 
 @Component({
   selector: 'app-service-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './service-management.component.html',
   styleUrls: ['./service-management.component.css']
 })
@@ -18,10 +19,18 @@ export class ServiceManagementComponent implements OnInit {
   showForm = false;
   isEditing = false;
   currentAppointmentType: AppointmentType | null = null;
+  showReportModal = false;
+  selectedServiceForReport: AppointmentType | null = null;
+  metrics: MetricsDTO | null = null;
+  loadingMetrics = false;
+  reportStartDate: string | null = null;
+  reportEndDate: string | null = null;
+  metricsError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
-    private appointmentTypeService: AppointmentTypeService
+    private appointmentTypeService: AppointmentTypeService,
+    private metricsService: MetricsService 
   ) {}
 
   ngOnInit(): void {
@@ -177,6 +186,72 @@ export class ServiceManagementComponent implements OnInit {
 
   cancelForm(): void {
     this.resetForm();
+  }
+
+  openReportModal(appointmentType: AppointmentType): void {
+    console.log('Abrindo modal para:', appointmentType);
+    this.selectedServiceForReport = appointmentType;
+    this.metrics = null;
+    this.metricsError = null;
+    
+    // Inicializar datas (último mês)
+    const today = new Date();
+    const lastMonth = new Date();
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    
+    // Formatar para yyyy-MM-dd para compatibilidade com input type="date"
+    this.reportEndDate = this.formatDateForInput(today);
+    this.reportStartDate = this.formatDateForInput(lastMonth);
+    
+    this.showReportModal = true;
+  }
+
+  closeReportModal(): void {
+    this.showReportModal = false;
+    this.selectedServiceForReport = null;
+    this.metrics = null;
+  }
+
+  generateReport(): void {
+    if (!this.selectedServiceForReport) {
+      return;
+    }
+  
+    this.loadingMetrics = true;
+    this.metricsError = null;
+    
+    console.log('Datas para relatório:', {
+      startDate: this.reportStartDate,
+      endDate: this.reportEndDate
+    });
+    
+    this.metricsService.getMetricsByAppointmentType(
+      this.selectedServiceForReport.name,
+      this.reportStartDate,
+      this.reportEndDate
+    ).subscribe({
+      next: (data) => {
+        this.metrics = data;
+        this.loadingMetrics = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar métricas:', error);
+        this.loadingMetrics = false;
+        if (error.status === 404) {
+          this.metricsError = 'Nenhum dado de métricas encontrado para este serviço no período selecionado.';
+        } else {
+          this.metricsError = 'Erro ao carregar métricas. Tente novamente mais tarde.';
+        }
+      }
+    });
+  }
+
+  //Método auxiliar para formatar data para input type="date".
+  private formatDateForInput(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   resetForm(): void {

@@ -43,6 +43,40 @@ export class AppointmentManagementComponent implements OnInit {
     }
   }
 
+  registerCheckIn(appointmentId: number): void {
+    if (!appointmentId) {
+      this.error.set('ID do agendamento não encontrado');
+      return;
+    }
+    
+    this.loading.set(true);
+    this.error.set(null);
+    
+    this.appointmentService.registerCheckIn(appointmentId).subscribe({
+      next: (response) => {
+        console.log('Check-in registrado com sucesso');
+        this.showSuccessMessage('Check-in registrado com sucesso!');
+        setTimeout(() => {
+          this.fetchAppointments();
+        }, 300);
+      },
+      error: (err) => {
+        console.error('Erro ao registrar check-in:', err);
+        if (err.status === 404) {
+          this.error.set('Agendamento não encontrado');
+        } else if (err.status === 400) {
+          this.error.set('Não foi possível registrar o check-in. Verifique o status do agendamento.');
+        } else {
+          this.error.set('Erro ao registrar check-in. Por favor, tente novamente.');
+        }
+        this.loading.set(false);
+      },
+      complete: () => {
+        this.loading.set(false);
+      }
+    });
+  }
+
   checkUserRole() {
     let isAdminUser = false;
     
