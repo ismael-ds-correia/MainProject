@@ -26,7 +26,7 @@ import com.qmasters.fila_flex.repository.RevokedTokenRepository;
 import com.qmasters.fila_flex.service.TokenService;
 import com.qmasters.fila_flex.util.UserRole;
 
-public class TokenServiceTest {
+class TokenServiceTest {
 
     @Mock
     private RevokedTokenRepository revokedTokenRepository;
@@ -38,7 +38,7 @@ public class TokenServiceTest {
     private User user;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         // Configura o secret manualmente
         ReflectionTestUtils.setField(tokenService, "secret", secret);
@@ -53,7 +53,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testGenerateToken_Success() {
+    void testGenerateToken_Success() {
         // Gera o token e verifica se ele não é nulo
         String token = tokenService.generateToken(user);
         assertNotNull(token);
@@ -70,7 +70,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testValidateToken_ValidToken() {
+    void testValidateToken_ValidToken() {
         // Gera um token válido
         String token = tokenService.generateToken(user);
         String subject = tokenService.validateToken(token);
@@ -78,7 +78,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testValidateToken_InvalidToken() {
+    void testValidateToken_InvalidToken() {
         // Token mal formado ou com assinatura incorreta
         String invalidToken = "tokenInvalido";
         String retorno = tokenService.validateToken(invalidToken);
@@ -86,7 +86,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testRevokeToken_NewToken() {
+    void testRevokeToken_NewToken() {
         String token = "algumToken";
         // Simula que o token não está revogado
         when(revokedTokenRepository.existsByToken(token)).thenReturn(false);
@@ -98,7 +98,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testRevokeToken_AlreadyRevoked() {
+    void testRevokeToken_AlreadyRevoked() {
         String token = "algumToken";
         // Simula que o token já foi revogado
         when(revokedTokenRepository.existsByToken(token)).thenReturn(true);
@@ -110,7 +110,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testIsTokenRevoked() {
+    void testIsTokenRevoked() {
         String token = "algumToken";
         when(revokedTokenRepository.existsByToken(token)).thenReturn(true);
         assertTrue(tokenService.isTokenRevoked(token));
@@ -120,7 +120,7 @@ public class TokenServiceTest {
     }
 
     @Test
-    public void testExtractAllClaims_InvalidSecret() {
+    void testExtractAllClaims_InvalidSecret() {
         // Para testar um cenário de exceção na extração dos claims,
         // podemos alterar temporariamente o secret para um valor inválido
         String token = tokenService.generateToken(user);

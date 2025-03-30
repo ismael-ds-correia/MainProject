@@ -41,7 +41,7 @@ import com.qmasters.fila_flex.service.QueueService;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
 @ExtendWith(MockitoExtension.class)
-public class QueueServiceTest {
+class QueueServiceTest {
 
     @Mock
     private AppointmentTypeRepository appointmentTypeRepository;

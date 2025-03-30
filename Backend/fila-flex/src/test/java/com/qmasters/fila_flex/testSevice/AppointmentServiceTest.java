@@ -43,7 +43,7 @@ import com.qmasters.fila_flex.service.AppointmentService;
 import com.qmasters.fila_flex.service.QueueService;
 import com.qmasters.fila_flex.util.PriorityCondition;
 
-public class AppointmentServiceTest {
+class AppointmentServiceTest {
 
     @InjectMocks
     private AppointmentService appointmentService;

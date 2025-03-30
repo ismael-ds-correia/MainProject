@@ -27,7 +27,7 @@ import com.qmasters.fila_flex.service.AppointmentTypeService;
 import com.qmasters.fila_flex.service.CategoryService;
 
 @ExtendWith(MockitoExtension.class)
-public class AppointmentTypeServiceTest {
+class AppointmentTypeServiceTest {
 
     @InjectMocks
     private AppointmentTypeService appointmentTypeService;
