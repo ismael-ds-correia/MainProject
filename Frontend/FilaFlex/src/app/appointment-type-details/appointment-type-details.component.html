@@ -70,8 +70,26 @@
         <button *ngIf="isAdmin()" class="queue-button" (click)="toggleQueueView()">
           {{ showQueue ? 'Ocultar Fila' : 'Exibir Fila' }}
         </button>
+            <!-- Novo botão de avaliações visível somente para admin -->
+        <button *ngIf="isAdmin()" class="evaluations-button" (click)="toggleEvaluationsView()">
+          {{ showEvaluations ? 'Ocultar Avaliações' : 'Exibir Avaliações' }}
+        </button>
       </div>
-
+      
+      <!-- Seção de Avaliações -->
+      <div class="evaluations-section" *ngIf="isAdmin() && showEvaluations">
+        <h2>Avaliações</h2>
+        <div *ngIf="appointmentType.evaluations && appointmentType.evaluations.length > 0; else noEvaluations">
+          <div *ngFor="let eval of appointmentType.evaluations" class="evaluation-card">
+            <p><strong>Nota:</strong> {{ eval.rating }}</p>
+            <p><strong>Comentário:</strong> {{ eval.comment }}</p>
+          </div>
+        </div>
+        <ng-template #noEvaluations>
+          <p>Não há avaliações para este serviço.</p>
+        </ng-template>
+      </div>
+    
       <!-- Área da fila, visível apenas quando showQueue for true -->
       <div *ngIf="showQueue && isAdmin()" class="queue-section">
         <h2>Fila de Agendamentos</h2>
@@ -146,7 +164,7 @@
             </tbody>
           </table>
         </div>
-
+        
         <!-- Modal de Próximo Agendamento -->
         <div *ngIf="showNextAppointmentDialog" class="next-appointment-dialog">
           <div class="dialog-content">

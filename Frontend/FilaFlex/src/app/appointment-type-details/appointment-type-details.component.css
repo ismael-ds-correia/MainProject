@@ -250,19 +250,90 @@
 }
 
 /* Estilo para o botão "Chamar Próximo" */
-.next-button {
-  background-color: #ff9800;
-  color: white !important;
-  -webkit-text-fill-color: white !important;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
+.back-button {
+  background-color: white;
+  color: #1976d2;
+  border: 2px solid #1976d2;
+  padding: 10px 18px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+.back-button:hover {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+/* Botão Agendar */
+.schedule-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 26px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.schedule-button:hover {
+  background-color: #388E3C;
+  transform: translateY(-2px);
+}
+
+/* Botão Fila */
+.queue-button {
+  background-color: #005f73;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.queue-button:hover {
+  background-color: #0a9396;
+  transform: scale(1.05);
+}
+
+.evaluations-button {
+  background-color: #005f73;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.evaluations-button:hover {
+  background-color: #0a9396;
+  transform: scale(1.05);
+}
+
+/* Botão Chamar Próximo */
+.next-button {
+  background-color: #ff9800;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s, transform 0.2s;
-  margin-bottom: 15px;
 }
 
 .next-button:hover {
@@ -270,34 +341,28 @@
   transform: translateY(-2px);
 }
 
-.queue-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
-}
-
-/* Estilo para o botão de reposicionamento na tabela */
+/* Botão Reposicionar */
 .reposition-button {
   background-color: #1976d2;
-  color: white !important;
-  -webkit-text-fill-color: white !important;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 13px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s, transform 0.1s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .reposition-button:hover {
   background-color: #1565c0;
-  transform: translateY(-1px);
+  transform: scale(1.05);
 }
 
 .reposition-button:active {
-  transform: translateY(0);
+  transform: scale(1);
 }
+
 
 /* Modal de reposicionamento */
 .reposition-dialog, .next-appointment-dialog {
@@ -460,4 +525,48 @@
   .next-buttons button {
     width: 100%;
   }
+}
+
+/* Seção de Avaliações (dentro do container azul) */
+.evaluations-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #fff; /* Branco para destacar a área */
+  border-radius: 8px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título das Avaliações */
+.evaluations-section h2 {
+  color: #1976d2;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Cartão individual para cada avaliação */
+.evaluation-card {
+  background-color: #fff; /* Fundo branco fixo */
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;  /* Borda para delimitar o cartão */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.evaluation-card:hover {
+  transform: translateY(-2px);
+}
+
+.evaluation-card p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.evaluation-card p strong {
+  color: #1976d2;
 }

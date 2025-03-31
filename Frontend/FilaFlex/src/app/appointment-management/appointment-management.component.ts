@@ -26,13 +26,13 @@ export class AppointmentManagementComponent implements OnInit {
   evaluationModal = signal<{
     visible: boolean,
     appointmentTypeId: number | null,
-    appointmentTypeName: string,
+    appointmentTypeDetailsName: string,
     rating: number,
     comment: string
   }>({
     visible: false,
     appointmentTypeId: null,
-    appointmentTypeName: '',
+    appointmentTypeDetailsName: '',
     rating: 0,
     comment: ''
   });
@@ -62,46 +62,47 @@ export class AppointmentManagementComponent implements OnInit {
   openEvaluationModal(appointment: any) {
     console.log('Dados do agendamento para avaliação:', appointment);
     
-    // Obter o nome do serviço diretamente do appointment
+    // Obter o nome do serviço a partir do appointment
     const serviceName = this.getServiceName(appointment);
     
-    // Tentar obter o ID diretamente dos dados do agendamento - sem chamar a API
-    let serviceId = null;
-    
-    if (appointment.appointmentTypeId) {
-      serviceId = appointment.appointmentTypeId;
-    } 
-    else if (appointment.appointmentType?.id) {
-      serviceId = appointment.appointmentType.id;
-    }
-    else if (appointment.service?.id) {
-      serviceId = appointment.service.id;
-    }
-    else if (appointment.id) {
-      // Como último recurso, usar o ID do próprio agendamento
-      serviceId = appointment.id; 
+    if (!serviceName) {
+      console.error("Nome do serviço não identificado.");
+      this.error.set("Nome do serviço não identificado para avaliação.");
+      return;
     }
     
-    // Abrir o modal imediatamente com os dados que temos
-    this.evaluationModal.set({
-      visible: true,
-      appointmentTypeId: serviceId || 1, // Usar ID 1 como fallback se não encontramos nenhum ID
-      appointmentTypeName: serviceName || 'Serviço',
-      rating: 0,
-      comment: ''
+    // Chama a função de busca por nome do serviço
+    this.appointmentTypeService.getAppointmentTypeByName(serviceName).subscribe({
+      next: (appointmentType) => {
+        if (!appointmentType || !appointmentType.id) {
+          console.error("ID do serviço não encontrado na resposta.");
+          this.error.set("Serviço não identificado para avaliação.");
+          return;
+        }
+        
+        // Abre o modal com os dados corretos
+        this.evaluationModal.set({
+          visible: true,
+          appointmentTypeId: appointmentType.id,
+          appointmentTypeDetailsName: serviceName,
+          rating: 0,
+          comment: ''
+        });
+        
+        console.log(`Modal aberto para avaliação do serviço "${serviceName}" com ID ${appointmentType.id}.`);
+      },
+      error: (err) => {
+        console.error("Erro ao buscar o serviço pelo nome:", err);
+        this.error.set("Erro ao buscar o serviço para avaliação.");
+      }
     });
-    
-    // Registrar no console para fins de depuração, mas não fechar o modal
-    if (!serviceId) {
-      console.warn('Aviso: ID do serviço não identificado. Usando ID padrão para avaliação.');
-    }
   }
 
   closeEvaluationModal() {
     this.evaluationModal.set({
       visible: false,
       appointmentTypeId: null,
-      appointmentTypeName: '',
+      appointmentTypeDetailsName: '',
       rating: 0,
       comment: ''
     });
@@ -139,13 +140,16 @@ export class AppointmentManagementComponent implements OnInit {
     
     const { appointmentTypeId, rating, comment } = this.evaluationModal();
     
-    // Garantir que temos um ID válido
-    const idToUse = appointmentTypeId || 1; // Usar ID 1 como fallback
+    // Verifica se o ID do serviço é válido
+    if (!appointmentTypeId) {
+      this.error.set('Serviço não identificado para avaliação.');
+      return;
+    }
     
     const evaluation: EvaluationDTO = {
       rating,
       comment: comment?.trim() || '',
-      appointmentTypeId: idToUse
+      appointmentTypeId // Usar o ID correto obtido do appointmentType
     };
     
     this.loading.set(true);
@@ -161,7 +165,7 @@ export class AppointmentManagementComponent implements OnInit {
         console.error('Erro ao enviar avaliação:', err);
         this.error.set('Erro ao enviar avaliação. Por favor, tente novamente.');
         this.loading.set(false);
-        // NÃO fechamos o modal em caso de erro
+        // O modal permanece aberto em caso de erro
       }
     });
   }
@@ -463,9 +467,27 @@ export class AppointmentManagementComponent implements OnInit {
   }
 
   getServiceName(appointment: any): string {
-    if (appointment.appointmentTypeName) return appointment.appointmentTypeName;
-    if (appointment.appointmentType?.name) return appointment.appointmentType.name;
-    if (appointment.appointmentTypeDescription) return appointment.appointmentTypeDescription;
+    // Primeiro, tenta pegar o nome correto no objeto appointmentType
+    if (appointment.appointmentType?.name) {
+      return appointment.appointmentType.name;
+    }
+    
+    // Se não houver, verifica se o campo appointmentTypeName existe
+    if (appointment.appointmentTypeDetailsName) {
+      return appointment.appointmentTypeDetailsName;
+    }
+    
+    // Como fallback, utiliza a descrição (mas idealmente não queremos esse valor)
+    if (appointment.appointmentTypeDescription) {
+      console.warn('Usando a descrição como nome, pois o nome não foi encontrado:', appointment);
+      return appointment.appointmentTypeDescription;
+    }
+    
+    if (appointment.appointmentType?.description) {
+      console.warn('Usando a descrição aninhada como nome, pois o nome não foi encontrado:', appointment);
+      return appointment.appointmentType.description;
+    }
+    
     return 'Serviço não especificado';
   }
 

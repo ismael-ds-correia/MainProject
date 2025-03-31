@@ -29,6 +29,7 @@ export class AppointmentTypeDetailsComponent implements OnInit {
   showNextAppointmentDialog = false;
   loadingNextAppointment = false;
   nextAppointment: AppointmentResponse | null = null;
+  showEvaluations: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +58,9 @@ export class AppointmentTypeDetailsComponent implements OnInit {
             console.log('Endereço encontrado:', data.adress);
           } else {
             console.log('Endereço não encontrado na resposta');
+          }
+          if (data.evaluations && !Array.isArray(data.evaluations)) {
+            data.evaluations = [data.evaluations];
           }
           this.appointmentType = data;
           this.loading = false;
@@ -120,6 +124,10 @@ export class AppointmentTypeDetailsComponent implements OnInit {
         queryParams: { name: this.appointmentType.name }
       });
     }
+  }
+
+  toggleEvaluationsView(): void {
+    this.showEvaluations = !this.showEvaluations;
   }
 
   isAdmin(): boolean {
