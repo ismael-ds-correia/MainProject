@@ -54,8 +54,19 @@ export class AppointmentTypeService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${localStorage.getItem('token')}` 
     };
-    
-    return this.http.post<EvaluationDTO>(`${this.evaluationUrl}/create`, evaluation, { headers })
+  
+    // Converter o EvaluationDTO para o payload com o objeto appointmentType aninhado
+    const payload = {
+      rating: evaluation.rating,
+      comment: evaluation.comment,
+      appointmentType: {
+        id: evaluation.appointmentTypeId
+      }
+    };
+  
+    console.log("Payload enviado para API:", JSON.stringify(payload, null, 2));
+  
+    return this.http.post<EvaluationDTO>(`${this.evaluationUrl}/create`, payload, { headers })
       .pipe(
         tap(response => console.log('Avaliação enviada com sucesso:', response)),
         catchError(error => {
@@ -64,6 +75,7 @@ export class AppointmentTypeService {
         })
       );
   }
+
   //por enquanto sem uso
   getAllEvaluations(): Observable<EvaluationDTO[]> {
     const headers = { 
