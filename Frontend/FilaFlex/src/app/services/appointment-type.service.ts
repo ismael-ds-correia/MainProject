@@ -3,7 +3,9 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export interface AppointmentType {
+//esse export devia ter um AppointmentTypeDetails, foi
+//feito gambiarra para o toDTO criar o AppointmentTypeDetails
+export interface AppointmentType { 
   id?: number;
   name: string;
   description: string;
@@ -19,6 +21,7 @@ export interface AppointmentType {
     state: string;
     country: string;
   };
+  evaluations?: EvaluationDTO[];
 }
 
 export interface EvaluationDTO {
@@ -52,7 +55,7 @@ export class AppointmentTypeService {
       'Authorization': `Bearer ${localStorage.getItem('token')}` 
     };
     
-    return this.http.post<EvaluationDTO>(this.evaluationUrl, evaluation, { headers })
+    return this.http.post<EvaluationDTO>(`${this.evaluationUrl}/create`, evaluation, { headers })
       .pipe(
         tap(response => console.log('Avaliação enviada com sucesso:', response)),
         catchError(error => {
@@ -61,7 +64,7 @@ export class AppointmentTypeService {
         })
       );
   }
-
+  //por enquanto sem uso
   getAllEvaluations(): Observable<EvaluationDTO[]> {
     const headers = { 
       'Authorization': `Bearer ${localStorage.getItem('token')}` 
@@ -79,9 +82,9 @@ export class AppointmentTypeService {
       'Authorization': `Bearer ${localStorage.getItem('token')}` 
     };
     
-    // Este endpoint precisará ser implementado no backend
-    return this.http.get<EvaluationDTO[]>(`${this.evaluationUrl}/appointment-type/${appointmentTypeId}`, { headers })
+    return this.http.get<AppointmentType>(`${this.apiUrl}/find-id/${appointmentTypeId}`, { headers })
       .pipe(
+        map(appointmentType => appointmentType.evaluations || []),
         tap(evaluations => console.log(`${evaluations.length} avaliações carregadas para o tipo ${appointmentTypeId}`)),
         catchError(this.handleError)
       );

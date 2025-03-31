@@ -58,6 +58,9 @@ export class AppointmentTypeDetailsComponent implements OnInit {
           } else {
             console.log('Endereço não encontrado na resposta');
           }
+          if (data.evaluations && !Array.isArray(data.evaluations)) {
+            data.evaluations = [data.evaluations];
+          }
           this.appointmentType = data;
           this.loading = false;
         },

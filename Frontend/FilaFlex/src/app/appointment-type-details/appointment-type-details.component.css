@@ -460,4 +460,47 @@
   .next-buttons button {
     width: 100%;
   }
+  /* Seção de Avaliações (dentro do container azul) */
+  .evaluations-section {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #fff; /* Branco para destacar a área */
+    border-radius: 8px;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Título das Avaliações */
+  .evaluations-section h2 {
+    color: #1976d2;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+
+  /* Cartão individual para cada avaliação */
+  .evaluation-card {
+    background-color: #fff; /* Fundo branco fixo */
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;  /* Borda para delimitar o cartão */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+
+  .evaluation-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .evaluation-card p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+
+  .evaluation-card p strong {
+    color: #1976d2;
+  }
 }
