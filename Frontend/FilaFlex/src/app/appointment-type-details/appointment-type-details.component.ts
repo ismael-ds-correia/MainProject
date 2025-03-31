@@ -29,6 +29,7 @@ export class AppointmentTypeDetailsComponent implements OnInit {
   showNextAppointmentDialog = false;
   loadingNextAppointment = false;
   nextAppointment: AppointmentResponse | null = null;
+  showEvaluations: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -123,6 +124,10 @@ export class AppointmentTypeDetailsComponent implements OnInit {
         queryParams: { name: this.appointmentType.name }
       });
     }
+  }
+
+  toggleEvaluationsView(): void {
+    this.showEvaluations = !this.showEvaluations;
   }
 
   isAdmin(): boolean {
