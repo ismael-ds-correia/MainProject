@@ -188,13 +188,15 @@ export class AppointmentTypeService {
     }
     
     return {
-      name: appointmentType.name,
-      description: appointmentType.description,
-      category: appointmentType.category || [],
-      price: appointmentType.price || 0,
+      appointmentTypeDetails: {
+        name: appointmentType.name,
+        description: appointmentType.description,
+        category: appointmentType.category || [],
+        price: appointmentType.price || 0,
+        appointmentDate: appointmentDate,
+        requiredDocumentation: appointmentType.requiredDocumentation || []
+      },
       estimatedTime: appointmentType.estimatedTime || 0,
-      appointmentDate: appointmentDate,
-      requiredDocumentation: appointmentType.requiredDocumentation || [],
       adress: adress
     };
   }
