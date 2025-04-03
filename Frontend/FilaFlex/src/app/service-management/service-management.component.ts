@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AppointmentType, AppointmentTypeService } from '../services/appointment-type.service';
@@ -30,6 +31,7 @@ export class ServiceManagementComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private appointmentTypeService: AppointmentTypeService,
+    private location: Location,
     private metricsService: MetricsService 
   ) {}
 
@@ -259,5 +261,9 @@ export class ServiceManagementComponent implements OnInit {
     this.isEditing = false;
     this.currentAppointmentType = null;
     this.showForm = false;
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 }
