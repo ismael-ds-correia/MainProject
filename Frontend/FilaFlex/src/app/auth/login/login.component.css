@@ -8,75 +8,11 @@ body {
   width: 100%;
 }
 
-/* Centraliza o formulário e define um tamanho máximo */
-.login-container {
-  font-family: 'Roboto', sans-serif;
-  width: 400px; /* Define uma largura fixa para o contêiner */
-  height: 300px; /* Ajusta a altura do contêiner */
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-}
-
-/* Centraliza o título do formulário */
-.login-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* Adiciona espaçamento entre os campos do formulário */
-.login-container form {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Define o estilo dos rótulos */
-.login-container label {
-  display: block;
-  margin-bottom: 5px;
-}
-
-/* Define o estilo dos campos de entrada */
-.login-container input {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-}
-
-/* Define o estilo do botão de envio */
-.login-container button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-/* Define o estilo do botão de envio quando desabilitado */
-.login-container button:disabled {
-  background-color: #ccc;
-}
-
-/* Centraliza o link de registro */
-.login-container p {
-  text-align: center;
-  margin-top: 10px;
-}
-
-/* Define o fundo da página como azul */
 :host {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: blue;
+  background-color: #6B7280;
   height: 100vh;
   width: 100vw;
 }
@@ -85,4 +21,154 @@ body {
 .error-message {
   color: red;
   font-size: 0.875em;
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;	
+	font-family: Raleway, sans-serif;
+}
+
+body {
+	background: linear-gradient(90deg, #C7C5F4, #6B7280);		
+}
+
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+.screen {		
+	background: linear-gradient(90deg, #333335, #6B7280);		
+	position: relative;	
+	height: 600px;
+	width: 360px;	
+	box-shadow: 0px 0px 24px #ffffff;
+}
+
+.screen_content {
+	z-index: 1;
+	position: relative;	
+	height: 100%;
+}
+
+.screen_background {		
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 0;
+	-webkit-clip-path: inset(0 0 0 0);
+	clip-path: inset(0 0 0 0);	
+}
+
+.screen_background_shape {
+	transform: rotate(45deg);
+	position: absolute;
+}
+
+.screen_background_shape1 {
+	height: 520px;
+	width: 520px;
+	background: #FFF;	
+	top: -50px;
+	right: 120px;	
+	border-radius: 0 72px 0 0;
+}
+
+.screen_background_shape2 {
+	height: 220px;
+	width: 220px;
+	background: #333335;	
+	top: -172px;
+	right: 0;	
+	border-radius: 32px;
+}
+
+.screen_background_shape3 {
+	height: 540px;
+	width: 190px;
+	background: linear-gradient(270deg, #6B7280, #333335);
+	top: -24px;
+	right: 0;	
+	border-radius: 32px;
+}
+
+.screen_background_shape4 {
+	height: 400px;
+	width: 200px;
+	background: #6B7280;	
+	top: 420px;
+	right: 50px;	
+	border-radius: 60px;
+}
+
+.login {
+	width: 320px;
+	padding: 30px;
+	padding-top: 156px;
+}
+
+.login_field {
+	padding: 20px 0px;	
+	position: relative;	
+}
+
+.login_icon {
+	position: absolute;
+	top: 30px;
+	color: #6B7280;
+}
+
+.login_input {
+	border: none;
+	border-bottom: 2px solid #D1D1D4;
+	background: none;
+	padding: 10px;
+	padding-left: 24px;
+	font-weight: 700;
+	width: 75%;
+	transition: .2s;
+}
+
+.login_input:active,
+.login_input:focus,
+.login_input:hover {
+	outline: none;
+	border-bottom-color: #6B7280;
+}
+
+.login_submit {
+	background: #fff;
+	font-size: 14px;
+	margin-top: 30px;
+	padding: 16px 20px;
+	border-radius: 26px;
+	border: 1px solid #D4D3E8;
+	text-transform: uppercase;
+	font-weight: 700;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	color: #6B7280;
+	box-shadow: 0px 2px 2px #6B7280;
+	cursor: pointer;
+	transition: .2s;
+}
+
+.login_submit:active,
+.login_submit:focus,
+.login_submit:hover {
+	border-color: #6B7280;
+	outline: none;
+}
+
+.button_icon {
+	font-size: 24px;
+	margin-left: auto;
+	color: #0d03cf;
 }
