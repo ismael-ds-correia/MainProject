@@ -5,3 +5,7 @@ html, body {
   padding: 0px;
   margin: 0px;
 }
+
+input, textarea, select {
+  background-color: #b7bbc4;
+}
