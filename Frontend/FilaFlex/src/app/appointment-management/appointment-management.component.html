@@ -1,7 +1,9 @@
 <div class="appointment-container">
-  <button (click)="goBack()" class="back-button">← Voltar</button>
-
   <div class="header-container">
+
+    <div class="topnav ">
+      <button (click)="goBack()" class="back-button">← Voltar</button>
+    </div>
     <h1>Gerenciar Agendamentos</h1>
     
     <!-- Indicador de perfil -->
@@ -79,8 +81,8 @@
     <table class="appointments-table">
       <thead>
         <tr>
-          <th>E-mail do Usuário</th>
-          <th>Data</th>
+          <th class="text-center">E-mail do Usuário</th>
+          <th class="text-center">Data</th>
           <th>Hora</th>
           <th>Serviço</th>
           <th>Endereço</th>
