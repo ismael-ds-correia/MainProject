@@ -11,20 +11,23 @@ body {
 /* Centraliza o formulário e define um tamanho máximo */
 .register {
   font-family: 'Roboto', sans-serif;
-  max-width: 400px;
-  width: 100%;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
+}
+
+.logo {
+  padding-bottom: 40px !important;
 }
 
 /* Centraliza o título do formulário */
 .register h1 {
+  margin-bottom: 50px !important;
+  margin: 0;
+  padding: 0;
   text-align: center;
   margin-bottom: 20px;
+  font-size: 34px;
+  color: #494e58;
 }
 
 /* Adiciona espaçamento entre os campos do formulário */
@@ -38,13 +41,29 @@ body {
   margin-bottom: 5px;
 }
 
-/* Define o estilo dos campos de entrada e seleção */
-.register input,
-.register select {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+.register_field {
+	padding: 20px 0px;	
+	position: relative;	
 }
+
+.register_input {
+	border: none;
+	border-bottom: 2px solid #D1D1D4;
+	background: none;
+	padding: 10px;
+	padding-left: 24px;
+	font-weight: 700;
+	width: 75%;
+	transition: .2s;
+}
+
+.register_input:active,
+.register_input:focus,
+.register_input:hover {
+	outline: none;
+	border-bottom-color: #6B7280;
+}
+
 
 /* Define o estilo do botão de envio */
 .register button {
@@ -72,7 +91,173 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: blue;
+  background-color: #6B7280;
   height: 100vh;
   width: 100vw;
+}
+
+.screen_background_shape {
+	transform: rotate(45deg);
+	position: absolute;
+}
+
+.screen_background_shape1 {
+	height: 520px;
+	width: 520px;
+	background: #FFF;	
+	top: -50px;
+	right: 120px;	
+	border-radius: 0 72px 0 0;
+}
+
+.screen_background_shape2 {
+	height: 220px;
+	width: 220px;
+	background: #333335;	
+	top: -172px;
+	right: 0;	
+	border-radius: 32px;
+}
+
+.screen_background_shape3 {
+	height: 540px;
+	width: 190px;
+	background: linear-gradient(270deg, #6B7280, #333335);
+	top: -24px;
+	right: 0;	
+	border-radius: 32px;
+}
+
+.screen_background_shape4 {
+	height: 400px;
+	width: 200px;
+	background: #6B7280;	
+	top: 420px;
+	right: 50px;	
+	border-radius: 60px;
+}
+
+.container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+}
+
+.screen {		
+  padding-top: 60px ;
+	background: linear-gradient(90deg, #333335, #6B7280);		
+	position: relative;	
+	min-height: 500px;
+	width: 360px;	
+	box-shadow: 0px 0px 24px #ffffff;
+}
+
+.screen_content {
+	z-index: 1;
+	position: relative;	
+	height: 100%;
+}
+
+.screen_background {		
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 0;
+	-webkit-clip-path: inset(0 0 0 0);
+	clip-path: inset(0 0 0 0);	
+}
+
+/* Aumentar espaçamento vertical para o componente de filtro de usuário */
+.perfil-filter {
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+/* Estilização do campo de comentário */
+.form-group {
+  width: 100%;
+  text-align: left;
+}
+
+/* Estilo para o dropdown de usuários */
+.perfil-dropdown {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  background-color: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  appearance: none; /* Remove a aparência padrão do dropdown */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  padding-right: 30px;
+  max-height: 300px; /* Limite para quando muitos itens estiverem disponíveis */
+}
+
+.perfil-dropdown:focus {
+  border-color: #1976d2;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.perfil-dropdown:hover {
+  border-color: #999;
+}
+
+.perfil-dropdown option {
+  padding: 8px;
+  line-height: 1.5;
+}
+
+.perfil-dropdown option:hover {
+  background-color: #f1f9ff;
+}
+
+/* Estilo para quando não há opções no dropdown */
+.perfil-dropdown:empty {
+  background-color: #f5f5f5;
+}
+
+.div_cancel_button {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.cancel_register {
+  width: 320px;
+  background-color: #c62828;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-right: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.5s ease;
+}
+
+.cancel_register:hover {
+  background-color: #e53935;
+}
+
+.register_submit {
+  margin-top: 30px !important;
+  width: 320px !important;  
+  color: white !important; 
+  border: none !important; 
+  border-radius: 4px !important; 
+  padding: 6px 12px !important; 
+  cursor: pointer !important; 
+  font-size: 14px !important; 
+  transition: background-color 0.5s ease  !important; 
 }
