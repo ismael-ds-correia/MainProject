@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body {
+  background-color: #6B7280;
+  padding: 0px;
+  margin: 0px;
+}
+
+input, textarea, select {
+  background-color: #b7bbc4;
+}
+
+.logo{
+  width: 100px;
+  margin-right: 30px;
+}

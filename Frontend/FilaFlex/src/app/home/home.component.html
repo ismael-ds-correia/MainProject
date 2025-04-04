@@ -1,18 +1,21 @@
 <div class="home-container">
-  <h1>Bem-vindo à página inicial</h1>
-  <button (click)="logout()" class="logout-button">Logout</button>
-  
-  <!-- Botões de filtro e gerenciamento de Agendamento e Serviços -->
-  <div class="filter-buttons">
-    <button (click)="openCategoryModal()" class="search-button">Buscar por Categorias</button>
-    <button (click)="openPriceModal()" class="search-button">Buscar por Preço</button>
-    <!-- Novo botão de tempo aqui -->
-    <button (click)="openTimeModal()" class="search-button">Buscar por Tempo</button>
-    <button (click)="navigateToAppointmentManagement()" class="management-button">Gerenciar Agendamentos</button>
-    <div class="spacer"></div>
-    <button *ngIf="isAdmin()" (click)="navigateToServiceManagement()" class="admin-button">Gerenciar Serviços</button>
-  </div>
+    
+    <div>
+        <h1>
+            <a href="/home"><img class="logo" src="logo.png" alt="Fila Flex"></a> 
+            Página inicial
+        </h1>
+    </div>
 
+    <div class="topnav filter-buttons">
+        <a (click)="openCategoryModal()" style="cursor: pointer;">Buscar por Categorias</a>
+        <a (click)="openPriceModal()" style="cursor: pointer;">Buscar por Preço</a>
+        <a (click)="openTimeModal()" style="cursor: pointer;">Buscar por Tempo</a>
+        <a (click)="navigateToAppointmentManagement()" style="cursor: pointer;">Gerenciar Agendamentos</a>
+        <a *ngIf="isAdmin()" (click)="navigateToServiceManagement()" style="cursor: pointer;">Gerenciar Serviços</a>
+        <button (click)="logout()" class="logout-button">Logout</button>
+    </div>
+    
   <!-- Modal de seleção de categorias0 -->
   <div *ngIf="showCategoryModal" class="modal">
     <div class="modal-content">

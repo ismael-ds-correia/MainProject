@@ -1,6 +1,14 @@
+
+<div class="topnav ">
+  <button (click)="goBack()" class="back-button">← Voltar</button>
+</div>
+
 <div class="service-management-container">
   <header>
-    <h1>Gerenciamento de Serviços</h1>
+    <h1>
+      <a href="/home"><img class="logo" src="logo.png" alt="Fila Flex"></a> 
+      Gerenciamento de Serviços
+    </h1>
     <button class="add-button" (click)="toggleForm()" *ngIf="!showForm">
       Adicionar Novo Serviço
     </button>

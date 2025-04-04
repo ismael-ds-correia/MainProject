@@ -1,24 +1,38 @@
 <section>
-    <div class="login-container">
-      <h2>Login</h2>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login">
-        <div>
-          <label for="email">Email:</label>
-          <input type="email" id="email" formControlName="email" placeholder="Digite seu email" />
+  <div class="container">
+    <div class="screen">
+      <div class="screen_content">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login">
+          <a href="/home"><img class="logo" src="logo.png" alt="Fila Flex" style="display: flex;
+  justify-content: center; margin: auto; padding-bottom: 30px;"></a> 
+          <div class="login_field">
+            <i class="login_icon fas fa-user"></i>
+            <input type="email" id="email" formControlName="email" class="login_input" placeholder="Digite seu email" />
+          </div>
           <span *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error-message">
             Digite um e-mail válido.
           </span>
-        </div>
-        <div>
-          <label for="password">Senha:</label>
-          <input type="password" id="password" formControlName="password" placeholder="Digite sua senha" required />
+          <div class="login_field">
+            <i class="login_icon fas fa-lock"></i>
+            <input type="password" class="login_input" id="password" formControlName="password" placeholder="Digite sua senha" required />
+          </div>
           <span *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error-message">
             A senha é obrigatória.
           </span>
-        </div>
-        <button type="submit" [disabled]="loginForm.invalid">Login</button>
-      </form>
-      <p>Ainda não possui conta? <a [routerLink]="['/register']">Registre-se</a></p>
+          <button class="button login_submit"  type="submit" [disabled]="loginForm.invalid">
+            <span class="button_text">Login</span>
+            <i class="button_icon fas fa-chevron-right"></i>
+          </button>				
+        </form>
+      </div>
+      <div class="screen_background">
+        <span class="screen_background_shape screen_background_shape4"></span>
+        <span class="screen_background_shape screen_background_shape3"></span>		
+        <span class="screen_background_shape screen_background_shape2"></span>
+        <span class="screen_background_shape screen_background_shape1"></span>
+      </div>		
     </div>
-  </section>
+  </div>
+
+</section>
   
