@@ -1,4 +1,8 @@
 <div class="details-container">
+
+  <div class="topnav ">
+    <button (click)="goBack()" class="back-button">← Voltar</button>
+  </div>
     <!-- Exibir mensagem de carregamento -->
     <div *ngIf="loading" class="loading-message">
       <p>Carregando detalhes do serviço...</p>
@@ -7,12 +11,10 @@
     <!-- Exibir mensagem de erro se houver -->
     <div *ngIf="error && !loading" class="error-message">
       <p>{{ error }}</p>
-      <button (click)="goBack()" class="back-button">Voltar</button>
     </div>
     
     <!-- Exibir detalhes do AppointmentType quando carregados -->
     <div *ngIf="appointmentType && !loading" class="service-details">
-      <button (click)="goBack()" class="back-button">← Voltar</button>
       
       <h1>{{ appointmentType.name }}</h1>
       
