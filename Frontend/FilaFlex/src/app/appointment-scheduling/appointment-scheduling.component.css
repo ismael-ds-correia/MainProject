@@ -1,27 +1,30 @@
 .scheduling-container {
   position: relative;
-  max-width: 1200px;
+  max-width: 90vw;
   margin: 0 auto;
   padding: 20px;
-  background-color: #1976d2; /* Fundo azul como na home */
   min-height: 100vh;
   color: white;
   border-radius: 8px;
 }
 
+
 .back-button {
-  background-color: white;
-  color: #1976d2;
+  position: absolute;
+  top: 20px;
+  right: 1vw;
+  background-color: #007bff;
+  color: white;
   border: none;
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
-  margin-bottom: 20px;
-  display: inline-flex;
-  align-items: center;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  transition: background-color 0.2s;
+  margin: 7px;
+}
+
+.back-button:hover {
+  text-decoration: underline;
 }
 
 h1 {
@@ -30,12 +33,13 @@ h1 {
 }
 
 .scheduling-form {
-  background-color: #f5f5f5;
+  background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 20px;
 }
 
 .form-group {
+  width: 99%;
   margin-bottom: 20px;
 }
 
@@ -51,7 +55,7 @@ input[type="time"] {
   border-radius: 4px;
   font-size: 16px;
   padding: 8px 12px;
-  width: 100%;
+  width: 99%;
 }
 
 .schedule-submit-button {
@@ -114,7 +118,7 @@ input[type="time"] {
 
 /* Estilos para o modal - adicione ao seu CSS */
 .priority-modal-content {
-  background-color: white;
+  background-color: #b9b9b9;
   padding: 25px;
   border-radius: 8px;
   width: 90%;
@@ -124,7 +128,6 @@ input[type="time"] {
 }
 
 .priority-modal-content h2 {
-  color: #1976d2; /* Azul para o título */
   margin-top: 0;
   margin-bottom: 20px;
   text-align: center;
@@ -167,31 +170,44 @@ input[type="time"] {
 }
 
 .cancel-button {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #ddd;
-  padding: 10px 20px;
+  top: 20px;
+  right: 20px;
+  background-color: #b6342b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin: 7px;
   transition: background-color 0.2s;
 }
 
 .cancel-button:hover {
-  background-color: #e0e0e0;
+  
+  background-color: #d13a30;
 }
 
 .confirm-button {
-  background-color: #1976d2;
+  top: 20px;
+  right: 20px;
+  background-color: #1565c0;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  margin: 7px;
   transition: background-color 0.2s;
 }
 
+
 .confirm-button:hover {
-  background-color: #1565c0;
+  background-color: #1b7fe2;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 10px;
 }

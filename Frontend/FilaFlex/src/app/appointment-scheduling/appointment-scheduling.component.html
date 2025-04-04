@@ -1,5 +1,8 @@
 <div class="scheduling-container">
-    <button (click)="goBack()" class="back-button">← Voltar</button>
+  
+    <div class="topnav ">
+      <button (click)="goBack()" class="back-button">← Voltar</button>
+    </div>
     
     <h1>Agendar Serviço</h1>
     
@@ -13,7 +16,6 @@
     
     <div *ngIf="success && !loading" class="success-message">
       <p>Agendamento realizado com sucesso!</p>
-      <button (click)="goBack()" class="back-button">Voltar para detalhes</button>
     </div>
     
     <form *ngIf="!loading && !success" [formGroup]="appointmentForm" (ngSubmit)="onSubmit()" class="scheduling-form">
