@@ -3,6 +3,8 @@
     <div class="screen">
       <div class="screen_content">
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login">
+          <a href="/home"><img class="logo" src="logo.png" alt="Fila Flex" style="display: flex;
+  justify-content: center; margin: auto; padding-bottom: 30px;"></a> 
           <div class="login_field">
             <i class="login_icon fas fa-user"></i>
             <input type="email" id="email" formControlName="email" class="login_input" placeholder="Digite seu email" />

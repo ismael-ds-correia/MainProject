@@ -9,3 +9,8 @@ html, body {
 input, textarea, select {
   background-color: #b7bbc4;
 }
+
+.logo{
+  width: 100px;
+  margin-right: 30px;
+}
