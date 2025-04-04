@@ -1,4 +1,5 @@
 <div class="details-container">
+    
 
   <div class="topnav ">
     <button (click)="goBack()" class="back-button">← Voltar</button>
@@ -15,8 +16,10 @@
     
     <!-- Exibir detalhes do AppointmentType quando carregados -->
     <div *ngIf="appointmentType && !loading" class="service-details">
-      
-      <h1>{{ appointmentType.name }}</h1>
+
+      <div>
+        <h1>Detalhes do Serviço - {{ appointmentType.name }}</h1>
+      </div>
       
       <div class="details-section">
         <h2>Descrição</h2>

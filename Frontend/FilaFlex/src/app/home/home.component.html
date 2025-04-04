@@ -1,4 +1,8 @@
 <div class="home-container">
+    
+    <div>
+        <h1>Página inicial</h1>
+    </div>
 
     <div class="topnav filter-buttons">
         <a (click)="openCategoryModal()" style="cursor: pointer;">Buscar por Categorias</a>
@@ -9,10 +13,6 @@
         <button (click)="logout()" class="logout-button">Logout</button>
     </div>
     
-    <div class="content">
-        <h1>Bem-vindo à página inicial</h1>
-    </div>
-
   <!-- Modal de seleção de categorias0 -->
   <div *ngIf="showCategoryModal" class="modal">
     <div class="modal-content">
