@@ -1,39 +1,63 @@
-<form [formGroup]="register" (ngSubmit)="onSubmit()" class="register">
-    <h1>Registrar-se</h1>
-  
-    <div>
-      <label for="name">Nome Completo:</label>
-      <input type="text" id="name" formControlName="name" />
-      <span *ngIf="register.get('name')?.invalid && register.get('name')?.touched">
-        O nome completo é obrigatório e deve ter no mínimo 6 caracteres.
-      </span>
+<section>
+  <div class="container">
+    <div class="screen">
+      <div class="screen_content">
+        <form [formGroup]="register" (ngSubmit)="onSubmit()" class="register">
+          <a href="/home"><img class="logo" src="logo.png" alt="Fila Flex" style="display: flex;
+  justify-content: center; margin: auto; padding-bottom: 30px;"></a> 
+          <h1>Registrar-se</h1>
+        
+          <div>
+            <input class="register_input" type="text" id="name" formControlName="name" placeholder="Digite seu nome" />
+            <span *ngIf="register.get('name')?.invalid && register.get('name')?.touched">
+              O nome completo é obrigatório e deve ter no mínimo 6 caracteres.
+            </span>
+          </div>
+        
+          <div>
+            <input class="register_input" type="email" id="email" formControlName="email" placeholder="Digite seu e-mail" />
+            <span *ngIf="register.get('email')?.invalid && register.get('email')?.touched">
+              Digite um e-mail válido.
+            </span>
+          </div>
+        
+          <div>
+            <input class="register_input" type="password" id="password" formControlName="password" placeholder="Digite sua senha" />
+            <span *ngIf="register.get('password')?.invalid && register.get('password')?.touched">
+              A senha deve ter pelo menos 8 caracteres.
+            </span>
+          </div>
+
+          <!-- Filtro de usuário (visível apenas para admin) -->
+          <div class="perfil-filter">
+            <div class="form-group">
+              <select 
+                id="role" 
+                formControlName="role"
+                name="perfilSearch" 
+                class="perfil-dropdown"
+              >
+              <option value="" disabled selected>Selecione um perfil de usuário</option>
+              <option value="admin">Perfil de Admin</option>
+              <option value="user">Perfil de Usuário</option>
+              </select>
+            </div>
+          </div>        
+          <button class="register_submit" type="submit" [disabled]="register.invalid">Registrar-se</button>
+        </form>
+
+        <div class="div_cancel_button">
+          <a [routerLink]="['/login']"><button class="cancel_register">Cancelar Registro</button></a>
+        </div>
+      </div>
+      <div class="screen_background">
+        <span class="screen_background_shape screen_background_shape4"></span>
+        <span class="screen_background_shape screen_background_shape3"></span>		
+        <span class="screen_background_shape screen_background_shape2"></span>
+        <span class="screen_background_shape screen_background_shape1"></span>
+      </div>		
     </div>
-  
-    <div>
-      <label for="email">Email:</label>
-      <input type="email" id="email" formControlName="email" />
-      <span *ngIf="register.get('email')?.invalid && register.get('email')?.touched">
-        Digite um e-mail válido.
-      </span>
-    </div>
-  
-    <div>
-      <label for="password">Senha:</label>
-      <input type="password" id="password" formControlName="password" />
-      <span *ngIf="register.get('password')?.invalid && register.get('password')?.touched">
-        A senha deve ter pelo menos 8 caracteres.
-      </span>
-    </div>
-  
-    <div>
-      <label for="role">Perfil de usuário</label>
-      <select id="role" formControlName="role">
-        <option value="" disabled selected>Selecione um perfil</option>
-        <option value="admin">Admin</option>
-        <option value="user">Usuário</option>
-      </select>
-    </div>
-  
-    <button type="submit" [disabled]="register.invalid">Registrar-se</button>
-  </form>
+  </div>
+
+</section>
   

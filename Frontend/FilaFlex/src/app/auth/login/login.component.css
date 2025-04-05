@@ -172,3 +172,11 @@ body {
 	margin-left: auto;
 	color: #0d03cf;
 }
+
+.login_link_register{
+	text-align: center;
+	margin-top: 50px;
+	color: #000000;
+	font-size: 14px;
+	text-decoration: none;
+}
