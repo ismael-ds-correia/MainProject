@@ -1,8 +1,13 @@
 name: CI/CD Spring Boot
+
 run-name: ${{ github.actor }} fez um pull request
 on: 
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
