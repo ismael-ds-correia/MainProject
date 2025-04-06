@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common';
@@ -32,7 +32,8 @@ export class ServiceManagementComponent implements OnInit {
     private fb: FormBuilder,
     private appointmentTypeService: AppointmentTypeService,
     private location: Location,
-    private metricsService: MetricsService 
+    private metricsService: MetricsService,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -73,8 +74,15 @@ export class ServiceManagementComponent implements OnInit {
   
   toggleForm(): void {
     this.showForm = !this.showForm;
-    if (this.showForm && !this.isEditing) {
-      this.appointmentTypeForm.reset();
+
+    if (this.showForm) {
+      // se estamos abrindo o form, reseta se não for edição
+      if (!this.isEditing) {
+        this.appointmentTypeForm.reset();
+      }
+      // força o Angular a detectar mudanças imediatamente,
+      // garantindo que o texto do botão apareça de cara
+      this.cd.detectChanges();
     }
   }
   

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
@@ -22,19 +22,15 @@ export class RegisterComponent {
     name: ['', [Validators.required, Validators.minLength(6)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(8)]],
+    confirmPassword: ['', Validators.required],
     role: ['', Validators.required]
-  });
+  }, { validators: this.passwordsMatch });
 
   onSubmit() {
     if (this.register.valid) {
       const { name, email, password, role } = this.register.value;
 
-      const newUser: User = {
-        name,
-        email,
-        password,
-        role
-      };
+      const newUser: User = { name, email, password, role };
 
       this.authService.register(newUser)
         .then(success => {
@@ -45,6 +41,14 @@ export class RegisterComponent {
           }
         })
         .catch(err => alert('Erro ao registrar: ' + err));
+    } else {
+      this.register.markAllAsTouched();
     }
+  }
+
+  private passwordsMatch(group: AbstractControl): ValidationErrors | null {
+    const pass = group.get('password')?.value;
+    const confirm = group.get('confirmPassword')?.value;
+    return pass === confirm ? null : { passwordMismatch: true };
   }
 }

@@ -81,7 +81,10 @@ body {
   background-color: #ccc;
 }
 
-.register span{
+.register span {
+  display: block;        /* vira bloco, ocupando 100% da largura disponível */
+  width: 75%;            /* igual à largura do input (ou ajuste à sua necessidade) */
+  margin-top: 5px;       /* dá um espacinho entre o campo e a mensagem */
   color: red;
   font-size: 0.875em;
 }
